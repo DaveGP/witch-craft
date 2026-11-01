@@ -23,6 +23,11 @@ namespace Art
 		/// </summary>
 		public Animator ArtAnimator { get; private set; }
 
+		/// <summary>
+		/// The instantiated art, or null while the placeholder shows.
+		/// </summary>
+		public GameObject Art => art;
+
 		public bool HasArt => art != null;
 
 		public string Key => key;

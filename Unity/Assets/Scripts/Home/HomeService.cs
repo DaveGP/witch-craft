@@ -27,6 +27,8 @@ namespace Home
 
 		public bool Has(BuildPieceDefinition piece) => pieces.Any(placed => placed != null && placed.Definition == piece);
 
+		public IReadOnlyList<PlacedPiece> Pieces => pieces;
+
 		public HomeLevel NextLevel => Level < database.HomeLevels.Count ? database.HomeLevels[Level] : null;
 
 		[SerializeField] private HomePlot plot;

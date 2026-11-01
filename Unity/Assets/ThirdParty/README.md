@@ -22,6 +22,7 @@ Everything the builders make is a placeholder with a named **art slot**: the wit
 Only looks change. The placeholder's collision, scripts and lights stay, so jumps, building and gathering behave exactly the same. On a machine without the pack (a fresh clone), the missing prefab is skipped and the placeholder shows.
 
 - **Animated witch:** give her slot a rigged character with an Animator. It is driven with Crewfall's locomotion parameters (`ForwardVelocity`, `StrafeVelocity`, `Velocity`, `IsGrounded`, `Gait`, `Direction`), so Crewfall's Synty locomotion controller works, plus `IsFlying`, `VerticalVelocity` and a `Jump` trigger. Parameters the controller doesn't have are skipped.
-- **Animated Sable:** `Speed` and `IsSitting`.
+- **Animated Sable:** **Witch Craft > Art > Set Up Casual Cat** (also run by the batch build) turns the Casual Cat - Black pack into her art: URP materials, an Animator Controller with a state per clip and a prefab variant with a `CatRigProfile` saying which state does what. Any cat with a `CatRigProfile` is crossfaded by state name; a plain Animator just gets `Speed` and `IsSitting`.
+- **Standard materials** render pink in URP: right-click a material or folder and choose **Witch Craft > Convert Materials to URP Lit**.
 - **Paint** only colours placeholder surfaces for now, not swapped-in art.
 - Slots are added to the Art Set automatically whenever the builders run; your assignments are never changed.

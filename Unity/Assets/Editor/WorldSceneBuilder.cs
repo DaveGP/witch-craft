@@ -101,6 +101,10 @@ namespace WitchCraftEditor
 			{
 				ContentBuilder.Build();
 				Build();
+
+				// Local-only art packs, when this machine has them
+				CasualCatSetup.Run();
+
 				EditorApplication.Exit(0);
 			}
 			catch (Exception exception)
@@ -1734,7 +1738,7 @@ namespace WitchCraftEditor
 
 			SetLayer(cat, Interactable);
 
-			ArtSlot(cat, "cat", "Sable the cat (an Animator gets Speed and IsSitting)");
+			ArtSlot(cat, "cat", "Sable the cat (a rig with a CatRigProfile is crossfaded by state name)");
 
 			var companion = cat.AddComponent<CatCompanion>();
 			Set(companion, "body", body.transform);

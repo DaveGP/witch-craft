@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Data.ScriptableObjects;
 using UnityEngine;
 
@@ -29,6 +30,11 @@ namespace Home.Interfaces
 		int Comfort { get; }
 
 		bool Has(BuildPieceDefinition piece);
+
+		/// <summary>
+		/// Everything built, in the order it was placed.
+		/// </summary>
+		IReadOnlyList<PlacedPiece> Pieces { get; }
 
 		PlacedPiece Place(BuildPieceDefinition piece, Vector3 position, Quaternion rotation, int colour = 0);
 

@@ -21,5 +21,6 @@ namespace Audio
 		Rain,
 		Cricket,
 		Music,
+		Hiss,
 	}
 }

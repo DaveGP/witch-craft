@@ -320,6 +320,9 @@ namespace Debugging
 
 			Shot("04_broom");
 
+			var cat = FindAnyObjectByType<CatCompanion>();
+			Check($"Sable loafs on the broom seat ({cat.Activity}{RigNote(cat)})", cat.Activity == "Ride" && (cat.RigState == null || cat.RigState.Contains("Catloaf")));
+
 			Release();
 			var climbed = player.transform.position.y - flyStart.y;
 			Check($"Holding Space climbs on the broom ({climbed:0.0}m)", climbed > 2f);
@@ -332,6 +335,8 @@ namespace Debugging
 			Tap(Key.F);
 			yield return new WaitForSeconds(2f);
 			Check("F again dismounts", !broom.IsMounted);
+			Check($"Sable hops down off the broom ({cat.Activity}, {Vector3.Distance(cat.transform.position, player.transform.position):0.0}m from the witch)",
+				cat.transform.parent == null && !cat.IsHopping && Vector3.Distance(cat.transform.position, player.transform.position) < 5f);
 
 			// Menus
 			Tap(Key.B);
@@ -369,12 +374,24 @@ namespace Debugging
 			yield return new WaitForSeconds(0.4f);
 			Check("Escape again returns to play", inputMode.Mode == InputMode.Gameplay);
 
+			yield return CatScenario(player, movement);
+
 			// Companions: gift Pip what they ask for and they move in
 			var pip = database.FindCompanion("pip");
 			inventory.Add(database.FindItem("glowcap"), 3);
 
 			var recruit = FindObjectsByType<CompanionRecruit>(FindObjectsSortMode.None).FirstOrDefault(found => found.name.StartsWith("Pip"));
 			movement.Teleport(recruit.transform.position + Vector3.right * 1.5f);
+
+			var hissed = false;
+
+			for (var t = 0f; t < 2f && !hissed; t += Time.deltaTime)
+			{
+				hissed = cat.Activity == "ThreatLong";
+				yield return null;
+			}
+
+			Check($"Sable hisses at Pip, whom she hasn't met ({cat.Activity}{RigNote(cat)})", hissed);
 			yield return new WaitForSeconds(0.5f);
 
 			recruit.Interact(player.gameObject);
@@ -615,6 +632,16 @@ namespace Debugging
 			movement.Teleport(new Vector3(0f, 0.2f, -9f));
 			yield return View("15_night", new Vector3(9f, 6f, -14f), new Vector3(0f, 1.5f, 0f));
 
+			// At night by home, Sable takes herself off to her Cat Bed
+			for (var t = 0f; t < 14f && !cat.IsInBed; t += Time.deltaTime)
+				yield return null;
+
+			yield return new WaitForSeconds(4f);
+			Check($"At night near home Sable sleeps in her Cat Bed ({cat.Activity}{RigNote(cat)})", cat.IsInBed && cat.IsAsleep);
+			yield return FrameCat(cat, 1.5f, true);
+			Shot("26_cat_bed");
+			EndFrame();
+
 			// Sleep in the starter bed through the dialogue, as a player would
 			var bed = FindAnyObjectByType<Bed>();
 			bed.Interact(player.gameObject);
@@ -719,6 +746,169 @@ namespace Debugging
 			Tap(Key.Escape);
 			yield return new WaitForSeconds(0.3f);
 			Check("Escape again returns to play", inputMode.Mode == InputMode.Gameplay);
+		}
+
+		// Sable: the art's scale, facing and materials, then sitting, grooming, pets, sleep and hopping up and down a ledge
+		private IEnumerator CatScenario(PlayerCharacter player, IMovementController movement)
+		{
+			var cat = FindAnyObjectByType<CatCompanion>();
+			var swap = cat.GetComponent<Art.ArtSwap>();
+			var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+
+			if (swap.HasArt)
+			{
+				var profile = swap.Art.GetComponentInChildren<Art.CatRigProfile>();
+				var roles = (Art.CatRigProfile.Role[])Enum.GetValues(typeof(Art.CatRigProfile.Role));
+				Check($"Sable's art has a rig profile covering every behaviour ({profile?.States.Count} states)", profile != null && roles.All(profile.Has));
+
+				var bones = swap.Art.GetComponentsInChildren<Transform>(true);
+				var head = bones.FirstOrDefault(bone => bone.name == "head");
+				var tailBase = bones.FirstOrDefault(bone => bone.name == "tail01");
+
+				if (head != null && tailBase != null && profile != null)
+				{
+					// Standing head height in the world, from the measured idle pose and the art's scale
+					var headHeight = profile.HeadHeight * swap.Art.transform.lossyScale.y;
+					var facing = Vector3.Dot(Flat(head.position - tailBase.position).normalized, Flat(cat.transform.forward).normalized);
+					Check($"Sable's art is cat-sized (head {headHeight:0.00}m up) and faces forward ({facing:0.00})", headHeight > 0.25f && headHeight < 0.4f && facing > 0.7f);
+				}
+
+				var shaders = swap.Art.GetComponentsInChildren<Renderer>().SelectMany(renderer => renderer.sharedMaterials).Where(material => material != null).Select(material => material.shader.name).Distinct().ToList();
+				Check($"Sable's materials render in URP ({string.Join(", ", shaders)})", shaders.Count > 0 && shaders.All(shader => shader.StartsWith("Universal Render Pipeline")));
+			}
+			else
+			{
+				report.AppendLine("NOTE  Sable has no art on this machine; behaviour checks use the placeholder");
+			}
+
+			// Somewhere open, away from home and the creatures
+			movement.Teleport(new Vector3(-3f, 0.2f, -15f));
+
+			// She may have a long way to come; give her time to arrive and settle
+			for (var t = 0f; t < 10f && (cat.Activity is not ("Sit" or "Groom" or "Scratch") || Vector3.Distance(cat.transform.position, player.transform.position) > 4f); t += Time.deltaTime)
+				yield return null;
+
+			Check($"When the witch stops, Sable sits ({cat.Activity}{RigNote(cat)}, {Vector3.Distance(cat.transform.position, player.transform.position):0.0}m from the witch)", cat.Activity is "Sit" or "Groom" or "Scratch" && Vector3.Distance(cat.transform.position, player.transform.position) < 4f);
+			yield return FrameCat(cat, 1.4f);
+			Shot("21_cat_sit");
+
+			cat.GetType().GetMethod("Act", flags).Invoke(cat, new object[] { Art.CatRigProfile.Role.Groom, 3f });
+			yield return new WaitForSeconds(1f);
+			Check($"Sitting, she grooms ({cat.Activity}{RigNote(cat)})", cat.Activity == "Groom" && (cat.RigState == null || cat.RigState.Contains("Grooming")));
+			Shot("22_cat_groom");
+			yield return new WaitForSeconds(2.5f);
+
+			cat.Interact(player.gameObject);
+			yield return new WaitForSeconds(1.5f);
+			Check($"A pet gets a roll over ({cat.Activity}{RigNote(cat)})", cat.Activity == "RollOver" && (cat.RigState == null || cat.RigState.Contains("Rollingover")));
+			Shot("24_cat_roll");
+
+			cat.Interact(player.gameObject);
+			cat.Interact(player.gameObject);
+			cat.Interact(player.gameObject);
+			yield return new WaitForSeconds(0.5f);
+			Check($"Too many pets and she's had enough ({cat.Activity}{RigNote(cat)})", cat.Activity == "ThreatShort");
+			yield return new WaitForSeconds(3f);
+
+			// Skip ahead through the loaf and lying down to sleep
+			cat.GetType().GetField("idleTime", flags).SetValue(cat, 60f);
+			yield return new WaitForSeconds(2f);
+			Check($"Left long enough, Sable falls asleep ({cat.Activity}{RigNote(cat)})", cat.IsAsleep && (cat.RigState == null || cat.RigState.Contains("Sleep")));
+			Shot("23_cat_sleep");
+
+			cat.Interact(player.gameObject);
+			yield return new WaitForSeconds(0.6f);
+			Check($"A pet while she sleeps gets a sleepy blink and she sleeps on ({cat.Activity}{RigNote(cat)})", cat.Activity == "SleepBlink" && cat.IsAsleep);
+			yield return new WaitForSeconds(2.5f);
+
+			EndFrame();
+
+			// A ledge: the witch climbs onto a block and Sable hops up after her, then down again
+			var groundY = Physics.Raycast(new Vector3(-3f, 20f, -21f), Vector3.down, out var groundHit, 40f, LayerMask.GetMask("Ground"), QueryTriggerInteraction.Ignore) ? groundHit.point.y : 0f;
+			var block = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			block.name = "PlaytestLedge";
+			block.layer = LayerMask.NameToLayer("Ground");
+			block.transform.position = new Vector3(-3f, groundY + 0.6f, -21f);
+			block.transform.localScale = new Vector3(5f, 1.2f, 5f);
+			Physics.SyncTransforms();
+
+			// The camera settles on the ledge first, as the hop itself is over in a moment
+			yield return FrameSpot(new Vector3(4f, groundY + 2.2f, -17f), new Vector3(-3f, groundY + 1f, -19f));
+
+			movement.Teleport(new Vector3(-3f, groundY + 1.4f, -21f));
+
+			var hopped = false;
+
+			for (var t = 0f; t < 4f && !hopped; t += Time.deltaTime)
+			{
+				hopped = cat.IsHopping;
+				yield return null;
+			}
+
+			yield return new WaitForSeconds(0.2f);
+			Shot("25_cat_hop");
+			EndFrame();
+			yield return new WaitForSeconds(1.5f);
+
+			Check($"Sable hops up the ledge after the witch (height {cat.transform.position.y - groundY:0.0}m)", hopped && cat.transform.position.y - groundY > 1f);
+
+			movement.Teleport(new Vector3(-3f, groundY + 0.2f, -15f));
+
+			var hoppedDown = false;
+
+			for (var t = 0f; t < 4f && !hoppedDown; t += Time.deltaTime)
+			{
+				hoppedDown = cat.IsHopping;
+				yield return null;
+			}
+
+			yield return new WaitForSeconds(1.5f);
+			Check($"...and hops back down (height {cat.transform.position.y - groundY:0.0}m)", hoppedDown && cat.transform.position.y - groundY < 0.5f);
+
+			Destroy(block);
+		}
+
+		private static string RigNote(CatCompanion cat) => cat.RigState != null ? $", {cat.RigState}" : "";
+
+		private Transform frame;
+
+		// Points the camera at the cat from beside and in front, and waits for it to arrive
+		private IEnumerator FrameCat(CatCompanion cat, float distance, bool fromAbove = false)
+		{
+			var target = cat.transform.position + Vector3.up * 0.2f;
+
+			// From the side away from the witch, so she isn't in the way
+			var away = Flat(cat.transform.position - FindAnyObjectByType<PlayerCharacter>().transform.position);
+			away = away.sqrMagnitude > 0.01f ? away.normalized : cat.transform.forward;
+
+			var offset = fromAbove
+				? (cat.transform.forward * 0.5f + Vector3.up).normalized * distance
+				: (away + cat.transform.forward * 0.7f).normalized * distance + Vector3.up * distance * 0.35f;
+
+			yield return FrameSpot(target + offset, target);
+		}
+
+		private IEnumerator FrameSpot(Vector3 position, Vector3 lookAt)
+		{
+			EndFrame();
+
+			frame = new GameObject("View_Cat").transform;
+			frame.position = position;
+			frame.LookAt(lookAt);
+
+			ServiceLocator.Get<IEventBusSender>().SetCameraOverride(frame);
+
+			yield return new WaitForSeconds(1.2f);
+		}
+
+		private void EndFrame()
+		{
+			if (frame == null)
+				return;
+
+			ServiceLocator.Get<IEventBusSender>().SetCameraOverride(null);
+			Destroy(frame.gameObject);
+			frame = null;
 		}
 
 		private IEnumerator BoilTurn(AlchemyStation station)

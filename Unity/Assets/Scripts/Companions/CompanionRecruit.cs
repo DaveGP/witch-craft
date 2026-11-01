@@ -23,6 +23,8 @@ namespace Companions
 
 		private IEventBusSender eventBus;
 
+		public CompanionDefinition Companion => companion;
+
 		public string Prompt => $"Talk to {companion.DisplayName}";
 
 		public bool CanInteract => !roster.IsResident(companion);

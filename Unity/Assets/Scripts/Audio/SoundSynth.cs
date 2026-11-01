@@ -52,6 +52,7 @@ namespace Audio
 				Sound.Rain => Loop(Rain(3f)),
 				Sound.Cricket => Cricket(),
 				Sound.Music => Music(),
+				Sound.Hiss => Hiss(),
 				_ => new float[1]
 			};
 
@@ -273,6 +274,30 @@ namespace Audio
 				var breath = Mathf.Sin(Mathf.PI * t / length);
 
 				samples[i] = (low * 2.5f + Mathf.Sin(Tau * 48f * t) * 0.2f) * rumble * breath;
+			}
+
+			return samples;
+		}
+
+		// A cat's hiss: bright breathy noise with a sharp start, fading out
+		private static float[] Hiss()
+		{
+			const float length = 0.75f;
+
+			var samples = Buffer(length);
+			var noise = new Random(13);
+			var low = 0f;
+
+			for (var i = 0; i < samples.Length; i++)
+			{
+				var t = Time(i);
+				var white = Noise(noise);
+
+				// Subtracting a smoothed copy leaves the hissy top end
+				low += (white - low) * 0.3f;
+
+				var spit = t < 0.05f ? 1.6f : 1f;
+				samples[i] = (white - low) * spit * Decay(t, 0.008f, 0.6f);
 			}
 
 			return samples;
