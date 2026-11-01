@@ -100,3 +100,6 @@ Builds/*
 
 # Third-party Synty assets
 Unity/[Aa]ssets/[Ss]ynty/
+
+# Player builds (the web build is published on the gh-pages branch)
+Unity/[Bb]uilds/

@@ -30,7 +30,9 @@ namespace UserInterface.Views
 			var newGame = UIFactory.Button(panel.transform, "New game", NewGame, 24, null, 54);
 			newGameLabel = newGame.GetComponentInChildren<Text>();
 
-			UIFactory.Button(panel.transform, "Quit", Quit, 24, null, 54);
+			// A browser tab can't quit itself
+			if (Application.platform != RuntimePlatform.WebGLPlayer)
+				UIFactory.Button(panel.transform, "Quit", Quit, 24, null, 54);
 		}
 
 		protected override void OnOpen()
