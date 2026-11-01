@@ -54,6 +54,8 @@ namespace Audio
 
 		public float SoundLevel => settings.SoundVolume;
 
+		public float AmbienceLevel => settings.SoundVolume * settings.AmbienceVolume;
+
 		private void Awake()
 		{
 			eventBus = ServiceLocator.Get<IEventBus>();
@@ -255,7 +257,7 @@ namespace Audio
 			lastStep = (lastStep + Random.Range(1, stepClips.Count)) % stepClips.Count;
 
 			interfaceSource.pitch = 1f + Random.Range(-0.08f, 0.08f);
-			interfaceSource.PlayOneShot(stepClips[lastStep], 0.09f * soundVolume * SoundLevel);
+			interfaceSource.PlayOneShot(stepClips[lastStep], 0.035f * soundVolume * AmbienceLevel);
 		}
 
 		private void UpdateWind()
@@ -264,7 +266,7 @@ namespace Audio
 
 			var speed = witch.Movement.Velocity.magnitude;
 
-			var target = flying ? Mathf.Clamp01(0.15f + speed / 18f) * 0.45f * SoundLevel : 0f;
+			var target = flying ? Mathf.Clamp01(0.15f + speed / 18f) * 0.22f * AmbienceLevel : 0f;
 
 			windSource.volume = Mathf.MoveTowards(windSource.volume, target, Time.deltaTime * 1.5f);
 			windSource.pitch = Mathf.Lerp(0.8f, 1.3f, speed / 18f);
@@ -280,7 +282,7 @@ namespace Audio
 			var raining = ServiceLocator.Get<IWeather>()?.IsRaining ?? false;
 
 			// Crickets chirp more often than birds sing
-			nextChirp = Time.time + (night ? Random.Range(2.5f, 6f) : Random.Range(5f, 13f));
+			nextChirp = Time.time + (night ? Random.Range(8f, 18f) : Random.Range(18f, 40f));
 
 			// Birds shelter from the rain
 			if (inputModeService.Mode != InputMode.Gameplay || raining && !night)
@@ -289,10 +291,12 @@ namespace Audio
 			// Something small somewhere nearby, off to one side
 			var offset = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f) * Vector3.forward * Random.Range(8f, 20f);
 
+			var level = settings.AmbienceVolume;
+
 			if (night)
-				PlayAt(Sound.Cricket, witch.Transform.position + offset, Random.Range(0.12f, 0.25f));
+				PlayAt(Sound.Cricket, witch.Transform.position + offset, Random.Range(0.03f, 0.06f) * level);
 			else
-				PlayAt(Sound.Chirp, witch.Transform.position + offset + Vector3.up * 4f, Random.Range(0.25f, 0.45f));
+				PlayAt(Sound.Chirp, witch.Transform.position + offset + Vector3.up * 4f, Random.Range(0.05f, 0.1f) * level);
 		}
 	}
 }

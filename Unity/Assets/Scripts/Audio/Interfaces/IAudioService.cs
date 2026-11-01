@@ -10,6 +10,11 @@ namespace Audio.Interfaces
 		float SoundLevel { get; }
 
 		/// <summary>
+		/// Sound level for background sounds (sound volume times ambience volume), 0-1.
+		/// </summary>
+		float AmbienceLevel { get; }
+
+		/// <summary>
 		/// Plays a sound with no position, for the witch and the interface.
 		/// </summary>
 		void Play(Sound sound, float volume = 1f, float pitchJitter = 0.05f);

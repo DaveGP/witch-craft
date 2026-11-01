@@ -21,6 +21,11 @@ namespace Settings.Interfaces
 		/// </summary>
 		float SoundVolume { get; set; }
 
+		/// <summary>
+		/// Background sounds: footsteps, rain, birds, crickets, broom wind and the bubbling cauldron. 0-1.
+		/// </summary>
+		float AmbienceVolume { get; set; }
+
 		event Action Changed;
 	}
 }

@@ -15,6 +15,7 @@ namespace Settings
 		private const string InvertKey = "WitchCraft.InvertY";
 		private const string MusicKey = "WitchCraft.MusicVolume";
 		private const string SoundKey = "WitchCraft.SoundVolume";
+		private const string AmbienceKey = "WitchCraft.AmbienceVolume";
 
 		public event Action Changed;
 
@@ -40,6 +41,12 @@ namespace Settings
 		{
 			get => PlayerPrefs.GetFloat(SoundKey, 1f);
 			set => Store(() => PlayerPrefs.SetFloat(SoundKey, Mathf.Clamp01(value)));
+		}
+
+		public float AmbienceVolume
+		{
+			get => PlayerPrefs.GetFloat(AmbienceKey, 1f);
+			set => Store(() => PlayerPrefs.SetFloat(AmbienceKey, Mathf.Clamp01(value)));
 		}
 
 		private void Store(Action write)

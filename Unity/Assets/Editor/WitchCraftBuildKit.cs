@@ -329,11 +329,30 @@ namespace WitchCraftEditor
 
 			if (!collider)
 				Object.DestroyImmediate(prim.GetComponent<Collider>());
+			else
+				MatchColliderToShape(prim, type, localScale);
 
 			if (parent != null)
 				prim.layer = parent.gameObject.layer;
 
 			return prim;
+		}
+
+		// A cylinder primitive collides as a capsule, and a squashed one becomes a ball as wide as the disc: a flat
+		// platform 9m across would have an invisible 9m sphere on it. Squashed spheres likewise collide as round balls.
+		// Swap both for a convex mesh of their actual shape.
+		private static void MatchColliderToShape(GameObject prim, PrimitiveType type, Vector3 scale)
+		{
+			var squashedSphere = type == PrimitiveType.Sphere && !(Mathf.Approximately(scale.x, scale.y) && Mathf.Approximately(scale.y, scale.z));
+
+			if (type != PrimitiveType.Cylinder && !squashedSphere)
+				return;
+
+			Object.DestroyImmediate(prim.GetComponent<Collider>());
+
+			var meshCollider = prim.AddComponent<MeshCollider>();
+			meshCollider.sharedMesh = prim.GetComponent<MeshFilter>().sharedMesh;
+			meshCollider.convex = true;
 		}
 
 		public static GameObject MeshObject(string name, Transform parent, Mesh mesh, Vector3 localPosition, Vector3 localScale, Material material, bool collider = false, Vector3? euler = null)

@@ -442,6 +442,29 @@ namespace Debugging
 			eventBus.SetCameraOverride(null);
 			Destroy(aim.gameObject);
 
+			// The sky spire's final jump: from the last step onto the summit, as a player would
+			var spireCentre = new Vector3(50f, 0f, -8f);
+			movement.Teleport(spireCentre + new Vector3(0f, 20.8f, -7f));
+			yield return new WaitForSeconds(0.6f);
+
+			// Face the camera (and so forward on W) at the summit
+			var cameraController = FindAnyObjectByType<global::Camera.CameraController>();
+			typeof(global::Camera.CameraController).GetField("yaw", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(cameraController, 0f);
+			yield return null;
+
+			Hold(Key.W);
+			yield return new WaitForSeconds(0.08f);
+			Hold(Key.W, Key.Space);
+			yield return new WaitForSeconds(0.5f);
+			Hold(Key.W);
+			yield return new WaitForSeconds(0.4f);
+			Release();
+			yield return new WaitForSeconds(0.8f);
+
+			var onSummit = player.transform.position;
+			var fromCentre = Vector2.Distance(new Vector2(onSummit.x, onSummit.z), new Vector2(spireCentre.x, spireCentre.z));
+			Check($"The last spire jump lands on the summit (height {onSummit.y:0.0}, {fromCentre:0.0}m from centre)", onSummit.y > 21.3f && onSummit.y < 22.5f && fromCentre < 4.5f && movement.IsGrounded);
+
 			// A new morning makes residents fonder, more so with comfort and their favourite piece about
 			var friendshipBefore = roster.Friendship(pip);
 			ServiceLocator.Get<IDayCycle>().SkipTo(6.5f);

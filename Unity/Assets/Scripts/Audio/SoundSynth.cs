@@ -288,7 +288,7 @@ namespace Audio
 				var t = Time(i);
 				var local = t % 0.14f;
 				var active = t < 0.28f && local < 0.09f;
-				var frequency = 2400f + Mathf.Sin(local / 0.09f * Mathf.PI) * 1300f;
+				var frequency = 1700f + Mathf.Sin(local / 0.09f * Mathf.PI) * 500f;
 
 				phase += Tau * frequency / SampleRate;
 				samples[i] = active ? Mathf.Sin(phase) * Mathf.Sin(local / 0.09f * Mathf.PI) : 0f;

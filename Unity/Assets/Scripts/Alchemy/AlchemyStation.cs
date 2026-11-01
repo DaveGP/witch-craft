@@ -232,7 +232,7 @@ namespace Alchemy
 			}
 
 			if (bubbling != null)
-				bubbling.volume = Session.HasStarted ? Mathf.Lerp(0.05f, 0.6f, Session.Heat) * audio.SoundLevel : 0f;
+				bubbling.volume = Session.HasStarted ? Mathf.Lerp(0.03f, 0.3f, Session.Heat) * audio.AmbienceLevel : 0f;
 
 			if (bubbles != null)
 			{

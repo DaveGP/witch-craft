@@ -24,6 +24,8 @@ namespace UserInterface.Views
 
 		private Slider sound;
 
+		private Slider ambience;
+
 		private Text invertLabel;
 
 		private Text controls;
@@ -51,6 +53,7 @@ namespace UserInterface.Views
 
 			music = Setting(left, "Music volume", 0f, 1f, value => settings.MusicVolume = value);
 			sound = Setting(left, "Sound volume", 0f, 1f, value => settings.SoundVolume = value);
+			ambience = Setting(left, "Ambience (footsteps, rain, birds)", 0f, 1f, value => settings.AmbienceVolume = value);
 
 			UIFactory.Button(left, "Reset look sensitivity", () =>
 			{
@@ -97,6 +100,7 @@ namespace UserInterface.Views
 			look.SetValueWithoutNotify(settings.LookSensitivity);
 			music.SetValueWithoutNotify(settings.MusicVolume);
 			sound.SetValueWithoutNotify(settings.SoundVolume);
+			ambience.SetValueWithoutNotify(settings.AmbienceVolume);
 
 			invertLabel.text = $"Invert look up/down: {(settings.InvertY ? "on" : "off")}";
 
