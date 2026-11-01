@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using Camera;
 using Character.Movement;
+using Spells.Effects;
 using Data.Enums;
 using DependencyInjection;
 using GameState.Interfaces;
@@ -23,6 +24,8 @@ namespace Debugging
 		private MovementController movement;
 
 		private BroomController broom;
+
+		private BubbleSpell bubble;
 
 		private CameraController cameraController;
 
@@ -48,6 +51,7 @@ namespace Debugging
 			{
 				movement = FindAnyObjectByType<MovementController>();
 				broom = FindAnyObjectByType<BroomController>();
+				bubble = FindAnyObjectByType<BubbleSpell>();
 				cameraController = FindAnyObjectByType<CameraController>();
 
 				inputModeService.Push(InputMode.Menu);
@@ -107,6 +111,14 @@ namespace Debugging
 				broomStats.RechargeRate = Slider("Recharge per second", broomStats.RechargeRate, 0.5f, 10f);
 			}
 
+			if (bubble != null)
+			{
+				GUILayout.Label("Spells", heading);
+				bubble.Duration = Slider("Bubble duration (s)", bubble.Duration, 0.5f, 10f);
+				bubble.RiseSpeed = Slider("Bubble rise speed", bubble.RiseSpeed, 0.5f, 10f);
+				GUILayout.Label($"  Bubble rises about {bubble.Duration * bubble.RiseSpeed:0.0} m");
+			}
+
 			if (cameraController != null)
 			{
 				GUILayout.Label("Camera", heading);
@@ -149,6 +161,9 @@ namespace Debugging
 				text.AppendLine("BroomStats");
 				text.AppendLine($"  Speed {broomStats.Speed:0.##}, BoostSpeed {broomStats.BoostSpeed:0.##}, VerticalSpeed {broomStats.VerticalSpeed:0.##}, Acceleration {broomStats.Acceleration:0.##}, MaxCharge {broomStats.MaxCharge:0.##}, RechargeRate {broomStats.RechargeRate:0.##}");
 			}
+
+			if (bubble != null)
+				text.AppendLine($"Bubble\n  Duration {bubble.Duration:0.##}, RiseSpeed {bubble.RiseSpeed:0.##}");
 
 			if (cameraController != null)
 				text.AppendLine($"Camera\n  Sensitivity {cameraController.Sensitivity:0.###}, Distance {cameraController.Distance:0.##}");

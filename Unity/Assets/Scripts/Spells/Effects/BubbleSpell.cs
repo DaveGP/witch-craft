@@ -24,6 +24,24 @@ namespace Spells.Effects
 
 		[SerializeField] private float riseSpeed = 4.2f;
 
+		/// <summary>
+		/// Seconds a bubble floats, for tuning.
+		/// </summary>
+		public float Duration
+		{
+			get => duration;
+			set => duration = Mathf.Max(0.1f, value);
+		}
+
+		/// <summary>
+		/// Metres per second a bubble rises, for tuning.
+		/// </summary>
+		public float RiseSpeed
+		{
+			get => riseSpeed;
+			set => riseSpeed = Mathf.Max(0f, value);
+		}
+
 		private IMovementController movement;
 
 		private IBroomState broom;
