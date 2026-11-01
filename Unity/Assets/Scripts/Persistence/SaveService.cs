@@ -120,7 +120,7 @@ namespace Persistence
 			if (saved == null)
 				return default;
 
-			return new SlotSummary(true, saved.Day, saved.Home.Level, saved.Companions.Count, saved.Spells.Count, File.GetLastWriteTime(path));
+			return new SlotSummary(true, saved.Day, saved.Home.Level, saved.Companions.Count, saved.Spells.Count, File.GetLastWriteTime(path), saved.WitchName);
 		}
 
 		public void RunUpdate()

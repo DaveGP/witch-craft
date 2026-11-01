@@ -44,6 +44,8 @@ namespace UserInterface
 
 		private BookcaseView bookcase;
 
+		private NameView nameView;
+
 		private View current;
 
 		private void Awake()
@@ -74,6 +76,7 @@ namespace UserInterface
 			catalogue = AddView<CatalogueView>(canvas, "Catalogue");
 			bookView = AddView<BookView>(canvas, "Book");
 			bookcase = AddView<BookcaseView>(canvas, "Bookcase");
+			nameView = AddView<NameView>(canvas, "Name");
 
 			bookcase.Read = ReadFromBookcase;
 
@@ -85,6 +88,7 @@ namespace UserInterface
 			eventBus.BuildCatalogueRequested += OpenCatalogue;
 			eventBus.BookOpened += OpenBook;
 			eventBus.BookcaseOpened += OpenBookcase;
+			eventBus.RenameRequested += OpenRename;
 		}
 
 		private void OnDestroy()
@@ -94,6 +98,7 @@ namespace UserInterface
 			eventBus.BuildCatalogueRequested -= OpenCatalogue;
 			eventBus.BookOpened -= OpenBook;
 			eventBus.BookcaseOpened -= OpenBookcase;
+			eventBus.RenameRequested -= OpenRename;
 		}
 
 		private void Start()
@@ -235,6 +240,11 @@ namespace UserInterface
 		private void OpenBookcase()
 		{
 			Show(bookcase);
+		}
+
+		private void OpenRename()
+		{
+			Show(nameView);
 		}
 
 		// Closing a book read from the bookcase goes back to the bookcase

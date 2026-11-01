@@ -49,8 +49,14 @@ namespace Persistence.Interfaces
 
 		public readonly System.DateTime LastPlayed;
 
-		public SlotSummary(bool exists, int day, int homeLevel, int companions, int spells, System.DateTime lastPlayed)
+		/// <summary>
+		/// Empty for saves made before witches had names.
+		/// </summary>
+		public readonly string WitchName;
+
+		public SlotSummary(bool exists, int day, int homeLevel, int companions, int spells, System.DateTime lastPlayed, string witchName)
 		{
+			WitchName = witchName ?? "";
 			Exists = exists;
 			Day = day;
 			HomeLevel = homeLevel;

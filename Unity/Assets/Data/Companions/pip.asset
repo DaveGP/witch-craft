@@ -30,6 +30,7 @@ MonoBehaviour:
   ChatLines:
   - '"Did you know lily pads are just pond plates?"'
   - '"I counted the stars last night. I got to eleven and fell asleep."'
+  - '"{name}! {name}! ...Nothing. I just like saying it."'
   - '"Sable keeps watching me. I don''t think she wants to be friends. I think she
     wants a snack."'
   LikedGifts:
@@ -46,4 +47,4 @@ MonoBehaviour:
   - Friendship: 9
     Recipe: {fileID: 0}
     Glyph: {fileID: 0}
-    Line: '"You''re my best friend. Don''t tell the newts."'
+    Line: '"You''re my best friend, {name}. Don''t tell the newts."'

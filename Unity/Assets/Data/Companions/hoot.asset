@@ -29,6 +29,7 @@ MonoBehaviour:
   ChatLines:
   - '"From my perch, your home looks like a little lantern."'
   - '"Wisdom is mostly sitting still and listening. And snacks."'
+  - '"Hoo. {name}. A good, sensible name. Almost owlish."'
   - '"The fox spirit in the crystal cave is lonely. Bring her something that glows."'
   - '"Far to the north, past the sea stacks, there''s an island with a turtle who
     never hurries. A broom could hop the stacks."'

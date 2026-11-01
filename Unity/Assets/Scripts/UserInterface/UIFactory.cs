@@ -106,6 +106,33 @@ namespace UserInterface
 		}
 
 		/// <summary>
+		/// A single-line text field on a parchment background.
+		/// </summary>
+		public static InputField InputField(Transform parent, string value, string placeholder, int characterLimit, int size = 26, float height = 56f)
+		{
+			var image = Image(parent, Parchment, "InputField");
+
+			var field = image.gameObject.AddComponent<InputField>();
+
+			var hint = Label(image.transform, placeholder, size, new Color(Ink.r, Ink.g, Ink.b, 0.45f), TextAnchor.MiddleLeft, FontStyle.Italic);
+			Fill(hint.rectTransform, 14f);
+
+			var text = Label(image.transform, "", size, Ink, TextAnchor.MiddleLeft);
+			Fill(text.rectTransform, 14f);
+			text.supportRichText = false;
+
+			field.textComponent = text;
+			field.placeholder = hint;
+			field.characterLimit = characterLimit;
+			field.lineType = UnityEngine.UI.InputField.LineType.SingleLine;
+			field.text = value;
+
+			Layout(image.gameObject, preferredHeight: height, minHeight: height);
+
+			return field;
+		}
+
+		/// <summary>
 		/// A horizontal slider with a filled track and a round handle.
 		/// </summary>
 		public static Slider Slider(Transform parent, float min, float max, float value, Action<float> onChanged, float height = 30f)

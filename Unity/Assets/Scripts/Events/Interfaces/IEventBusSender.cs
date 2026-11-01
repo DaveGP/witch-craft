@@ -54,5 +54,7 @@ namespace Events.Interfaces
 		public void OpenBook(StoryBookDefinition book);
 
 		public void OpenBookcase();
+
+		public void RequestRename();
 	}
 }

@@ -29,6 +29,8 @@ MonoBehaviour:
   ChatLines:
   - '"I can see your house from here. It''s the cosy little light."'
   - '"Stars don''t walk. We sort of... skip."'
+  - '"I wrote your name in the sky last night, {name}! Well, the first letter. Then
+    I got distracted."'
   - '"Have you seen a telescope? I''d love to see the stars from the other side."'
   LikedGifts:
   - {fileID: 11400000, guid: 0b8a6bce99c824808bc2410cdba3d0d6, type: 2}

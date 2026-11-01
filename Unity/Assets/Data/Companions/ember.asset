@@ -28,6 +28,8 @@ MonoBehaviour:
     always."'
   ChatLines:
   - '"Your hearth is the cosiest fire I''ve ever slept beside."'
+  - '"When you''re out late, {name}, I keep the fire bright so you can find your
+    way back."'
   - '"Crystals hum if you listen closely. These ones hum in B flat."'
   - '"Pip asked if I was a very orange dog. I have decided to allow it."'
   LikedGifts:

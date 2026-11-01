@@ -52,5 +52,7 @@ namespace Events.Interfaces
 		event Action<StoryBookDefinition> BookOpened;
 
 		event Action BookcaseOpened;
+
+		event Action RenameRequested;
 	}
 }

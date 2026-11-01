@@ -14,6 +14,8 @@ using Events;
 using Events.Interfaces;
 using GameState;
 using GameState.Interfaces;
+using Identity;
+using Identity.Interfaces;
 using Items;
 using Items.Interfaces;
 using LocalPlayer;
@@ -134,6 +136,9 @@ namespace DependencyInjection
 			var books = new BookCollection(database, eventBus);
 			ServiceLocator.Register<IBookCollection>(books);
 
+			var witch = new WitchProfile();
+			ServiceLocator.Register<IWitchProfile>(witch);
+
 			var potionEffects = new PotionEffects(inventory, eventBus);
 			ServiceLocator.Register<IPotionEffects>(potionEffects);
 			systemManager.Register(potionEffects);
@@ -143,6 +148,7 @@ namespace DependencyInjection
 			saveService.Register(spellBook);
 			saveService.Register(roster);
 			saveService.Register(books);
+			saveService.Register(witch);
 
 			Application.quitting += saveService.Save;
 		}

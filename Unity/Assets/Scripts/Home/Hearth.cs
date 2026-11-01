@@ -59,6 +59,8 @@ namespace Home
 			if (next != null)
 				options.Add(new DialogueOption("Expand my home", () => homeService.Expand()));
 
+			options.Add(new DialogueOption("Change my name", () => eventBus.RequestRename()));
+
 			options.Add(new DialogueOption("Leave", null));
 
 			eventBus.RequestDialogue(new DialogueRequest("The Hearth", body, new Color(1f, 0.6f, 0.3f), options));

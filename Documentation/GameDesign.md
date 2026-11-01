@@ -28,6 +28,10 @@ A cosy 3D platformer. You are a young witch with a tiny hut, a cat and a head fu
 | Starfall Ridge | High above Tidewater | Night-only stardust, **Nova the Star Sprite**; the **Astra** shrine on an isle too high for the broom (Bubble up to it); the Comet Nook, only reachable with Blink |
 | Secret isle | South, high up | Reached by a hidden path that only appears near a Wisp or while Glimmering. Moonpetals and crystal |
 
+## Your witch
+
+Starting an empty slot asks for your witch's name first. The field comes filled with a suggestion, and "Suggest another" picks a new one, so a gamepad never has to type. Names are up to 16 characters; markup and braces are stripped. Saves from before names existed ask once, on Continue. The name shows on the save slot and the HUD ("Hazel's home"), companions use it once they've moved in, and the hearth's "Change my name" renames her.
+
 ## First five minutes
 
 Sable guides a new witch through the core loop, one suggestion at a time, shown on the HUD with a beacon where it helps:

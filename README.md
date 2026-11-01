@@ -25,6 +25,7 @@ Run, jump and fly around a little island gathering herbs for potions, glyphs for
 * Sound effects, ambience and a music loop, all generated in code, with separate music, sound and ambience volumes
 * A second island across the sea and floating isles above it, with new glyphs, spells (Bubble, Rain Call, Blink), a water-walking potion and two more companions
 * Day and night with moonlit nights and fireflies, night-only flowers, companions who sleep, beds to sleep or nap in, and passing rain showers that make herbs regrow faster
+* Name your witch when you start; companions use it, and the hearth lets you change it
 * A title screen with three save slots, autosave, and saving by resting at the hearth or in bed
 * Settings for look sensitivity, invert Y, music and sound volume, with a controls reference
 * Gamepad support: stick look, menus navigable with the D-pad, prompts that follow the device in use

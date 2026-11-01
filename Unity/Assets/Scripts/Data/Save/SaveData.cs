@@ -9,6 +9,8 @@ namespace Data.Save
 	{
 		public int Version = 1;
 
+		public string WitchName = "";
+
 		public List<ItemCount> Items = new();
 
 		public List<string> Glyphs = new();

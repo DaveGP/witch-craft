@@ -56,6 +56,8 @@ namespace Events
 
 		public event Action BookcaseOpened;
 
+		public event Action RenameRequested;
+
 
 		public void SetActiveTarget(IObserverTarget target)
 			=> ActiveTargetChanged?.Invoke(target);
@@ -119,5 +121,8 @@ namespace Events
 
 		public void OpenBookcase()
 			=> BookcaseOpened?.Invoke();
+
+		public void RequestRename()
+			=> RenameRequested?.Invoke();
 	}
 }

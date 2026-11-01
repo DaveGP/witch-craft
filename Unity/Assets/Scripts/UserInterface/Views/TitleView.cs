@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DependencyInjection;
 using Events.Interfaces;
 using GameState;
+using Identity.Interfaces;
 using Persistence.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,8 @@ using UnityEngine.UI;
 namespace UserInterface.Views
 {
 	// The front door: three save slots over a slow view of the island. Picking the slot that is already loaded
-	// starts straight away; any other slot reloads the world from its save.
+	// starts straight away; any other slot reloads the world from its save. A new witch (or one from a save made
+	// before witches had names) is named first.
 	public class TitleView : View
 	{
 		public Action OpenSettings { get; set; }
@@ -24,6 +26,13 @@ namespace UserInterface.Views
 		private Transform viewpoint;
 
 		private int confirmingErase = -1;
+
+		private int naming = -1;
+
+		/// <summary>
+		/// The name form, while a slot is being named.
+		/// </summary>
+		public NameForm Naming { get; private set; }
 
 		protected override void OnBuild()
 		{
@@ -65,6 +74,7 @@ namespace UserInterface.Views
 		protected override void OnOpen()
 		{
 			confirmingErase = -1;
+			naming = -1;
 
 			eventBus.SetCameraOverride(viewpoint);
 
@@ -83,6 +93,21 @@ namespace UserInterface.Views
 		{
 			UIFactory.Clear(slotList);
 
+			Naming = null;
+
+			if (naming >= 0)
+			{
+				var chosen = naming;
+				var fresh = !saveService.Describe(chosen).Exists;
+
+				Naming = new NameForm(slotList,
+					fresh ? $"Slot {chosen + 1}: a new witch, a tiny hut and a cat. What is your witch called?" : $"Slot {chosen + 1}: this witch has no name yet. What is she called?",
+					"", fresh ? "Begin" : "Continue", name => Begin(chosen, name), () => { naming = -1; Refresh(); });
+
+				Naming.Field.ActivateInputField();
+				return;
+			}
+
 			for (var slot = 0; slot < saveService.SlotCount; slot++)
 				SlotRow(slot);
 
@@ -98,8 +123,10 @@ namespace UserInterface.Views
 			UIFactory.Horizontal(row.gameObject, 12f, 12, false).childAlignment = TextAnchor.MiddleLeft;
 			UIFactory.Layout(row.gameObject, preferredHeight: 92);
 
+			var who = string.IsNullOrEmpty(summary.WitchName) ? "" : $"  ·  {summary.WitchName}";
+
 			var text = summary.Exists
-				? $"<b>Slot {slot + 1}</b>{(slot == saveService.CurrentSlot ? "   <size=16><color=#" + UIFactory.Hex(UIFactory.Accent) + ">last played</color></size>" : "")}\n" +
+				? $"<b>Slot {slot + 1}{who}</b>{(slot == saveService.CurrentSlot ? "   <size=16><color=#" + UIFactory.Hex(UIFactory.Accent) + ">last played</color></size>" : "")}\n" +
 				  $"<size=18>Day {summary.Day}  ·  Home level {summary.HomeLevel}  ·  {Plural(summary.Companions, "companion")}  ·  {Plural(summary.Spells, "spell")}\n" +
 				  $"<color=#{UIFactory.Hex(UIFactory.TextMuted)}>{summary.LastPlayed:d MMM, HH:mm}</color></size>"
 				: $"<b>Slot {slot + 1}</b>\n<size=18><color=#{UIFactory.Hex(UIFactory.TextMuted)}>Empty. A new witch, a tiny hut and a cat.</color></size>";
@@ -122,6 +149,33 @@ namespace UserInterface.Views
 		private static string Plural(int count, string word) => count == 1 ? $"1 {word}" : $"{count} {word}s";
 
 		private void Play(int slot)
+		{
+			if (string.IsNullOrEmpty(saveService.Describe(slot).WitchName) && !(slot == saveService.CurrentSlot && ServiceLocator.Get<IWitchProfile>().HasName))
+			{
+				naming = slot;
+				Refresh();
+				return;
+			}
+
+			Load(slot);
+		}
+
+		private void Begin(int slot, string name)
+		{
+			var witch = ServiceLocator.Get<IWitchProfile>();
+
+			// The loaded world is this slot's, so name her now; otherwise the slot takes the name as it loads
+			if (slot == saveService.CurrentSlot)
+				witch.Rename(name);
+			else
+				witch.SetPendingName(name);
+
+			naming = -1;
+
+			Load(slot);
+		}
+
+		private void Load(int slot)
 		{
 			if (slot == saveService.CurrentSlot)
 			{

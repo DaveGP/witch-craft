@@ -29,6 +29,7 @@ MonoBehaviour:
   ChatLines:
   - '"The lavender in your planters wants more sun. Or less. One of those."'
   - '"Nettles are misunderstood. Like me."'
+  - '"Morning, {name}. Or afternoon. I don''t keep track."'
   - '"I heard the owl up in the sky islands keeps recipes in his nest."'
   LikedGifts:
   - {fileID: 11400000, guid: f86313d2dc61d49199b20b97715c63c4, type: 2}

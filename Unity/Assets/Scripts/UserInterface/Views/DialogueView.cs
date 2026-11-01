@@ -1,3 +1,5 @@
+using DependencyInjection;
+using Identity.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,8 +42,10 @@ namespace UserInterface.Views
 
 		public void Show(DialogueRequest request)
 		{
+			var witch = ServiceLocator.Get<IWitchProfile>();
+
 			title.text = request.Title;
-			body.text = request.Body;
+			body.text = witch != null ? witch.Personalise(request.Body) : request.Body;
 			accent.color = request.Colour;
 
 			UIFactory.Clear(options);

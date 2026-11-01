@@ -802,20 +802,20 @@ namespace WitchCraftEditor
 				"\"If you brought me three Glowcaps, I'd hop right over to your house. They make the best night-lights.\"",
 				("glowcap", 3),
 				"\"Ribbit-ribbit! Wait for me, I'll catch up. Probably. Frogs are not fast walkers.\"",
-				new[] { "\"Did you know lily pads are just pond plates?\"", "\"I counted the stars last night. I got to eleven and fell asleep.\"", "\"Sable keeps watching me. I don't think she wants to be friends. I think she wants a snack.\"" },
+				new[] { "\"Did you know lily pads are just pond plates?\"", "\"I counted the stars last night. I got to eleven and fell asleep.\"", "\"{name}! {name}! ...Nothing. I just like saying it.\"", "\"Sable keeps watching me. I don't think she wants to be friends. I think she wants a snack.\"" },
 				new[] { "glowcap", "wild_berry", "moonpetal" });
 
 			pip.FavouriteFurniture = Database.FindBuildPiece("planter");
 
 			AddReward(pip, 3, recipes["glimmer"], null, "\"Here, my family's secret: Glimmer Draught. Moon Dew, two ground Glowcaps, boil, a Moonpetal, boil again. You'll sparkle!\"");
-			AddReward(pip, 9, null, null, "\"You're my best friend. Don't tell the newts.\"");
+			AddReward(pip, 9, null, null, "\"You're my best friend, {name}. Don't tell the newts.\"");
 
 			var bramble = AddCompanion("bramble", "Bramble", "Hedgehog", new Color(0.62f, 0.45f, 0.3f), Hedgehog(),
 				"\"Hm? Oh, hullo. Mind the prickles. I'm Bramble. I mostly forage and complain about weather.\"",
 				"\"Your home has a garden, does it? Bring me four Wild Berries and I'll come tend it.\"",
 				("wild_berry", 4),
 				"\"Right then. I'll pack my things. Which is to say, I'll roll there.\"",
-				new[] { "\"The lavender in your planters wants more sun. Or less. One of those.\"", "\"Nettles are misunderstood. Like me.\"", "\"I heard the owl up in the sky islands keeps recipes in his nest.\"" },
+				new[] { "\"The lavender in your planters wants more sun. Or less. One of those.\"", "\"Nettles are misunderstood. Like me.\"", "\"Morning, {name}. Or afternoon. I don't keep track.\"", "\"I heard the owl up in the sky islands keeps recipes in his nest.\"" },
 				new[] { "wild_berry", "lavender", "nettle" });
 
 			bramble.FavouriteFurniture = Database.FindBuildPiece("rug");
@@ -827,7 +827,7 @@ namespace WitchCraftEditor
 				"\"I'd come down to live with you, but my wings are tired. A Swiftness Brew would see me there in no time.\"",
 				("swiftness_brew", 1),
 				"\"Hoo hoo! Already I feel younger. I'll meet you at your hearth.\"",
-				new[] { "\"From my perch, your home looks like a little lantern.\"", "\"Wisdom is mostly sitting still and listening. And snacks.\"", "\"The fox spirit in the crystal cave is lonely. Bring her something that glows.\"", "\"Far to the north, past the sea stacks, there's an island with a turtle who never hurries. A broom could hop the stacks.\"" },
+				new[] { "\"From my perch, your home looks like a little lantern.\"", "\"Wisdom is mostly sitting still and listening. And snacks.\"", "\"Hoo. {name}. A good, sensible name. Almost owlish.\"", "\"The fox spirit in the crystal cave is lonely. Bring her something that glows.\"", "\"Far to the north, past the sea stacks, there's an island with a turtle who never hurries. A broom could hop the stacks.\"" },
 				new[] { "moonpetal", "feather_down", "leaping_tonic" });
 
 			hoot.Nocturnal = true;
@@ -840,7 +840,7 @@ namespace WitchCraftEditor
 				"\"It's so dark down here. If you brought me a Glimmer Draught, I think I could find my way out.\"",
 				("glimmer_draught", 1),
 				"\"It's so bright! Thank you, witch. I will keep your hearth warm, always.\"",
-				new[] { "\"Your hearth is the cosiest fire I've ever slept beside.\"", "\"Crystals hum if you listen closely. These ones hum in B flat.\"", "\"Pip asked if I was a very orange dog. I have decided to allow it.\"" },
+				new[] { "\"Your hearth is the cosiest fire I've ever slept beside.\"", "\"When you're out late, {name}, I keep the fire bright so you can find your way back.\"", "\"Crystals hum if you listen closely. These ones hum in B flat.\"", "\"Pip asked if I was a very orange dog. I have decided to allow it.\"" },
 				new[] { "ember_moss", "crystal", "glimmer_draught" });
 
 			ember.FavouriteFurniture = Database.FindBuildPiece("lamp");
@@ -850,7 +850,7 @@ namespace WitchCraftEditor
 				"\"I've always fancied a garden to doze in. Bring me three pearls from the giant clams and I'll make the trip. It may take me a while.\"",
 				("pearl", 3),
 				"\"Off we go then. Don't wait up, I'll be there by supper. Possibly next supper.\"",
-				new[] { "\"Hurrying is for crabs.\"", "\"When the sea is calm you can walk on it, if you know the right brew.\"", "\"That little star sprite up on the ridge only comes out at night. Lovely girl. Terribly bright.\"" },
+				new[] { "\"Hurrying is for crabs.\"", "\"{name}, dear, you do far too much. Sit down for a century or so.\"", "\"When the sea is calm you can walk on it, if you know the right brew.\"", "\"That little star sprite up on the ridge only comes out at night. Lovely girl. Terribly bright.\"" },
 				new[] { "kelp", "seashell", "moonpetal" });
 
 			tilly.FavouriteFurniture = Database.FindBuildPiece("shell_lamp");
@@ -862,7 +862,7 @@ namespace WitchCraftEditor
 				"\"My light's been fading lately. Four pinches of stardust would brighten me right up. It only settles up here after dark.\"",
 				("stardust", 4),
 				"\"Ooh, a real house, with a roof to sit on! I'll shine for you every night.\"",
-				new[] { "\"I can see your house from here. It's the cosy little light.\"", "\"Stars don't walk. We sort of... skip.\"", "\"Have you seen a telescope? I'd love to see the stars from the other side.\"" },
+				new[] { "\"I can see your house from here. It's the cosy little light.\"", "\"Stars don't walk. We sort of... skip.\"", "\"I wrote your name in the sky last night, {name}! Well, the first letter. Then I got distracted.\"", "\"Have you seen a telescope? I'd love to see the stars from the other side.\"" },
 				new[] { "stardust", "crystal", "glimmer_draught" });
 
 			nova.Nocturnal = true;

@@ -57,6 +57,7 @@ UnityInputReader ──> InputProvider ──(FixedUpdate)──> PlayerCharacte
 * **Companions**: `CompanionRoster` holds friendship and grants rewards. `CompanionSpawner` creates residents at home.
 * **World**: `MovingPlatform`, `BouncePad`, `Updraft`, `HiddenPath`, `BloomSpot`, `Campfire`, `Bobbing`.
 * **Settings**: `GameSettings` (`IGameSettings`) keeps look sensitivity, invert Y and volumes in PlayerPrefs, per machine rather than per slot.
+* **Witch**: `WitchProfile` (`IWitchProfile`) holds the witch's name, saved as `SaveData.WitchName`. The title screen names a new slot before it loads (`SetPendingName`, taken by the slot as it reads its save) and the hearth renames through `RenameRequested` and `NameView`; both use `NameForm`. `Personalise` fills `{name}` in dialogue bodies and HUD messages, so content lines can use the token.
 * **Saves and flow**: `SaveService` has three slots (slot one keeps the original file name). Saving is off while the title screen is up. `GameFlow` reloads the scene to switch slot or return to the title.
 * **Input devices**: `UnityInputReader` also implements `IControlScheme`, tracking whether the last input was a gamepad; views focus their first button for gamepad navigation and the HUD swaps its prompts.
 * **Web**: `Assets/WebGLTemplates/WitchCraft` is the page around the web build: a themed loading screen, full-window canvas and `autoSyncPersistentDataPath` so browser saves persist.

@@ -128,6 +128,15 @@ namespace Debugging
 
 			Check("An empty slot offers Start", startButton != null);
 			startButton?.onClick.Invoke();
+			yield return new WaitForSeconds(0.5f);
+
+			// A new witch is named first; the suggestion is already filled in, and stray spaces and markup are tidied
+			var naming = FindAnyObjectByType<UserInterface.Views.TitleView>().Naming;
+			Check($"Starting a new slot asks for a name, with a suggestion ready (\"{naming?.Field.text}\")", naming != null && naming.Field.text.Length > 0 && naming.Confirm.interactable);
+			Shot("00b_name");
+
+			naming?.Field.SetTextWithoutNotify(" <i>Marigold</i>");
+			naming?.Submit();
 			yield return new WaitForSeconds(1.5f);
 
 			Check("Starting a slot goes into play", inputMode.Mode == InputMode.Gameplay);
@@ -691,7 +700,42 @@ namespace Debugging
 
 			yield return Storybooks(inputMode, player, movement);
 
+			yield return WitchName(inputMode, player);
+
 			report.AppendLine($"Inventory: {string.Join(", ", inventory.Items.Select(stack => stack.ToString()))}");
+		}
+
+		// The name given on the title screen is saved, shown on the HUD, filled into dialogue, and can be changed at the hearth
+		private IEnumerator WitchName(GameState.Interfaces.IInputModeService inputMode, PlayerCharacter player)
+		{
+			var witch = ServiceLocator.Get<Identity.Interfaces.IWitchProfile>();
+			Check($"The witch is called what she was named, tidied (\"{witch.Name}\")", witch.Name == "Marigold");
+			Check("Dialogue fills in her name", witch.Personalise("\"Morning, {name}.\"") == "\"Morning, Marigold.\"");
+
+			var hud = FindObjectsByType<UnityEngine.UI.Text>(FindObjectsSortMode.None).Any(text => text.isActiveAndEnabled && text.text.Contains("Marigold's home"));
+			Check("The HUD shows whose home it is", hud);
+
+			var saves = ServiceLocator.Get<Persistence.Interfaces.ISaveService>();
+			saves.Save();
+			Check($"The slot remembers her name (\"{saves.Describe(saves.CurrentSlot).WitchName}\")", saves.Describe(saves.CurrentSlot).WitchName == "Marigold");
+
+			FindAnyObjectByType<Hearth>().Interact(player.gameObject);
+			yield return new WaitForSeconds(0.3f);
+
+			var rename = FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None)
+				.FirstOrDefault(button => button.isActiveAndEnabled && button.GetComponentInChildren<UnityEngine.UI.Text>().text == "Change my name");
+			Check("The hearth offers to change your name", rename != null);
+			rename?.onClick.Invoke();
+			yield return new WaitForSeconds(0.3f);
+
+			var nameView = FindAnyObjectByType<UserInterface.Views.NameView>();
+			Check($"Changing your name starts from the current one (\"{nameView.Form?.Field.text}\")", nameView.IsOpen && nameView.Form.Field.text == "Marigold");
+			Shot("20_rename");
+
+			nameView.Form.Field.SetTextWithoutNotify("Hazel");
+			nameView.Form.Submit();
+			yield return new WaitForSeconds(0.3f);
+			Check("Renaming takes effect and returns to play", witch.Name == "Hazel" && !nameView.IsOpen && inputMode.Mode == InputMode.Gameplay);
 		}
 
 		// Find a storybook, read it, then read it again from the bookcase at home

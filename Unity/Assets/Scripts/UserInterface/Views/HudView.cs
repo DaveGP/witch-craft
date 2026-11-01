@@ -9,6 +9,7 @@ using DependencyInjection;
 using Events.Interfaces;
 using GameState.Interfaces;
 using Home.Interfaces;
+using Identity.Interfaces;
 using Interaction.Interfaces;
 using Items.Interfaces;
 using Potions.Interfaces;
@@ -239,7 +240,10 @@ namespace UserInterface.Views
 		{
 			var home = ServiceLocator.Get<IHomeService>();
 
-			return home != null ? $"Home level {home.Level}  ·  Comfort {home.Comfort}  ·  {roster.Residents.Count} companions" : "";
+			var witch = ServiceLocator.Get<IWitchProfile>();
+			var owner = witch != null && witch.HasName ? $"{witch.Name}'s home" : "Home";
+
+			return home != null ? $"{owner} level {home.Level}  ·  Comfort {home.Comfort}  ·  {roster.Residents.Count} companions" : "";
 		}
 
 		private void SetObjective(string text)
@@ -275,6 +279,8 @@ namespace UserInterface.Views
 
 		private void Toast(string message)
 		{
+			message = ServiceLocator.Get<IWitchProfile>()?.Personalise(message) ?? message;
+
 			if (toasts.Count >= MaxToasts)
 				RemoveToast(0);
 
