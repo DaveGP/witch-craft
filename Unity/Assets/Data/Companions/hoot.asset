@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 079bcd380567145bc84a30791440eb72, type: 3}
+  m_Name: hoot
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.CompanionDefinition
+  Id: hoot
+  DisplayName: Hoot
+  Species: Owl
+  Color: {r: 0.78, g: 0.66, b: 0.5, a: 1}
+  Prefab: {fileID: 2498053392399735534, guid: 99915d125305849f6954b62e69c01a81, type: 3}
+  Greeting: '"Hoo. A visitor, all the way up here. You must be a determined sort
+    of witch."'
+  Plea: '"I''d come down to live with you, but my wings are tired. A Swiftness Brew
+    would see me there in no time."'
+  RecruitGift:
+    Item: {fileID: 11400000, guid: 4ba4f1c8ab72043a3b35ddda89ef478b, type: 2}
+    Amount: 1
+  MoveInLine: '"Hoo hoo! Already I feel younger. I''ll meet you at your hearth."'
+  ChatLines:
+  - '"From my perch, your home looks like a little lantern."'
+  - '"Wisdom is mostly sitting still and listening. And snacks."'
+  - '"The fox spirit in the crystal cave is lonely. Bring her something that glows."'
+  LikedGifts:
+  - {fileID: 11400000, guid: 00f614802af1f4c6d80c57bbc0bfebdc, type: 2}
+  - {fileID: 11400000, guid: cded7103c10224607b67ac8943dbbe89, type: 2}
+  - {fileID: 11400000, guid: 59bea374c70534337b136bcc1d51039f, type: 2}
+  Rewards:
+  - Friendship: 4
+    Recipe: {fileID: 11400000, guid: 50856f6be3f9f4f39b1608decc0f257d, type: 2}
+    Glyph: {fileID: 0}
+    Line: '"Take this: Skyward Draught. Spring Water, a Moonpetal, ground Feather
+      Down, Ember Moss, and three long boils. Your broom will never tire."'

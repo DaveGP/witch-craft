@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 079bcd380567145bc84a30791440eb72, type: 3}
+  m_Name: pip
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.CompanionDefinition
+  Id: pip
+  DisplayName: Pip
+  Species: Frog
+  Color: {r: 0.45, g: 0.82, b: 0.38, a: 1}
+  Prefab: {fileID: 2528627024512764033, guid: fd3205cef425c49b184cd83473a89a8c, type: 3}
+  Greeting: '"Ribbit! Oh! A witch! I''ve always wanted to live somewhere with a roof.
+    Ponds are so... damp."'
+  Plea: '"If you brought me three Glowcaps, I''d hop right over to your house. They
+    make the best night-lights."'
+  RecruitGift:
+    Item: {fileID: 11400000, guid: 9d00bc4df6797461caef1fd0506496c1, type: 2}
+    Amount: 3
+  MoveInLine: '"Ribbit-ribbit! Wait for me, I''ll catch up. Probably. Frogs are not
+    fast walkers."'
+  ChatLines:
+  - '"Did you know lily pads are just pond plates?"'
+  - '"I counted the stars last night. I got to eleven and fell asleep."'
+  - '"Sable keeps watching me. I don''t think she wants to be friends. I think she
+    wants a snack."'
+  LikedGifts:
+  - {fileID: 11400000, guid: 9d00bc4df6797461caef1fd0506496c1, type: 2}
+  - {fileID: 11400000, guid: f86313d2dc61d49199b20b97715c63c4, type: 2}
+  - {fileID: 11400000, guid: 00f614802af1f4c6d80c57bbc0bfebdc, type: 2}
+  Rewards:
+  - Friendship: 3
+    Recipe: {fileID: 11400000, guid: de0b4fea927134bd6a8cd721d8abef21, type: 2}
+    Glyph: {fileID: 0}
+    Line: '"Here, my family''s secret: Glimmer Draught. Moon Dew, two ground Glowcaps,
+      boil, a Moonpetal, boil again. You''ll sparkle!"'
+  - Friendship: 9
+    Recipe: {fileID: 0}
+    Glyph: {fileID: 0}
+    Line: '"You''re my best friend. Don''t tell the newts."'

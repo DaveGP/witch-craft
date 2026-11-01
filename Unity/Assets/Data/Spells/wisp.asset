@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad5a5e968c2424ec080d6ab5db333a7f, type: 3}
+  m_Name: wisp
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.SpellDefinition
+  Id: wisp
+  DisplayName: Wisp
+  Effect: 5
+  Color: {r: 1, g: 0.95, b: 0.6, a: 1}
+  Glyphs:
+  - {fileID: 11400000, guid: 211fe8475911841a6aa8143eb06d8beb, type: 2}
+  - {fileID: 11400000, guid: ff1b84353de1241c49e06e576b7ca2e2, type: 2}
+  Description: Call a little living light that reveals hidden paths.
+  Hint: A light that is alive.

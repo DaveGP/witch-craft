@@ -1,0 +1,248 @@
+using System.Collections.Generic;
+using System.Linq;
+using Character.Interfaces;
+using Companions.Interfaces;
+using Data.Enums;
+using Data.ScriptableObjects;
+using DependencyInjection;
+using Events.Interfaces;
+using GameState.Interfaces;
+using Home.Interfaces;
+using Interaction.Interfaces;
+using Items.Interfaces;
+using Potions.Interfaces;
+using Spells.Interfaces;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace UserInterface.Views
+{
+	// Always-on overlay: interaction prompt, toasts, spell hotbar, broom charge and active potions.
+	public class HudView : MonoBehaviour
+	{
+		private const float ToastLifetime = 4.5f;
+
+		private const int MaxToasts = 5;
+
+		private IEventBus eventBus;
+
+		private IInputModeService inputModeService;
+
+		private ISpellBook spellBook;
+
+		private IPotionEffects potionEffects;
+
+		private IInventory inventory;
+
+		private ICompanionRoster roster;
+
+		private IObserverTarget target;
+
+		private RectTransform root;
+
+		private Text prompt;
+
+		private Text status;
+
+		private Text crosshair;
+
+		private Text potions;
+
+		private Text homeInfo;
+
+		private RectTransform toastList;
+
+		private GameObject broomPanel;
+
+		private Image broomFill;
+
+		private readonly List<(Image back, Text label)> slots = new();
+
+		private readonly List<(Text text, float born)> toasts = new();
+
+		public void Build(RectTransform parent)
+		{
+			eventBus = ServiceLocator.Get<IEventBus>();
+			inputModeService = ServiceLocator.Get<IInputModeService>();
+			spellBook = ServiceLocator.Get<ISpellBook>();
+			potionEffects = ServiceLocator.Get<IPotionEffects>();
+			inventory = ServiceLocator.Get<IInventory>();
+			roster = ServiceLocator.Get<ICompanionRoster>();
+
+			root = parent;
+
+			BuildPrompt();
+			BuildHotbar();
+			BuildToasts();
+			BuildBroom();
+			BuildCorners();
+
+			eventBus.ActiveTargetChanged += value => target = value;
+			eventBus.InteractionFocusChanged += SetFocus;
+			eventBus.Notified += Toast;
+			eventBus.ItemCollected += Collected;
+			eventBus.SpellSlotsChanged += RefreshSlots;
+			eventBus.SpellLearned += _ => RefreshSlots();
+
+			SetFocus(null);
+			RefreshSlots();
+		}
+
+		private void BuildPrompt()
+		{
+			prompt = UIFactory.Label(root, "", 26, UIFactory.Text, TextAnchor.MiddleCenter, FontStyle.Bold);
+			UIFactory.Place(prompt.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-400, 190), new Vector2(400, 230));
+			prompt.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(2, -2);
+
+			status = UIFactory.Label(root, "", 20, UIFactory.Accent, TextAnchor.MiddleCenter);
+			UIFactory.Place(status.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-600, 120), new Vector2(600, 150));
+			status.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(1, -1);
+
+			crosshair = UIFactory.Label(root, "◦", 34, new Color(1f, 1f, 1f, 0.85f), TextAnchor.MiddleCenter);
+			UIFactory.Place(crosshair.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-20, -20), new Vector2(20, 20));
+		}
+
+		private void BuildHotbar()
+		{
+			var bar = UIFactory.Rect("Hotbar", root);
+			UIFactory.Place(bar, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-330, 30), new Vector2(330, 110));
+			UIFactory.Horizontal(bar.gameObject, 10f);
+
+			for (var i = 0; i < ISpellBook.SlotCount; i++)
+			{
+				var back = UIFactory.Image(bar, UIFactory.Panel, $"Slot{i + 1}");
+
+				var key = UIFactory.Label(back.transform, $"{i + 1}", 16, UIFactory.TextMuted);
+				UIFactory.Place(key.rectTransform, Vector2.zero, Vector2.one, new Vector2(8, 4), new Vector2(-4, -4));
+
+				var label = UIFactory.Label(back.transform, "", 18, UIFactory.Text, TextAnchor.MiddleCenter, FontStyle.Bold);
+				UIFactory.Fill(label.rectTransform, 6f);
+
+				slots.Add((back, label));
+			}
+		}
+
+		private void BuildToasts()
+		{
+			toastList = UIFactory.Rect("Toasts", root);
+			UIFactory.Place(toastList, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-500, -260), new Vector2(500, -30));
+
+			var group = UIFactory.Vertical(toastList.gameObject, 6f);
+			group.childAlignment = TextAnchor.UpperCenter;
+		}
+
+		private void BuildBroom()
+		{
+			var panel = UIFactory.Image(root, UIFactory.Panel, "Broom");
+			UIFactory.Place(panel.rectTransform, Vector2.zero, Vector2.zero, new Vector2(30, 30), new Vector2(300, 90));
+			UIFactory.Vertical(panel.gameObject, 4f, 10);
+
+			UIFactory.Label(panel.transform, "Broom magic", 16, UIFactory.TextMuted);
+			broomFill = UIFactory.Bar(panel.transform, new Color(0, 0, 0, 0.5f), new Color(0.6f, 0.75f, 1f));
+
+			broomPanel = panel.gameObject;
+		}
+
+		private void BuildCorners()
+		{
+			potions = UIFactory.Label(root, "", 20, UIFactory.Text);
+			UIFactory.Place(potions.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(30, -300), new Vector2(420, -30));
+			potions.gameObject.AddComponent<Shadow>();
+
+			homeInfo = UIFactory.Label(root, "", 18, UIFactory.TextMuted, TextAnchor.UpperRight);
+			UIFactory.Place(homeInfo.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-520, -120), new Vector2(-30, -30));
+			homeInfo.gameObject.AddComponent<Shadow>();
+
+			var help = UIFactory.Label(root,
+				"WASD move · Space jump · Shift sprint · E interact · F broom\n1-4 ready spell · Click cast · Tab satchel · B spellbook · Esc menu",
+				16, UIFactory.TextMuted, TextAnchor.LowerRight);
+			UIFactory.Place(help.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-640, 24), new Vector2(-30, 80));
+			help.gameObject.AddComponent<Shadow>();
+		}
+
+		private void SetFocus(IInteractable interactable)
+		{
+			prompt.text = interactable != null ? $"<color=#{UIFactory.Hex(UIFactory.Accent)}>[E]</color> {interactable.Prompt}" : "";
+		}
+
+		private void Collected(ItemDefinition item, int amount)
+		{
+			Toast($"<color=#{UIFactory.Hex(item.Color)}>+{amount} {item.DisplayName}</color>  ({inventory.Count(item)})");
+		}
+
+		private void Toast(string message)
+		{
+			if (toasts.Count >= MaxToasts)
+				RemoveToast(0);
+
+			var back = UIFactory.Image(toastList, new Color(0.1f, 0.07f, 0.13f, 0.8f), "Toast");
+			UIFactory.Horizontal(back.gameObject, 0f, 10);
+			back.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+			var text = UIFactory.Label(back.transform, message, 21, UIFactory.Text, TextAnchor.MiddleCenter);
+			UIFactory.Layout(text.gameObject, preferredWidth: Mathf.Min(900, message.Length * 11 + 20));
+
+			toasts.Add((text, Time.unscaledTime));
+		}
+
+		private void RemoveToast(int index)
+		{
+			Destroy(toasts[index].text.transform.parent.gameObject);
+			toasts.RemoveAt(index);
+		}
+
+		private void RefreshSlots()
+		{
+			for (var i = 0; i < slots.Count; i++)
+			{
+				var spell = spellBook.GetSlot(i);
+
+				var readied = target?.Spells?.ActiveSpell == spell && spell != null;
+
+				slots[i].label.text = spell != null ? spell.DisplayName : "";
+				slots[i].label.color = spell != null ? Color.Lerp(spell.Color, Color.white, 0.4f) : UIFactory.TextMuted;
+				slots[i].back.color = readied ? Color.Lerp(UIFactory.Panel, spell.Color, 0.55f) : UIFactory.Panel;
+			}
+		}
+
+		private void Update()
+		{
+			var gameplay = inputModeService.Mode == InputMode.Gameplay;
+
+			root.gameObject.SetActive(gameplay);
+
+			for (var i = toasts.Count - 1; i >= 0; i--)
+			{
+				var age = Time.unscaledTime - toasts[i].born;
+
+				if (age > ToastLifetime)
+				{
+					RemoveToast(i);
+					continue;
+				}
+
+				toasts[i].text.color = new Color(1f, 1f, 1f, Mathf.Clamp01((ToastLifetime - age) * 2f));
+			}
+
+			if (target == null)
+				return;
+
+			status.text = target.Spells.Status;
+
+			crosshair.enabled = target.Spells.ActiveSpell != null && target.Spells.IsAiming;
+
+			broomPanel.SetActive(target.Broom.IsMounted || target.Broom.Charge01 < 0.999f);
+			broomFill.fillAmount = target.Broom.Charge01;
+			broomFill.color = potionEffects.IsActive(PotionEffect.Skyward) ? UIFactory.Accent : new Color(0.6f, 0.75f, 1f);
+
+			potions.text = string.Join("\n", potionEffects.Active.Select(pair => $"{pair.Key}  {Mathf.CeilToInt(pair.Value)}s"));
+
+			var home = ServiceLocator.Get<IHomeService>();
+
+			homeInfo.text = home != null ? $"Home level {home.Level}  ·  {roster.Residents.Count} companions" : "";
+
+			if (Time.frameCount % 10 == 0)
+				RefreshSlots();
+		}
+	}
+}

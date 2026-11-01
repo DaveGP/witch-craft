@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad5a5e968c2424ec080d6ab5db333a7f, type: 3}
+  m_Name: levitate
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.SpellDefinition
+  Id: levitate
+  DisplayName: Levitate
+  Effect: 0
+  Color: {r: 0.78, g: 0.62, b: 1, a: 1}
+  Glyphs:
+  - {fileID: 11400000, guid: 99899dce860a64f12917ded531888c7d, type: 2}
+  - {fileID: 11400000, guid: 55119a711421047e1b840cfdcf36ede3, type: 2}
+  Description: Lift furniture and crates, and set them down wherever you like.
+  Hint: A shape made as light as air.

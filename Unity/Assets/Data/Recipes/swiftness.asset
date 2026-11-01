@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62fe7ea3ed8474af5a45b0728233509a, type: 3}
+  m_Name: swiftness
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.RecipeDefinition
+  Id: swiftness
+  DisplayName: Swiftness Brew
+  Output: {fileID: 11400000, guid: 4ba4f1c8ab72043a3b35ddda89ef478b, type: 2}
+  Flavour: For errands that simply cannot wait.
+  Steps:
+  - Type: 0
+    Item: {fileID: 11400000, guid: 5569cb99075ae4820bff7081988e0b5c, type: 2}
+    Amount: 1
+  - Type: 1
+    Item: {fileID: 11400000, guid: ee8d597e20f114ce8b04de49fa3a17d8, type: 2}
+    Amount: 2
+  - Type: 3
+    Item: {fileID: 0}
+    Amount: 1
+  - Type: 2
+    Item: {fileID: 11400000, guid: fbf67058018dc4282a9dac590cb3abe2, type: 2}
+    Amount: 1
+  - Type: 3
+    Item: {fileID: 0}
+    Amount: 1
+  - Type: 4
+    Item: {fileID: 0}
+    Amount: 1

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62fe7ea3ed8474af5a45b0728233509a, type: 3}
+  m_Name: featherfall
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.RecipeDefinition
+  Id: featherfall
+  DisplayName: Featherfall Elixir
+  Output: {fileID: 11400000, guid: d8d156d9838ac47fb930974a1ccf4bc0, type: 2}
+  Flavour: Scribbled on a page found high above the world.
+  Steps:
+  - Type: 0
+    Item: {fileID: 11400000, guid: 93a6f5ec7f2474b8a9e1833403e3e026, type: 2}
+    Amount: 1
+  - Type: 1
+    Item: {fileID: 11400000, guid: cded7103c10224607b67ac8943dbbe89, type: 2}
+    Amount: 2
+  - Type: 2
+    Item: {fileID: 11400000, guid: fbf67058018dc4282a9dac590cb3abe2, type: 2}
+    Amount: 1
+  - Type: 3
+    Item: {fileID: 0}
+    Amount: 1
+  - Type: 4
+    Item: {fileID: 0}
+    Amount: 1

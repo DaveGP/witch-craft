@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 079bcd380567145bc84a30791440eb72, type: 3}
+  m_Name: bramble
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.CompanionDefinition
+  Id: bramble
+  DisplayName: Bramble
+  Species: Hedgehog
+  Color: {r: 0.62, g: 0.45, b: 0.3, a: 1}
+  Prefab: {fileID: 7785332836048652414, guid: 074f56bebec904adfa7ba3328e1f9f27, type: 3}
+  Greeting: '"Hm? Oh, hullo. Mind the prickles. I''m Bramble. I mostly forage and
+    complain about weather."'
+  Plea: '"Your home has a garden, does it? Bring me four Wild Berries and I''ll come
+    tend it."'
+  RecruitGift:
+    Item: {fileID: 11400000, guid: f86313d2dc61d49199b20b97715c63c4, type: 2}
+    Amount: 4
+  MoveInLine: '"Right then. I''ll pack my things. Which is to say, I''ll roll there."'
+  ChatLines:
+  - '"The lavender in your planters wants more sun. Or less. One of those."'
+  - '"Nettles are misunderstood. Like me."'
+  - '"I heard the owl up in the sky islands keeps recipes in his nest."'
+  LikedGifts:
+  - {fileID: 11400000, guid: f86313d2dc61d49199b20b97715c63c4, type: 2}
+  - {fileID: 11400000, guid: fbf67058018dc4282a9dac590cb3abe2, type: 2}
+  - {fileID: 11400000, guid: ee8d597e20f114ce8b04de49fa3a17d8, type: 2}
+  Rewards:
+  - Friendship: 5
+    Recipe: {fileID: 11400000, guid: 8f5cb1760f350447092e0ab80908f718, type: 2}
+    Glyph: {fileID: 0}
+    Line: '"Found this page in a hedge. Featherfall Elixir. Moon Dew, two Feather
+      Down, ground Lavender, one boil."'

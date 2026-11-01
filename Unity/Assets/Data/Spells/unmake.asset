@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad5a5e968c2424ec080d6ab5db333a7f, type: 3}
+  m_Name: unmake
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.SpellDefinition
+  Id: unmake
+  DisplayName: Unmake
+  Effect: 2
+  Color: {r: 0.62, g: 0.5, b: 0.85, a: 1}
+  Glyphs:
+  - {fileID: 11400000, guid: 6bdb482396ee94da7938f4b9e7292aed, type: 2}
+  - {fileID: 11400000, guid: 55119a711421047e1b840cfdcf36ede3, type: 2}
+  Description: Unravel something you built and get its materials back.
+  Hint: Pour emptiness into a shape and the shape lets go.

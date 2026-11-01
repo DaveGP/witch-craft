@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3626cf25d716c47f98f30db555969a34, type: 3}
+  m_Name: wall_stone
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.BuildPieceDefinition
+  Id: wall_stone
+  DisplayName: Stone Wall
+  Category: 0
+  Snap: 1
+  Prefab: {fileID: 996660538061504423, guid: 386501050e1df4d8abd54e0a5ed13c09, type: 3}
+  RequiredHomeLevel: 2
+  Cost:
+  - Item: {fileID: 11400000, guid: 7eabde70e5f084e0389827b7c192e473, type: 2}
+    Amount: 3
