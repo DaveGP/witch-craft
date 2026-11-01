@@ -1,4 +1,7 @@
 using System;
+using Audio;
+using Audio.Interfaces;
+using DependencyInjection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -88,6 +91,8 @@ namespace UserInterface
 			colours.pressedColor = new Color(0.8f, 0.8f, 0.8f);
 			colours.disabledColor = new Color(0.55f, 0.55f, 0.55f, 0.6f);
 			button.colors = colours;
+
+			button.onClick.AddListener(() => ServiceLocator.Get<IAudioService>()?.Play(Sound.Click, 0.4f));
 
 			if (onClick != null)
 				button.onClick.AddListener(() => onClick());

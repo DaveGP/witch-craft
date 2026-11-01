@@ -1,3 +1,5 @@
+using Audio;
+using Audio.Interfaces;
 using Character.Interfaces;
 using DependencyInjection;
 using Events.Interfaces;
@@ -83,6 +85,8 @@ namespace Companions
 		public void Interact(GameObject interactor)
 		{
 			purrUntil = Time.time + 2.5f;
+
+			ServiceLocator.Get<IAudioService>()?.PlayAt(Sound.Purr, transform.position, 0.9f);
 
 			FxUtility.Burst(transform.position + Vector3.up * 0.6f, new Color(1f, 0.5f, 0.7f), 12, 1.2f, 0.2f);
 

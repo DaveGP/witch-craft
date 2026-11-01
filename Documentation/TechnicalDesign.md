@@ -54,6 +54,9 @@ UnityInputReader ──> InputProvider ──(FixedUpdate)──> PlayerCharacte
 * **Home**: `HomePlot` snaps pieces to the grid (floors and roofs to cells, walls to edges, furniture free). `HomeService` places, removes, moves and saves pieces, seeds the starter hut and handles expansion. `PlacedPiece` ties a scene object to its save record; `Movable` lets Levitate lift it.
 * **Companions**: `CompanionRoster` holds friendship and grants rewards. `CompanionSpawner` creates residents at home.
 * **World**: `MovingPlatform`, `BouncePad`, `Updraft`, `HiddenPath`, `BloomSpot`, `Campfire`, `Bobbing`.
+* **Audio**: `AudioDirector` (`IAudioService`) generates clips with `SoundSynth`, plays music, ambience and broom wind, and turns events into sounds.
+* **Tutorial**: `TutorialGuide` (`ITutorialGuide`) runs Sable's guided steps, sets the HUD objective and places a beacon. Progress is saved.
+* **Debugging**: `FeelTuner` is a backquote-toggled panel of live sliders for movement, broom and camera values. `PlaytestScenario` is the automated playtest.
 * **UI**: `UIRoot` builds a uGUI canvas in code via `UIFactory` and routes menu keys. Views: `HudView`, `SatchelView`, `SpellbookView`, `AlchemyView`, `DialogueView`, `PauseView`.
 
 ## Layers

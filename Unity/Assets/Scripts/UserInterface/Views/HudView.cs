@@ -50,6 +50,10 @@ namespace UserInterface.Views
 
 		private Text homeInfo;
 
+		private GameObject objectivePanel;
+
+		private Text objective;
+
 		private RectTransform toastList;
 
 		private GameObject broomPanel;
@@ -83,6 +87,7 @@ namespace UserInterface.Views
 			eventBus.ItemCollected += Collected;
 			eventBus.SpellSlotsChanged += RefreshSlots;
 			eventBus.SpellLearned += _ => RefreshSlots();
+			eventBus.ObjectiveChanged += SetObjective;
 
 			SetFocus(null);
 			RefreshSlots();
@@ -125,7 +130,7 @@ namespace UserInterface.Views
 		private void BuildToasts()
 		{
 			toastList = UIFactory.Rect("Toasts", root);
-			UIFactory.Place(toastList, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-500, -260), new Vector2(500, -30));
+			UIFactory.Place(toastList, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(-400, -260), new Vector2(400, -30));
 
 			var group = UIFactory.Vertical(toastList.gameObject, 6f);
 			group.childAlignment = TextAnchor.UpperCenter;
@@ -153,11 +158,32 @@ namespace UserInterface.Views
 			UIFactory.Place(homeInfo.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-520, -120), new Vector2(-30, -30));
 			homeInfo.gameObject.AddComponent<Shadow>();
 
+			var panel = UIFactory.Image(root, new Color(0.13f, 0.09f, 0.17f, 0.82f), "Objective");
+			UIFactory.Place(panel.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-520, -230), new Vector2(-30, -130));
+
+			var accent = UIFactory.Image(panel.transform, UIFactory.Accent, "Accent");
+			UIFactory.Place(accent.rectTransform, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(5, 0));
+
+			var heading = UIFactory.Label(panel.transform, "SABLE SUGGESTS", 14, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
+			UIFactory.Place(heading.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(20, -30), new Vector2(-16, -10));
+
+			objective = UIFactory.Label(panel.transform, "", 20, UIFactory.Text);
+			UIFactory.Place(objective.rectTransform, Vector2.zero, Vector2.one, new Vector2(20, 10), new Vector2(-16, -32));
+
+			objectivePanel = panel.gameObject;
+			objectivePanel.SetActive(false);
+
 			var help = UIFactory.Label(root,
 				"WASD move · Space jump · Shift sprint · E interact · F broom\n1-4 ready spell · Click cast · Tab satchel · B spellbook · Esc menu",
 				16, UIFactory.TextMuted, TextAnchor.LowerRight);
 			UIFactory.Place(help.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-640, 24), new Vector2(-30, 80));
 			help.gameObject.AddComponent<Shadow>();
+		}
+
+		private void SetObjective(string text)
+		{
+			objective.text = text;
+			objectivePanel.SetActive(!string.IsNullOrEmpty(text));
 		}
 
 		private void SetFocus(IInteractable interactable)
@@ -180,7 +206,7 @@ namespace UserInterface.Views
 			back.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
 			var text = UIFactory.Label(back.transform, message, 21, UIFactory.Text, TextAnchor.MiddleCenter);
-			UIFactory.Layout(text.gameObject, preferredWidth: Mathf.Min(900, message.Length * 11 + 20));
+			UIFactory.Layout(text.gameObject, preferredWidth: Mathf.Min(760, message.Length * 11 + 20));
 
 			toasts.Add((text, Time.unscaledTime));
 		}

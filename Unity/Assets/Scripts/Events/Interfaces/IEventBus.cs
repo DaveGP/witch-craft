@@ -39,5 +39,11 @@ namespace Events.Interfaces
 		event Action<DialogueRequest> DialogueRequested;
 
 		event Action PotionEffectsChanged;
+
+		event Action<Vector3> PiecePlaced;
+
+		event Action<Vector3> PieceRemoved;
+
+		event Action<string> ObjectiveChanged;
 	}
 }

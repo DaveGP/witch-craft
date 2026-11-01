@@ -1,4 +1,7 @@
+using Audio;
+using Audio.Interfaces;
 using Character.Movement.Interfaces;
+using DependencyInjection;
 using UnityEngine;
 
 namespace World
@@ -35,6 +38,8 @@ namespace World
 			movement.Launch(velocity, true);
 
 			squash = 1f;
+
+			ServiceLocator.Get<IAudioService>()?.PlayAt(Sound.Boing, transform.position, 0.8f);
 		}
 
 		private void Update()

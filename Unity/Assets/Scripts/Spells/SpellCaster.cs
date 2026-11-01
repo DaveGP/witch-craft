@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using Audio;
+using Audio.Interfaces;
 using Data.ScriptableObjects;
 using DependencyInjection;
 using Events.Interfaces;
@@ -96,6 +98,8 @@ namespace Spells
 
 				return;
 			}
+
+			ServiceLocator.Get<IAudioService>()?.Play(Sound.Cast, 0.45f, 0.1f);
 
 			activeEffect.Cast();
 		}

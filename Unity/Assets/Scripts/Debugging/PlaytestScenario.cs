@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using Alchemy;
 using Alchemy.Interfaces;
+using Audio;
+using Audio.Interfaces;
 using Character;
 using Character.Movement.Interfaces;
 using Companions;
@@ -24,6 +26,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UserInterface;
+using Tutorial.Interfaces;
 
 
 namespace Debugging
@@ -131,6 +134,12 @@ namespace Debugging
 			Check("Starter home was built", FindObjectsByType<PlacedPiece>(FindObjectsSortMode.None).Length >= 20);
 			Check("Started with two recipes", recipeBook.Known.Count == 2);
 			Check("Started with three glyphs", spellBook.KnownGlyphs.Count == 3);
+
+			var audio = ServiceLocator.Get<IAudioService>();
+			Check("Audio generated its sounds and music", audio != null && audio.Clip(Sound.Music) != null && audio.Clip(Sound.Music).length > 30f);
+
+			var tutorial = ServiceLocator.Get<ITutorialGuide>();
+			Check("The tutorial starts on a new game", tutorial != null && tutorial.IsActive);
 
 			Shot("01_spawn");
 
@@ -331,6 +340,9 @@ namespace Debugging
 			inventory.Add(database.FindItem("stone"), 20);
 			inventory.Add(database.FindItem("crystal"), 5);
 			Check("Home expands to level 2", home.Expand() && home.Level == 2);
+
+			yield return new WaitForSeconds(0.6f);
+			Check("Doing everything Sable suggests finishes the tutorial", !tutorial.IsActive);
 
 			// Scenic shots
 			movement.Teleport(new Vector3(0f, 0.2f, -9f));

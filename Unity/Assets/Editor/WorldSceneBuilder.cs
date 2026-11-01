@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Alchemy;
+using Audio;
+using Debugging;
 using Camera;
 using Character;
 using Character.Actions;
@@ -16,6 +18,7 @@ using Potions;
 using Spells;
 using Spells.Effects;
 using SystemManagement;
+using Tutorial;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -247,6 +250,9 @@ namespace WitchCraftEditor
 		{
 			new GameObject("Systems").AddComponent<SystemsRunner>();
 			new GameObject("UI").AddComponent<UIRoot>();
+			new GameObject("Audio").AddComponent<AudioDirector>();
+			new GameObject("Tutorial").AddComponent<TutorialGuide>();
+			new GameObject("FeelTuner").AddComponent<FeelTuner>();
 		}
 
 		private static void BuildIsland()

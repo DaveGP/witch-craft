@@ -169,7 +169,7 @@ namespace UserInterface.Views
 			if (!IsOpen)
 				return;
 
-			station.Session.PumpBellows();
+			station.PumpBellows();
 		}
 
 		private void Bottle()

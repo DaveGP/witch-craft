@@ -1,4 +1,7 @@
+using Audio;
+using Audio.Interfaces;
 using Character.Movement.Interfaces;
+using DependencyInjection;
 using Data.Enums;
 using UnityEngine;
 using Utilities;
@@ -80,6 +83,8 @@ namespace Spells.Effects
 			}
 
 			Push(forward);
+
+			ServiceLocator.Get<IAudioService>()?.Play(Sound.Whoosh, 0.8f, 0.1f);
 
 			FxUtility.Burst(transform.position + Vector3.up * 0.5f, SpellColour, 30, 6f, 0.2f);
 		}

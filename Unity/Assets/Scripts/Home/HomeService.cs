@@ -149,6 +149,8 @@ namespace Home
 
 			FxUtility.Burst(position + Vector3.up * 0.5f, new Color(0.8f, 0.6f, 1f), 30, 3f);
 
+			eventBus.PlacePiece(position);
+
 			return Spawn(piece, pieceRecord);
 		}
 
@@ -165,6 +167,8 @@ namespace Home
 			pieces.Remove(piece);
 
 			FxUtility.Burst(piece.transform.position + Vector3.up * 0.5f, new Color(0.5f, 0.4f, 0.7f), 30, 3f);
+
+			eventBus.RemovePiece(piece.transform.position);
 
 			Destroy(piece.gameObject);
 		}

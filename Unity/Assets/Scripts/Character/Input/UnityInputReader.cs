@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Controls;
 using Data.Enums;
 using Data.Input;
@@ -13,11 +14,41 @@ namespace Character.Input
 	{
 		private readonly PlayerControls playerControls;
 
+		// Presses are recorded the moment the Input System sees them, rather than polled with
+		// WasPressedThisFrame, so a press handled between frames is never lost
+		private CharacterAction pressedActions;
+
+		private MenuAction pressedMenuActions;
+
 		public UnityInputReader(PlayerControls playerControls)
 		{
 			this.playerControls = playerControls;
 
-			playerControls.Player.Enable();
+			var player = playerControls.Player;
+
+			OnPress(player.Interact, CharacterAction.Interact);
+			OnPress(player.Jump, CharacterAction.Jump, MenuAction.Pump);
+			OnPress(player.Cast, CharacterAction.Cast);
+			OnPress(player.AltCast, CharacterAction.AltCast);
+			OnPress(player.Broom, CharacterAction.ToggleBroom);
+			OnPress(player.Spell1, CharacterAction.Spell1);
+			OnPress(player.Spell2, CharacterAction.Spell2);
+			OnPress(player.Spell3, CharacterAction.Spell3);
+			OnPress(player.Spell4, CharacterAction.Spell4);
+			OnPress(player.Satchel, CharacterAction.None, MenuAction.Satchel);
+			OnPress(player.Spellbook, CharacterAction.None, MenuAction.Spellbook);
+			OnPress(player.Cancel, CharacterAction.None, MenuAction.Cancel);
+
+			player.Enable();
+		}
+
+		private void OnPress(InputAction action, CharacterAction characterAction, MenuAction menuAction = MenuAction.None)
+		{
+			action.started += _ =>
+			{
+				pressedActions |= characterAction;
+				pressedMenuActions |= menuAction;
+			};
 		}
 
 		public InputData GetInputData()
@@ -41,13 +72,9 @@ namespace Character.Input
 		{
 			var player = playerControls.Player;
 
-			var actions = CharacterAction.None;
+			var actions = pressedActions;
 
-			if (player.Interact.WasPressedThisFrame())
-				actions |= CharacterAction.Interact;
-
-			if (player.Jump.WasPressedThisFrame())
-				actions |= CharacterAction.Jump;
+			pressedActions = CharacterAction.None;
 
 			if (player.Jump.IsPressed())
 				actions |= CharacterAction.JumpHeld;
@@ -58,47 +85,14 @@ namespace Character.Input
 			if (player.Descend.IsPressed())
 				actions |= CharacterAction.Descend;
 
-			if (player.Cast.WasPressedThisFrame())
-				actions |= CharacterAction.Cast;
-
-			if (player.AltCast.WasPressedThisFrame())
-				actions |= CharacterAction.AltCast;
-
-			if (player.Broom.WasPressedThisFrame())
-				actions |= CharacterAction.ToggleBroom;
-
-			if (player.Spell1.WasPressedThisFrame())
-				actions |= CharacterAction.Spell1;
-
-			if (player.Spell2.WasPressedThisFrame())
-				actions |= CharacterAction.Spell2;
-
-			if (player.Spell3.WasPressedThisFrame())
-				actions |= CharacterAction.Spell3;
-
-			if (player.Spell4.WasPressedThisFrame())
-				actions |= CharacterAction.Spell4;
-
 			return actions;
 		}
 
 		private MenuAction GetMenuActions()
 		{
-			var player = playerControls.Player;
+			var actions = pressedMenuActions;
 
-			var actions = MenuAction.None;
-
-			if (player.Satchel.WasPressedThisFrame())
-				actions |= MenuAction.Satchel;
-
-			if (player.Spellbook.WasPressedThisFrame())
-				actions |= MenuAction.Spellbook;
-
-			if (player.Cancel.WasPressedThisFrame())
-				actions |= MenuAction.Cancel;
-
-			if (player.Jump.WasPressedThisFrame())
-				actions |= MenuAction.Pump;
+			pressedMenuActions = MenuAction.None;
 
 			return actions;
 		}

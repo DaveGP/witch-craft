@@ -25,6 +25,23 @@ A cosy 3D platformer. You are a young witch with a tiny hut, a cat and a head fu
 | Sky island | Above the spire | Reached by riding the updraft beside the spire summit. **Lux** shrine, feather down, moonpetals, Hoot the owl |
 | Secret isle | South, high up | Reached by a hidden path that only appears near a Wisp or while Glimmering. Moonpetals and crystal |
 
+## First five minutes
+
+Sable guides a new witch through the core loop, one suggestion at a time, shown on the HUD with a beacon where it helps:
+
+1. Walk and look around.
+2. Inscribe Terra + Forma in the spellbook to discover Conjure.
+3. Ready Conjure with 1.
+4. Build something on the plot.
+5. Brew a Swiftness Brew at the bench (the starting satchel has everything).
+6. Bring Pip three Glowcaps.
+
+Each step checks game state, so doing things early or out of order still counts. It can be skipped from the pause menu.
+
+## Sound
+
+All sound is synthesised at startup (`Audio/SoundSynth`): footsteps, jumps and landings, pickups, learning chimes, building pops, spell shimmer, gust whooshes, bounce boings, the bellows, grinding, a bubbling cauldron that gets louder with the heat, Sable's purr, broom wind and birdsong, plus a gentle music loop. Music and sound can be toggled in the pause menu.
+
 ## Movement
 
 * Camera relative running with walk, run and sprint speeds.

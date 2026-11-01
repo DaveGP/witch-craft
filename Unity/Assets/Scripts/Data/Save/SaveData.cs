@@ -22,6 +22,8 @@ namespace Data.Save
 		public List<CompanionRecord> Companions = new();
 
 		public HomeRecord Home = new();
+
+		public int TutorialStep;
 	}
 
 	[Serializable]

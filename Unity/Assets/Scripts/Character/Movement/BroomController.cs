@@ -17,6 +17,8 @@ namespace Character.Movement
 
 		public bool IsBoosting { get; private set; }
 
+		public BroomStats Stats => stats;
+
 		public float Charge01 => stats.MaxCharge <= 0f ? 0f : charge / stats.MaxCharge;
 
 		[SerializeField] private BroomStats stats;

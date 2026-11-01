@@ -21,6 +21,18 @@ namespace Camera
 
 		public Ray AimRay => new(cameraTransform.position, cameraTransform.forward);
 
+		public float Sensitivity
+		{
+			get => sensitivity;
+			set => sensitivity = value;
+		}
+
+		public float Distance
+		{
+			get => distance;
+			set => distance = Mathf.Clamp(value, minDistance, maxDistance);
+		}
+
 		private ICameraInputSource inputSource;
 
 		private IEventBus eventBus;
@@ -28,6 +40,8 @@ namespace Camera
 		private IPlayerContext playerContext;
 
 		private ICameraTarget cameraTarget;
+
+		private IObserverTarget observed;
 
 		[SerializeField] private float sensitivity = 0.12f;
 
@@ -44,6 +58,12 @@ namespace Camera
 		[SerializeField] private float maxDistance = 12f;
 
 		[SerializeField] private float followSharpness = 14f;
+
+		[Tooltip("How quickly the camera follows height changes in the air. Low keeps jumps from bobbing the view")]
+		[SerializeField] private float airborneHeightSharpness = 2.5f;
+
+		[Tooltip("The furthest the witch can rise or fall before the camera catches up regardless")]
+		[SerializeField] private float maxHeightLag = 2.5f;
 
 		[SerializeField] private float collisionRadius = 0.25f;
 
@@ -112,6 +132,8 @@ namespace Camera
 		{
 			cameraTarget = target.Camera;
 
+			observed = target;
+
 			yaw = target.Transform.eulerAngles.y;
 
 			transform.position = cameraTarget.Position;
@@ -138,9 +160,23 @@ namespace Camera
 
 		private void UpdatePosition()
 		{
+			var target = cameraTarget.Position;
+
+			var current = transform.position;
+
 			var blend = 1f - Mathf.Exp(-followSharpness * Time.deltaTime);
 
-			transform.position = Vector3.Lerp(transform.position, cameraTarget.Position, blend);
+			// Follow height lazily mid-jump so the view stays steady, but snappily on the ground and on the broom
+			var airborne = observed != null && !observed.Movement.IsGrounded && !observed.Broom.IsMounted;
+
+			var heightBlend = airborne ? 1f - Mathf.Exp(-airborneHeightSharpness * Time.deltaTime) : blend;
+
+			var height = Mathf.Lerp(current.y, target.y, heightBlend);
+			height = Mathf.Clamp(height, target.y - maxHeightLag, target.y + maxHeightLag);
+
+			var flat = Vector3.Lerp(new Vector3(current.x, 0f, current.z), new Vector3(target.x, 0f, target.z), blend);
+
+			transform.position = new Vector3(flat.x, height, flat.z);
 		}
 
 		private void UpdateRotation()

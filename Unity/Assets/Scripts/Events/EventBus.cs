@@ -43,6 +43,12 @@ namespace Events
 
 		public event Action PotionEffectsChanged;
 
+		public event Action<Vector3> PiecePlaced;
+
+		public event Action<Vector3> PieceRemoved;
+
+		public event Action<string> ObjectiveChanged;
+
 
 		public void SetActiveTarget(IObserverTarget target)
 			=> ActiveTargetChanged?.Invoke(target);
@@ -88,5 +94,14 @@ namespace Events
 
 		public void UpdatePotionEffects()
 			=> PotionEffectsChanged?.Invoke();
+
+		public void PlacePiece(Vector3 position)
+			=> PiecePlaced?.Invoke(position);
+
+		public void RemovePiece(Vector3 position)
+			=> PieceRemoved?.Invoke(position);
+
+		public void SetObjective(string objective)
+			=> ObjectiveChanged?.Invoke(objective);
 	}
 }

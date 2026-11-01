@@ -1,4 +1,6 @@
 using System.Linq;
+using Audio;
+using Audio.Interfaces;
 using Alchemy.Interfaces;
 using Data.Enums;
 using Data.ScriptableObjects;
@@ -49,6 +51,10 @@ namespace Alchemy
 
 		private ParticleSystem bubbles;
 
+		private AudioSource bubbling;
+
+		private IAudioService audio;
+
 		private Vector3 liquidRestScale;
 
 		private Vector3 flameRestScale;
@@ -92,6 +98,20 @@ namespace Alchemy
 
 		private void Start()
 		{
+			audio = ServiceLocator.Get<IAudioService>();
+
+			if (audio != null)
+			{
+				bubbling = gameObject.AddComponent<AudioSource>();
+				bubbling.clip = audio.Clip(Sound.Bubbling);
+				bubbling.loop = true;
+				bubbling.spatialBlend = 1f;
+				bubbling.rolloffMode = AudioRolloffMode.Linear;
+				bubbling.maxDistance = 14f;
+				bubbling.volume = 0f;
+				bubbling.Play();
+			}
+
 			if (liquidSurface != null)
 				bubbles = FxUtility.Loop(liquidSurface, Vector3.zero, new Color(0.8f, 1f, 0.9f), 0f, 0.6f, 0.35f, 0.1f);
 		}
@@ -118,6 +138,13 @@ namespace Alchemy
 			eventBus.SetCameraOverride(null);
 		}
 
+		public void PumpBellows()
+		{
+			Session.PumpBellows();
+
+			audio?.PlayAt(Sound.Whoosh, fireLight != null ? fireLight.transform.position : transform.position, 0.5f);
+		}
+
 		public bool Pour(ItemDefinition item)
 			=> TakeAnd(item, () => Session.PourBase(item));
 
@@ -129,9 +156,14 @@ namespace Alchemy
 
 		public void Grind()
 		{
+			if (Session.MortarItem == null)
+				return;
+
 			Session.Grind();
 
 			pestleKick = 1f;
+
+			audio?.PlayAt(Sound.Grind, pestle != null ? pestle.position : transform.position, 0.8f);
 		}
 
 		public BrewResult Bottle()
@@ -198,6 +230,9 @@ namespace Alchemy
 				liquid.material.color = colour;
 				liquid.material.SetColor(EmissionColor, colour * Mathf.Lerp(0.25f, 0.6f, Session.Heat));
 			}
+
+			if (bubbling != null)
+				bubbling.volume = Session.HasStarted && audio.SoundEnabled ? Mathf.Lerp(0.05f, 0.6f, Session.Heat) : 0f;
 
 			if (bubbles != null)
 			{

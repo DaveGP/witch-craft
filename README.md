@@ -18,6 +18,8 @@ Run, jump and fly around a little island gathering herbs for potions, glyphs for
 * Building spells: Conjure walls, floors, roofs and furniture onto a snapping grid, Levitate furniture to rearrange it, Unmake to get materials back
 * Companions to recruit with gifts, who live at home and reward friendship with recipes
 * A home plot that expands as you gather materials and friends
+* A guided first five minutes: Sable suggests what to try next, with a beacon showing where
+* Sound effects, ambience and a music loop, all generated in code
 * Autosave, and save by resting at the hearth
 
 ## Development
@@ -105,6 +107,7 @@ The playtest deletes your local save before it runs.
 | Menu / leave a station | Escape        |
 | Bellows at the bench | Space           |
 | Grind at the bench  | G                |
+| Feel tuning panel (dev) | ` (backquote) |
 
 ## Documentation
 

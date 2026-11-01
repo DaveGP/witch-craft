@@ -38,5 +38,14 @@ namespace Events.Interfaces
 		public void RequestDialogue(DialogueRequest request);
 
 		public void UpdatePotionEffects();
+
+		public void PlacePiece(Vector3 position);
+
+		public void RemovePiece(Vector3 position);
+
+		/// <summary>
+		/// Sets the HUD's current objective. Empty clears it.
+		/// </summary>
+		public void SetObjective(string objective);
 	}
 }

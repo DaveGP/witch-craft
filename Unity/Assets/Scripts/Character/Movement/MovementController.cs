@@ -26,6 +26,8 @@ namespace Character.Movement
 
 		public bool Suspended { get; set; }
 
+		public CharacterStats Stats => stats;
+
 		public event Action Jumped;
 
 		public event Action Landed;
