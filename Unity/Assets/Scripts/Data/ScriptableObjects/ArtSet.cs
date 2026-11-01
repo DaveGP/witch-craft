@@ -57,6 +57,9 @@ namespace Data.ScriptableObjects
 		[Tooltip("Prefab to show instead of the placeholder. Empty keeps the placeholder")]
 		public GameObject Prefab;
 
+		[Tooltip("For surface slots: the material painted over the placeholder's own shapes")]
+		public Material Material;
+
 		[Tooltip("Nudge the art to sit right on the placeholder's spot")]
 		public Vector3 Offset;
 

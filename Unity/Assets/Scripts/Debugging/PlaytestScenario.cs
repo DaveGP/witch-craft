@@ -159,6 +159,7 @@ namespace Debugging
 				new[] { "witch", "cat", "broom", "piece:bed", "piece:wall_timber", "companion:pip", "companion:nova", "tree:pine", "tree:palm", "rock:boulder", "prop:crate", "gather:Lavender", "gather:GiantClam" }.All(artKeys.Contains));
 
 			var crateEntry = artSet.Find("prop:crate");
+			var crateArtBefore = crateEntry.Prefab;
 			crateEntry.Prefab = database.FindBuildPiece("lamp").Prefab;
 			artSet.NotifyChanged();
 			yield return null;
@@ -175,6 +176,29 @@ namespace Debugging
 			yield return null;
 
 			Check("Clearing the art brings the placeholder back", !crateSwap.HasArt && crateRenderer.enabled);
+
+			crateEntry.Prefab = crateArtBefore;
+			artSet.NotifyChanged();
+			yield return null;
+
+			// The enchanted realm's art, when the Synty packs are on this machine
+			var swaps = FindObjectsByType<Art.ArtSwap>(FindObjectsSortMode.None);
+			var surfaces = FindObjectsByType<Art.ArtMaterialSwap>(FindObjectsSortMode.None);
+			var lanterns = swaps.Where(swap => swap.Key == "scatter:lantern").ToList();
+
+			Check($"Art-only spots and surface slots exist ({lanterns.Count} lanterns, {surfaces.Length} surfaces)", lanterns.Count > 5 && surfaces.Any(surface => surface.Key == "surface:grass"));
+
+			if (lanterns.Any(lantern => lantern.HasArt))
+			{
+				var dressed = new[] { "tree:pine", "tree:broadleaf", "rock:boulder", "prop:shrine", "prop:bounce-mushroom", "prop:alchemy-bench", "prop:hearth", "piece:wall_timber", "piece:bed", "gather:Lavender" };
+				var bare = dressed.Where(key => !swaps.Any(swap => swap.Key == key && swap.HasArt)).ToList();
+				Check($"The enchanted realm dresses trees, rocks, shrines, the bench, the hut and herbs (bare: {string.Join(", ", bare)})", bare.Count == 0);
+				Check("The meadow is painted with the realm's grass", surfaces.First(surface => surface.Key == "surface:grass").HasArt);
+			}
+			else
+			{
+				report.AppendLine("NOTE  No Synty packs on this machine; the island keeps its placeholder looks");
+			}
 
 			var audio = ServiceLocator.Get<IAudioService>();
 			Check("Audio generated its sounds and music", audio != null && audio.Clip(Sound.Music) != null && audio.Clip(Sound.Music).length > 30f);
@@ -599,6 +623,8 @@ namespace Debugging
 			yield return new WaitForSeconds(1.5f);
 
 			yield return View("08_home", new Vector3(9f, 6f, -14f), new Vector3(0f, 1.5f, 0f));
+			yield return View("08b_alchemy_bench", new Vector3(-6.5f, 2.6f, -9.5f), new Vector3(-6.5f, 1f, -5.5f));
+			yield return View("08c_hearth", new Vector3(9f, 3.5f, -9f), new Vector3(5.5f, 0.5f, -5f));
 			yield return View("09_island", new Vector3(-30f, 45f, -75f), new Vector3(10f, 0f, 0f));
 			yield return View("10_spire", new Vector3(28f, 16f, -24f), new Vector3(50f, 12f, -6f));
 			yield return View("11_pond", new Vector3(-24f, 9f, -6f), new Vector3(-41f, 2f, 13f));

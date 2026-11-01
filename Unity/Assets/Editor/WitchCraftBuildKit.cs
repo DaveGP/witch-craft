@@ -517,6 +517,27 @@ namespace WitchCraftEditor
 		}
 
 		/// <summary>
+		/// Gives every renderer in the open scene that uses one of these materials a surface slot, which can paint
+		/// them with an Art Set material instead. Meshes and collision stay as they are.
+		/// </summary>
+		public static void SurfaceSlot(Transform parent, string key, string note, params Material[] materials)
+		{
+			var renderers = Object.FindObjectsByType<MeshRenderer>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+				.Where(renderer => materials.Contains(renderer.sharedMaterial))
+				.Cast<Renderer>()
+				.ToArray();
+
+			if (renderers.Length == 0)
+				return;
+
+			var holder = new GameObject($"Surface ({key})");
+			holder.transform.SetParent(parent, false);
+			holder.AddComponent<ArtMaterialSwap>().Configure(key, renderers);
+
+			artSlots[key] = note;
+		}
+
+		/// <summary>
 		/// Makes sure the Art Set lists every slot the builders made. Never touches an existing entry's art.
 		/// </summary>
 		public static void SyncArtSet()

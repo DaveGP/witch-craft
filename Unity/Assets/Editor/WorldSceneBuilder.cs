@@ -104,6 +104,7 @@ namespace WitchCraftEditor
 
 				// Local-only art packs, when this machine has them
 				CasualCatSetup.Run();
+				EnchantedRealmSetup.Run();
 
 				EditorApplication.Exit(0);
 			}
@@ -149,10 +150,13 @@ namespace WitchCraftEditor
 			BuildStorybooks();
 			BuildPaths();
 			BuildScatter();
+			BuildEnchantment();
 
 			var player = BuildPlayer();
 			BuildCat(player);
 			BuildCamera();
+
+			BuildSurfaces();
 
 			SyncArtSet();
 
@@ -760,12 +764,15 @@ namespace WitchCraftEditor
 
 			var liquid = Prim(PrimitiveType.Cylinder, "Brew", t, new Vector3(0, 1.005f, 0), new Vector3(0.92f, 0.01f, 0.92f), Lit("Brew", new Color(0.55f, 0.8f, 1f), 0.9f, new Color(0.2f, 0.3f, 0.4f)), false);
 
-			// Work table with mortar and pestle, and a shelf of jars behind
-			Prim(PrimitiveType.Cube, "Table", t, new Vector3(1.55f, 0.78f, 0f), new Vector3(1.3f, 0.08f, 0.8f), Wood);
+			// Work table with mortar and pestle, and a shelf of jars behind. The table, shelf and awning are the
+			// bench's dressing, which art can replace; the cauldron, fire, mortar and pestle always show
+			var dressing = Node("Dressing", t).transform;
+
+			Prim(PrimitiveType.Cube, "Table", dressing, new Vector3(1.55f, 0.78f, 0f), new Vector3(1.3f, 0.08f, 0.8f), Wood);
 
 			foreach (var x in new[] { 1.0f, 2.1f })
 			foreach (var z in new[] { -0.32f, 0.32f })
-				Prim(PrimitiveType.Cube, "Leg", t, new Vector3(x, 0.37f, z), new Vector3(0.08f, 0.74f, 0.08f), DarkWood, false);
+				Prim(PrimitiveType.Cube, "Leg", dressing, new Vector3(x, 0.37f, z), new Vector3(0.08f, 0.74f, 0.08f), DarkWood, false);
 
 			Prim(PrimitiveType.Cylinder, "Mortar", t, new Vector3(1.35f, 0.92f, 0.05f), new Vector3(0.36f, 0.12f, 0.36f), StoneMat(), false);
 
@@ -774,23 +781,25 @@ namespace WitchCraftEditor
 			var pestle = Node("Pestle", t, new Vector3(1.45f, 1.0f, 0.05f));
 			Prim(PrimitiveType.Cylinder, "Pestle", pestle.transform, new Vector3(0, 0.18f, 0), new Vector3(0.07f, 0.2f, 0.07f), StoneMat(), false);
 
-			Prim(PrimitiveType.Cube, "Shelf", t, new Vector3(0.8f, 1.6f, -0.9f), new Vector3(2.6f, 0.06f, 0.35f), Wood, false);
+			Prim(PrimitiveType.Cube, "Shelf", dressing, new Vector3(0.8f, 1.6f, -0.9f), new Vector3(2.6f, 0.06f, 0.35f), Wood, false);
 
 			foreach (var x in new[] { -0.6f, -0.2f })
-				Prim(PrimitiveType.Cube, "Post", t, new Vector3(x + 0.1f, 0.85f, -0.9f), new Vector3(0.08f, 1.7f, 0.08f), DarkWood);
+				Prim(PrimitiveType.Cube, "Post", dressing, new Vector3(x + 0.1f, 0.85f, -0.9f), new Vector3(0.08f, 1.7f, 0.08f), DarkWood);
 
-			Prim(PrimitiveType.Cube, "Post", t, new Vector3(2.05f, 0.85f, -0.9f), new Vector3(0.08f, 1.7f, 0.08f), DarkWood);
+			Prim(PrimitiveType.Cube, "Post", dressing, new Vector3(2.05f, 0.85f, -0.9f), new Vector3(0.08f, 1.7f, 0.08f), DarkWood);
 
 			var jarColours = database.Items.Where(item => item.Category == Data.Enums.ItemCategory.Ingredient).Select(item => item.Color).ToList();
 
 			for (var i = 0; i < 7; i++)
-				Prim(PrimitiveType.Cylinder, "Jar", t, new Vector3(-0.35f + i * 0.33f, 1.75f, -0.9f), new Vector3(0.18f, 0.12f, 0.18f),
+				Prim(PrimitiveType.Cylinder, "Jar", dressing, new Vector3(-0.35f + i * 0.33f, 1.75f, -0.9f), new Vector3(0.18f, 0.12f, 0.18f),
 					Lit($"Jar{i}", jarColours[i % jarColours.Count], 0.8f, jarColours[i % jarColours.Count] * 0.3f), false);
 
 			// Little awning to frame it
-			Prim(PrimitiveType.Cube, "Awning", t, new Vector3(0.8f, 2.6f, -0.3f), new Vector3(3.4f, 0.08f, 1.8f), Lit("Thatch", new Color(0.85f, 0.7f, 0.4f)), false, new Vector3(-15f, 0, 0));
-			Prim(PrimitiveType.Cube, "AwningPost", t, new Vector3(-0.85f, 1.3f, -1f), new Vector3(0.1f, 2.6f, 0.1f), DarkWood);
-			Prim(PrimitiveType.Cube, "AwningPost", t, new Vector3(2.45f, 1.3f, -1f), new Vector3(0.1f, 2.6f, 0.1f), DarkWood);
+			Prim(PrimitiveType.Cube, "Awning", dressing, new Vector3(0.8f, 2.6f, -0.3f), new Vector3(3.4f, 0.08f, 1.8f), Lit("Thatch", new Color(0.85f, 0.7f, 0.4f)), false, new Vector3(-15f, 0, 0));
+			Prim(PrimitiveType.Cube, "AwningPost", dressing, new Vector3(-0.85f, 1.3f, -1f), new Vector3(0.1f, 2.6f, 0.1f), DarkWood);
+			Prim(PrimitiveType.Cube, "AwningPost", dressing, new Vector3(2.45f, 1.3f, -1f), new Vector3(0.1f, 2.6f, 0.1f), DarkWood);
+
+			ArtSlot(dressing.gameObject, "prop:alchemy-bench", "Alchemy bench dressing: table, shelf and awning (cauldron, fire, mortar and pestle always show)");
 
 			var viewpoint = Node("Viewpoint", t, new Vector3(0.6f, 2.7f, 2.3f));
 			viewpoint.transform.LookAt(t.TransformPoint(new Vector3(0.55f, 0.7f, -0.1f)));
@@ -819,10 +828,13 @@ namespace WitchCraftEditor
 
 			Prim(PrimitiveType.Cylinder, "Hearthstone", t, new Vector3(0, 0.08f, 0), new Vector3(2.2f, 0.08f, 2.2f), ShrineStone);
 
+			// The ring of stones and the seats are the hearth's dressing, which art can replace
+			var dressing = Node("Dressing", t).transform;
+
 			for (var i = 0; i < 10; i++)
 			{
 				var angle = i * 36f * Mathf.Deg2Rad;
-				Prim(PrimitiveType.Sphere, "Stone", t, new Vector3(Mathf.Cos(angle) * 0.85f, 0.22f, Mathf.Sin(angle) * 0.85f), new Vector3(0.4f, 0.3f, 0.35f), Rock, false);
+				Prim(PrimitiveType.Sphere, "Stone", dressing, new Vector3(Mathf.Cos(angle) * 0.85f, 0.22f, Mathf.Sin(angle) * 0.85f), new Vector3(0.4f, 0.3f, 0.35f), Rock, false);
 			}
 
 			Prim(PrimitiveType.Cylinder, "Log", t, new Vector3(0, 0.25f, 0), new Vector3(0.2f, 0.45f, 0.2f), Trunk, false, new Vector3(0, 30, 80));
@@ -842,8 +854,10 @@ namespace WitchCraftEditor
 			foreach (var angle in new[] { 200f, 340f })
 			{
 				var rad = angle * Mathf.Deg2Rad;
-				Prim(PrimitiveType.Cylinder, "Stump", t, new Vector3(Mathf.Cos(rad) * 2f, 0.25f, Mathf.Sin(rad) * 2f), new Vector3(0.6f, 0.25f, 0.6f), Trunk);
+				Prim(PrimitiveType.Cylinder, "Stump", dressing, new Vector3(Mathf.Cos(rad) * 2f, 0.25f, Mathf.Sin(rad) * 2f), new Vector3(0.6f, 0.25f, 0.6f), Trunk);
 			}
+
+			ArtSlot(dressing.gameObject, "prop:hearth", "Hearth dressing: ring of stones and seats (fire and hearthstone always show)");
 
 			var zone = Node("Interact", t, new Vector3(0, 0.8f, 0));
 			zone.layer = Interactable;
@@ -1259,6 +1273,8 @@ namespace WitchCraftEditor
 		{
 			var paths = Node("Paths", world).transform;
 
+			routes.Clear();
+
 			Path(paths, SpawnPoint, new Vector3(0, 0, -2.5f));
 			Path(paths, new Vector3(0, 0, -6f), ForestCentre + new Vector3(-8f, 0, -10f));
 			Path(paths, new Vector3(-4f, 0, -4f), PondCentre + new Vector3(13f, 0, -5f));
@@ -1267,8 +1283,11 @@ namespace WitchCraftEditor
 			Path(paths, new Vector3(6f, 0, -6f), SpireCentre + new Vector3(-8f, 0, 0f));
 		}
 
+		private static readonly List<(Vector3 from, Vector3 to)> routes = new();
+
 		private static void Path(Transform parent, Vector3 from, Vector3 to)
 		{
+			routes.Add((from, to));
 			const float segmentLength = 3f;
 
 			var distance = Vector3.Distance(new Vector3(from.x, 0, from.z), new Vector3(to.x, 0, to.z));
@@ -1334,6 +1353,72 @@ namespace WitchCraftEditor
 			for (var i = 0; i < 4; i++)
 				Gatherable(scatter, "Boulder", Around(HomeCentre, 14f, 30f), "stone", 1, 120f, visual =>
 					Prim(PrimitiveType.Sphere, "Rock", visual, new Vector3(0, 0.3f, 0), new Vector3(0.8f, 0.6f, 0.7f), Rock, false), false, "Chip");
+		}
+
+		// Spots for the Art Set's scatter slots: elven lanterns along the paths, glowing flora in the forest and by
+		// the pond, crystals by the cave. They are empty without art and collide with nothing. Their own dice keep
+		// everything else in the world where it was
+		private static void BuildEnchantment()
+		{
+			var parent = Node("Enchantment", world).transform;
+			var dice = new Random(7);
+
+			float Roll(float min, float max) => min + (float)dice.NextDouble() * (max - min);
+
+			void Spot(string name, Vector3 position, string key, string note)
+			{
+				var spot = Node(name, parent, position, Roll(0f, 360f));
+				ArtSlot(spot, key, note);
+			}
+
+			// A lantern every few steps along each path, alternating sides, clear of the home plot
+			foreach (var (from, to) in routes)
+			{
+				var length = Vector3.Distance(new Vector3(from.x, 0, from.z), new Vector3(to.x, 0, to.z));
+				var direction = new Vector3(to.x - from.x, 0, to.z - from.z).normalized;
+				var side = Vector3.Cross(Vector3.up, direction);
+
+				for (var distance = 4f; distance < length - 2f; distance += 9f)
+				{
+					var along = from + direction * distance + side * (Mathf.Repeat(distance, 18f) < 9f ? 2.2f : -2.2f);
+
+					if (Vector3.Distance(new Vector3(along.x, 0, along.z), HomeCentre) > 10f)
+						Spot("Lantern", OnGround(along.x, along.z), "scatter:lantern", "Lantern beside a path (art only)");
+				}
+			}
+
+			for (var i = 0; i < 30; i++)
+			{
+				var angle = Roll(0f, Mathf.PI * 2f);
+				var radius = Roll(5f, 26f);
+				Spot("GlowFlora", OnGround(ForestCentre.x + Mathf.Cos(angle) * radius, ForestCentre.z + Mathf.Sin(angle) * radius), "scatter:glowflora", "Glowing flora (art only)");
+			}
+
+			for (var i = 0; i < 10; i++)
+			{
+				var angle = Roll(0f, Mathf.PI * 2f);
+				var radius = Roll(14.5f, 19f);
+				Spot("GlowFlora", OnGround(PondCentre.x + Mathf.Cos(angle) * radius, PondCentre.z + Mathf.Sin(angle) * radius), "scatter:glowflora", "Glowing flora (art only)");
+			}
+
+			for (var i = 0; i < 6; i++)
+			{
+				var angle = Roll(0f, Mathf.PI * 2f);
+				var radius = Roll(11f, 16f);
+				Spot("Crystals", OnGround(CaveCentre.x + Mathf.Cos(angle) * radius, CaveCentre.z + Mathf.Sin(angle) * radius), "scatter:crystals", "Crystal cluster (art only)");
+			}
+		}
+
+		// Ground, paths and rock as surface slots, so art can paint them with its own materials
+		private static void BuildSurfaces()
+		{
+			var parent = Node("ArtSurfaces", world).transform;
+
+			SurfaceSlot(parent, "surface:grass", "Meadow grass on the island and hills (a world-space triplanar material suits the shapes)", Grass);
+			SurfaceSlot(parent, "surface:grass-dark", "Darker grass on some hills", GrassDark);
+			SurfaceSlot(parent, "surface:sand", "Beaches", Sand);
+			SurfaceSlot(parent, "surface:path", "Path stones", PathMat);
+			SurfaceSlot(parent, "surface:rock", "Rocks, cliffs and stones", Rock, RockDark);
 		}
 
 		#endregion
