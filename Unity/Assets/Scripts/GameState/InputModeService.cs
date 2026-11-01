@@ -42,7 +42,12 @@ namespace GameState
 		{
 			var gameplay = Mode == InputMode.Gameplay;
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+			// Browsers only grant pointer lock inside a click, so the page locks on the next click instead
+			Utilities.WebPointerLock.SetWanted(gameplay);
+#else
 			Cursor.lockState = gameplay ? CursorLockMode.Locked : CursorLockMode.None;
+#endif
 			Cursor.visible = !gameplay;
 
 			ModeChanged?.Invoke(Mode);

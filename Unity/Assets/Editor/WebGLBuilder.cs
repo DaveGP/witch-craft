@@ -39,6 +39,9 @@ namespace WitchCraftEditor
 			PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
 			PlayerSettings.WebGL.decompressionFallback = true;
 			PlayerSettings.WebGL.dataCaching = true;
+
+			// Pages lets browsers cache files for ten minutes; hashed names stop a new deploy mixing with old files
+			PlayerSettings.WebGL.nameFilesAsHashes = true;
 			PlayerSettings.WebGL.template = "APPLICATION:Default";
 			PlayerSettings.runInBackground = true;
 			PlayerSettings.defaultWebScreenWidth = 1280;

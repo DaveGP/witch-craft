@@ -27,7 +27,10 @@ else
 	git -C "$STAGING" remote add origin "$(git -C "$ROOT" remote get-url origin)"
 fi
 
-find "$STAGING" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+# Keep earlier builds' hash-named files in Build/: browsers may hold a cached index.html for ten minutes
+# that still points at them
+find "$STAGING" -mindepth 1 -maxdepth 1 ! -name .git ! -name Build -exec rm -rf {} +
+find "$STAGING/Build" -name 'WebGL.*' -delete 2>/dev/null || true
 cp -R "$BUILD/." "$STAGING/"
 
 # Pages serves LFS files as pointers, so keep every file of the site in plain git
