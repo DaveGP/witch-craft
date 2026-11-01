@@ -30,6 +30,8 @@ MonoBehaviour:
   - '"From my perch, your home looks like a little lantern."'
   - '"Wisdom is mostly sitting still and listening. And snacks."'
   - '"The fox spirit in the crystal cave is lonely. Bring her something that glows."'
+  - '"Far to the north, past the sea stacks, there''s an island with a turtle who
+    never hurries. A broom could hop the stacks."'
   LikedGifts:
   - {fileID: 11400000, guid: 00f614802af1f4c6d80c57bbc0bfebdc, type: 2}
   - {fileID: 11400000, guid: cded7103c10224607b67ac8943dbbe89, type: 2}

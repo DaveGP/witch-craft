@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 079bcd380567145bc84a30791440eb72, type: 3}
+  m_Name: nova
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.CompanionDefinition
+  Id: nova
+  DisplayName: Nova
+  Species: Star Sprite
+  Color: {r: 1, g: 0.88, b: 0.55, a: 1}
+  Prefab: {fileID: 4339307824995382180, guid: 6564c8aa670524894a7471b3f6461b7b, type: 3}
+  Nocturnal: 1
+  Greeting: '"Twinkle! A visitor from all the way down there? Nobody visits!"'
+  Plea: '"My light''s been fading lately. Four pinches of stardust would brighten
+    me right up. It only settles up here after dark."'
+  RecruitGift:
+    Item: {fileID: 11400000, guid: 0b8a6bce99c824808bc2410cdba3d0d6, type: 2}
+    Amount: 4
+  MoveInLine: '"Ooh, a real house, with a roof to sit on! I''ll shine for you every
+    night."'
+  ChatLines:
+  - '"I can see your house from here. It''s the cosy little light."'
+  - '"Stars don''t walk. We sort of... skip."'
+  - '"Have you seen a telescope? I''d love to see the stars from the other side."'
+  LikedGifts:
+  - {fileID: 11400000, guid: 0b8a6bce99c824808bc2410cdba3d0d6, type: 2}
+  - {fileID: 11400000, guid: 3722690083b8c470183bd59a4377530c, type: 2}
+  - {fileID: 11400000, guid: 847b9d9fb9a224a59acd6e2cdf4182de, type: 2}
+  FavouriteFurniture: {fileID: 11400000, guid: 42267a2d817de4ad9a06676ccb2df001, type: 2}
+  Rewards:
+  - Friendship: 5
+    Recipe: {fileID: 0}
+    Glyph: {fileID: 0}
+    Line: '"A secret, from one star to another: Astra and Motus together make a star''s
+      quick step. Try it in your spellbook!"'

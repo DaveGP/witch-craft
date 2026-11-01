@@ -61,6 +61,14 @@ namespace WitchCraftEditor
 
 		public const float SpireTop = 21.5f;
 
+		public static readonly Vector3 TidewaterCentre = new(10f, 0f, 150f);
+
+		public static readonly Vector3 StarfallCentre = TidewaterCentre + new Vector3(9f, 46f, 14f);
+
+		public static readonly Vector3 AstraIsleCentre = TidewaterCentre + new Vector3(9f, 55f, -6f);
+
+		public static readonly Vector3 CometNookCentre = AstraIsleCentre + new Vector3(-14f, 0f, -5f);
+
 		private static Random random;
 
 		private static GameDatabase database;
@@ -131,6 +139,9 @@ namespace WitchCraftEditor
 			BuildSpire();
 			BuildSkyIsle();
 			BuildSecretIsle();
+			BuildSeaCrossing();
+			BuildTidewater();
+			BuildStarfall();
 			BuildPaths();
 			BuildScatter();
 
@@ -282,6 +293,11 @@ namespace WitchCraftEditor
 
 			var sea = Prim(PrimitiveType.Plane, "Sea", world, new Vector3(0, -0.6f, 0), new Vector3(70f, 1f, 70f), Water, false);
 			sea.layer = 4;
+
+			// Solid only to a witch who has drunk Seafoam Draught (see PotionAura)
+			var surface = Node("SeaSurface", world, new Vector3(0, -0.7f, 0));
+			surface.layer = 4;
+			surface.AddComponent<BoxCollider>().size = new Vector3(700f, 0.2f, 700f);
 
 			var seabed = Prim(PrimitiveType.Cylinder, "Seabed", world, new Vector3(0, -4f, 0), new Vector3(700f, 1f, 700f), Lit("Seabed", new Color(0.3f, 0.45f, 0.55f)), false);
 			seabed.layer = 4;
@@ -1253,6 +1269,220 @@ namespace WitchCraftEditor
 
 		#endregion
 
+		#region Tidewater and Starfall
+
+		private static Material Seashell => Lit("Seashell", new Color(0.98f, 0.82f, 0.78f), 0.6f);
+		private static Material Kelp => Lit("KelpLeaf", new Color(0.3f, 0.58f, 0.38f));
+		private static Material StarGlow => Lit("StardustGlow", new Color(1f, 0.93f, 0.65f), 0.6f, new Color(1f, 0.85f, 0.45f) * 2f);
+
+		// Rocky stacks rising out of the sea between the beaches: places for a broom to touch down and recharge
+		private static void BuildSeaCrossing()
+		{
+			var crossing = Node("SeaStacks", world).transform;
+
+			var stacks = new[] { new Vector3(4f, 1.8f, 95f), new Vector3(-2f, 2.4f, 103f), new Vector3(5f, 2.0f, 110f) };
+
+			foreach (var stack in stacks)
+			{
+				Pillar(crossing, stack, 2.2f, Rock);
+				Prim(PrimitiveType.Cylinder, "Moss", crossing, stack + Vector3.up * 0.02f, new Vector3(3.6f, 0.02f, 3.6f), Lit("PlatformMoss", new Color(0.5f, 0.72f, 0.42f)), false);
+			}
+
+			Signpost(crossing, OnGround(1f, 83f), "Tidewater Isle\nacross the sea stacks", 0f);
+		}
+
+		private static void Signpost(Transform parent, Vector3 position, string text, float yaw)
+		{
+			var post = Node("Signpost", parent, position, yaw);
+			post.layer = EnvironmentLayer;
+
+			Prim(PrimitiveType.Cube, "Post", post.transform, new Vector3(0, 1f, 0), new Vector3(0.15f, 2f, 0.15f), Wood);
+			Prim(PrimitiveType.Cube, "Board", post.transform, new Vector3(0, 1.75f, 0.1f), new Vector3(1.9f, 0.7f, 0.08f), Lit("SignBoard", new Color(0.78f, 0.6f, 0.4f)), false);
+
+			// Readable from the approach (south) side
+			var label = new GameObject("Text");
+			label.transform.SetParent(post.transform, false);
+			label.transform.localPosition = new Vector3(0, 1.75f, 0.04f);
+			label.transform.localRotation = Quaternion.identity;
+
+			var mesh = label.AddComponent<TextMesh>();
+			mesh.text = text;
+			mesh.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+			mesh.fontSize = 48;
+			mesh.characterSize = 0.035f;
+			mesh.anchor = TextAnchor.MiddleCenter;
+			mesh.alignment = TextAlignment.Center;
+			mesh.color = new Color(0.25f, 0.15f, 0.12f);
+			label.GetComponent<MeshRenderer>().sharedMaterial = mesh.font.material;
+		}
+
+		private static void BuildTidewater()
+		{
+			var isle = Node("TidewaterIsle", world).transform;
+
+			var t = TidewaterCentre;
+
+			var ground = Prim(PrimitiveType.Cylinder, "Island", isle, t + new Vector3(0, -2f, 0), new Vector3(64f, 2f, 64f), Grass);
+			ground.layer = Ground;
+			ReplaceWithMeshCollider(ground);
+
+			var beach = Prim(PrimitiveType.Cylinder, "Beach", isle, t + new Vector3(0, -2.08f, 0), new Vector3(72f, 2f, 72f), Sand);
+			beach.layer = Ground;
+			ReplaceWithMeshCollider(beach);
+
+			Hill(isle, t + new Vector3(-12f, 0, 8f), 9f, 3f, GrassDark);
+			Hill(isle, t + new Vector3(14f, 0, -8f), 7f, 2f, Grass);
+
+			Physics.SyncTransforms();
+
+			for (var i = 0; i < 9; i++)
+				Palm(isle, Around(t, 10f, 29f));
+
+			Recruit(isle, OnGround(t.x - 6f, t.z - 28f), "tilly", 180f);
+
+			for (var i = 0; i < 7; i++)
+				Gatherable(isle, "Seashell", Around(t, 30f, 33.5f), "seashell", 1, 100f, visual =>
+				{
+					Prim(PrimitiveType.Sphere, "Shell", visual, new Vector3(0, 0.06f, 0), new Vector3(0.3f, 0.12f, 0.36f), Seashell, false, new Vector3(0, Range(0, 360), 0));
+					Prim(PrimitiveType.Sphere, "Shell", visual, new Vector3(0.25f, 0.05f, 0.1f), new Vector3(0.2f, 0.1f, 0.24f), Seashell, false, new Vector3(0, Range(0, 360), 0));
+				}, false, "Pick up a");
+
+			for (var i = 0; i < 5; i++)
+				Gatherable(isle, "Kelp", Around(t, 33.5f, 35f), "kelp", 1, 100f, visual =>
+				{
+					for (var k = 0; k < 5; k++)
+						Prim(PrimitiveType.Cylinder, "Frond", visual, new Vector3(Range(-0.3f, 0.3f), 0.3f, Range(-0.3f, 0.3f)), new Vector3(0.08f, 0.3f, 0.03f), Kelp, false,
+							new Vector3(Range(-20, 20), Range(0, 360), Range(-20, 20)));
+				}, false, "Gather");
+
+			for (var i = 0; i < 3; i++)
+				Clam(isle, Around(t, 27f, 31f));
+
+			for (var i = 0; i < 4; i++)
+				Gatherable(isle, "Driftwood", Around(t, 26f, 32f), "timber", 2, 120f, FallenLog, false, "Collect");
+
+			BuildReef(isle);
+
+			BuildGeyser(isle, t + new Vector3(-4f, 0f, 14f));
+		}
+
+		private static void Palm(Transform parent, Vector3 position)
+		{
+			var palm = Node("Palm", parent, position, Range(0, 360)).transform;
+			palm.gameObject.layer = EnvironmentLayer;
+
+			var lean = Range(8f, 18f);
+
+			Prim(PrimitiveType.Cylinder, "Trunk", palm, new Vector3(0, 2.2f, 0.35f), new Vector3(0.35f, 2.3f, 0.35f), Lit("PalmTrunk", new Color(0.62f, 0.5f, 0.36f)), true, new Vector3(lean, 0, 0));
+
+			// The top of the leaning trunk
+			var crown = new Vector3(0, 2.2f, 0.35f) + Quaternion.Euler(lean, 0, 0) * Vector3.up * 2.3f;
+
+			for (var i = 0; i < 6; i++)
+				Prim(PrimitiveType.Sphere, "Frond", palm, crown + Quaternion.Euler(0, i * 60f, 0) * new Vector3(0, -0.1f, 0.9f), new Vector3(0.5f, 0.12f, 2f), Leaf(1), false,
+					new Vector3(15f, i * 60f, 0));
+		}
+
+		private static void Clam(Transform parent, Vector3 position)
+		{
+			Gatherable(parent, "GiantClam", position, "pearl", 1, 240f, visual =>
+			{
+				var shell = Lit("ClamShell", new Color(0.75f, 0.7f, 0.85f), 0.5f);
+
+				Prim(PrimitiveType.Sphere, "Lower", visual, new Vector3(0, 0.12f, 0), new Vector3(0.9f, 0.25f, 0.7f), shell, false);
+				Prim(PrimitiveType.Sphere, "Upper", visual, new Vector3(0, 0.3f, -0.18f), new Vector3(0.9f, 0.22f, 0.7f), shell, false, new Vector3(-25f, 0, 0));
+				Prim(PrimitiveType.Sphere, "Pearl", visual, new Vector3(0, 0.25f, 0.05f), Vector3.one * 0.16f, Lit("PearlGlow", new Color(0.95f, 0.95f, 1f), 0.9f, new Color(0.9f, 0.9f, 1f) * 1.5f), false);
+			}, false, "Open the clam for a");
+		}
+
+		// Stepping rocks out to a reef where the Aqua glyph waits
+		private static void BuildReef(Transform parent)
+		{
+			var reef = Node("Reef", parent).transform;
+
+			var t = TidewaterCentre;
+
+			var rocks = new[] { new Vector3(38.5f, 0.7f, 4f), new Vector3(42.5f, 1.4f, 1.5f), new Vector3(46.5f, 2.1f, 4.5f) };
+
+			foreach (var rock in rocks)
+				Pillar(reef, t + rock, 1.1f, Rock);
+
+			var islet = t + new Vector3(51.5f, 2.8f, 2f);
+
+			Pillar(reef, islet, 3.2f, Rock);
+			Prim(PrimitiveType.Cylinder, "Sand", reef, islet + Vector3.up * 0.02f, new Vector3(5.6f, 0.02f, 5.6f), Sand, false);
+
+			Shrine(reef, islet, "aqua", -90f);
+		}
+
+		// A sea-spray geyser whose updraft carries a broom up to Starfall Ridge
+		private static void BuildGeyser(Transform parent, Vector3 position)
+		{
+			var geyser = Node("Geyser", parent, OnGround(position.x, position.z));
+
+			for (var i = 0; i < 8; i++)
+			{
+				var angle = i * 45f * Mathf.Deg2Rad;
+				Prim(PrimitiveType.Sphere, "Rock", geyser.transform, new Vector3(Mathf.Cos(angle) * 2.4f, 0.25f, Mathf.Sin(angle) * 2.4f), new Vector3(0.9f, 0.6f, 0.8f), Rock, false);
+			}
+
+			Prim(PrimitiveType.Cylinder, "Spray", geyser.transform, new Vector3(0, 0.05f, 0), new Vector3(3.5f, 0.05f, 3.5f), Lit("Swirl", new Color(0.8f, 0.95f, 1f), 0.5f, new Color(0.6f, 0.85f, 1f) * 1.2f), false);
+
+			var updraft = Node("Updraft", geyser.transform);
+			var box = updraft.AddComponent<BoxCollider>();
+			box.isTrigger = true;
+			box.center = new Vector3(0, 25f, 0);
+			box.size = new Vector3(5f, 50f, 5f);
+			updraft.AddComponent<Updraft>();
+		}
+
+		private static void BuildStarfall()
+		{
+			var ridge = Node("StarfallRidge", world).transform;
+
+			FloatingIsle(ridge, StarfallCentre, 8f);
+			FloatingIsle(ridge, AstraIsleCentre, 5f);
+			FloatingIsle(ridge, CometNookCentre, 3.5f);
+
+			Recruit(ridge, StarfallCentre + new Vector3(2f, 0f, -2f), "nova", 200f);
+
+			Shrine(ridge, AstraIsleCentre + new Vector3(0.5f, 0f, -1f), "astra", 20f);
+
+			foreach (var offset in new[] { new Vector3(-4f, 0, 2f), new Vector3(3f, 0, 4f), new Vector3(-1f, 0, -5f) })
+				Stardust(ridge, StarfallCentre + offset);
+
+			foreach (var offset in new[] { new Vector3(-2.5f, 0, 2f), new Vector3(2.5f, 0, 2.5f) })
+				Stardust(ridge, AstraIsleCentre + offset);
+
+			// The Comet Nook: only Blink crosses the gap
+			Clam(ridge, CometNookCentre + new Vector3(-1f, 0, 0.5f));
+			Clam(ridge, CometNookCentre + new Vector3(1.2f, 0, -0.8f));
+
+			var moonpetal = ContentBuilder.Item("moonpetal").Color;
+			Gatherable(ridge, "Moonpetal", CometNookCentre + new Vector3(0f, 0, 1.8f), "moonpetal", 1, 150f, visual => Flowers(visual, moonpetal, 4, 0.3f), false, "Gather", true);
+
+			// A few twinkles hanging in the air around the ridge
+			for (var i = 0; i < 12; i++)
+			{
+				var sparkle = Node("Twinkle", ridge, StarfallCentre + new Vector3(Range(-14f, 14f), Range(2f, 14f), Range(-20f, 12f)));
+				Prim(PrimitiveType.Sphere, "Star", sparkle.transform, Vector3.zero, Vector3.one * 0.15f, StarGlow, false);
+				sparkle.AddComponent<Bobbing>();
+			}
+		}
+
+		private static void Stardust(Transform parent, Vector3 position)
+		{
+			Gatherable(parent, "Stardust", position, "stardust", 1, 150f, visual =>
+			{
+				for (var i = 0; i < 6; i++)
+					Prim(PrimitiveType.Sphere, "Mote", visual, new Vector3(Range(-0.3f, 0.3f), Range(0.1f, 0.5f), Range(-0.3f, 0.3f)), Vector3.one * 0.09f, StarGlow, false);
+
+				PointLight(visual, new Vector3(0, 0.3f, 0), new Color(1f, 0.9f, 0.6f), 2.5f, 1f);
+			}, false, "Scoop up", true);
+		}
+
+		#endregion
+
 		#region Characters
 
 		private static GameObject BuildPlayer()
@@ -1312,6 +1542,9 @@ namespace WitchCraftEditor
 			player.AddComponent<GustSpell>();
 			player.AddComponent<BloomSpell>();
 			player.AddComponent<WispSpell>();
+			player.AddComponent<BubbleSpell>();
+			player.AddComponent<RainCallSpell>();
+			player.AddComponent<BlinkSpell>();
 			player.AddComponent<SpellCaster>();
 
 			player.AddComponent<ActionController>();

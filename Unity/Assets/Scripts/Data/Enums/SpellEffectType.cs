@@ -8,5 +8,8 @@ namespace Data.Enums
 		Gust = 3,
 		Bloom = 4,
 		Wisp = 5,
+		Bubble = 6,
+		RainCall = 7,
+		Blink = 8,
 	}
 }

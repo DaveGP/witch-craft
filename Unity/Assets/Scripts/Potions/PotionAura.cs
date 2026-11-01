@@ -15,6 +15,12 @@ namespace Potions
 
 		private bool glimmering;
 
+		private bool tidewalking;
+
+		private int playerLayer;
+
+		private int waterLayer;
+
 		private void Awake()
 		{
 			potionEffects = ServiceLocator.Get<IPotionEffects>();
@@ -24,10 +30,17 @@ namespace Potions
 
 			if (glimmerLight != null)
 				glimmerLight.enabled = false;
+
+			playerLayer = LayerMask.NameToLayer("Player");
+			waterLayer = LayerMask.NameToLayer("Water");
+
+			Physics.IgnoreLayerCollision(playerLayer, waterLayer, true);
 		}
 
 		private void Update()
 		{
+			UpdateTidewalk();
+
 			var active = potionEffects.IsActive(PotionEffect.Glimmer);
 
 			if (active == glimmering)
@@ -44,8 +57,22 @@ namespace Potions
 				HiddenPath.RemoveRevealer(transform);
 		}
 
+		private void UpdateTidewalk()
+		{
+			var active = potionEffects.IsActive(PotionEffect.Tidewalk);
+
+			if (active == tidewalking)
+				return;
+
+			tidewalking = active;
+
+			Physics.IgnoreLayerCollision(playerLayer, waterLayer, !active);
+		}
+
 		private void OnDestroy()
 		{
+			Physics.IgnoreLayerCollision(playerLayer, waterLayer, true);
+
 			HiddenPath.RemoveRevealer(transform);
 		}
 	}

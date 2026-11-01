@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad5a5e968c2424ec080d6ab5db333a7f, type: 3}
+  m_Name: rain_call
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.SpellDefinition
+  Id: rain_call
+  DisplayName: Rain Call
+  Effect: 7
+  Color: {r: 0.5, g: 0.72, b: 0.95, a: 1}
+  Glyphs:
+  - {fileID: 11400000, guid: 5f5537ed17c4a4cf8a281e5223e14ece, type: 2}
+  - {fileID: 11400000, guid: ff1b84353de1241c49e06e576b7ca2e2, type: 2}
+  Description: Call a gentle shower (or send one away). Herbs regrow twice as fast
+    in the rain.
+  Hint: The water that every living thing waits for.

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 079bcd380567145bc84a30791440eb72, type: 3}
+  m_Name: tilly
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.CompanionDefinition
+  Id: tilly
+  DisplayName: Tilly
+  Species: Turtle
+  Color: {r: 0.4, g: 0.68, b: 0.55, a: 1}
+  Prefab: {fileID: 6441749282122593066, guid: b6bc174abb32f4e09ba23d1e97c5bdcf, type: 3}
+  Nocturnal: 0
+  Greeting: '"Oh, hello dear. Slowly does it. I''m Tilly. I''ve been sunning myself
+    on this beach since before the sea stacks were stacked."'
+  Plea: '"I''ve always fancied a garden to doze in. Bring me three pearls from the
+    giant clams and I''ll make the trip. It may take me a while."'
+  RecruitGift:
+    Item: {fileID: 11400000, guid: 4f1495fa81bf442f9b5cd30c36ecc63d, type: 2}
+    Amount: 3
+  MoveInLine: '"Off we go then. Don''t wait up, I''ll be there by supper. Possibly
+    next supper."'
+  ChatLines:
+  - '"Hurrying is for crabs."'
+  - '"When the sea is calm you can walk on it, if you know the right brew."'
+  - '"That little star sprite up on the ridge only comes out at night. Lovely girl.
+    Terribly bright."'
+  LikedGifts:
+  - {fileID: 11400000, guid: b5d363d6bc0354d27aea89d79b1baf6e, type: 2}
+  - {fileID: 11400000, guid: a9f0425399bec46b38f52e7f97c60114, type: 2}
+  - {fileID: 11400000, guid: 00f614802af1f4c6d80c57bbc0bfebdc, type: 2}
+  FavouriteFurniture: {fileID: 11400000, guid: 9d42bcfa0b2b548f58571b6264bb0d32, type: 2}
+  Rewards:
+  - Friendship: 4
+    Recipe: {fileID: 11400000, guid: ca49928842f064083b84b937eb9ea37b, type: 2}
+    Glyph: {fileID: 0}
+    Line: '"Here''s my grandmother''s Seafoam Draught. Spring Water, two Kelp, boil
+      twice, then a ground Glowcap. The sea will hold you up like a friend."'

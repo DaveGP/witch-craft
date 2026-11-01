@@ -23,6 +23,9 @@ A cosy 3D platformer. You are a young witch with a tiny hut, a cat and a head fu
 | Crystal cave | South east | Crystal, ember moss, the **Nihil** shrine, Ember the fox spirit |
 | Sky spire | East | A spiral climb of platforms, a moving platform and a bounce mushroom up to the **Motus** shrine and the Featherfall recipe |
 | Sky island | Above the spire | Reached by riding the updraft beside the spire summit. **Lux** shrine, feather down, moonpetals, Hoot the owl |
+| Sea stacks | North of the main island | Rocky stacks for a broom to hop and recharge on, with a signpost on the north beach |
+| Tidewater Isle | Across the northern sea | Kelp, seashells, giant clams with pearls, driftwood, palms, **Tilly the Turtle**; stepping rocks out to the **Aqua** shrine on the eastern reef; a geyser updraft rising to Starfall Ridge |
+| Starfall Ridge | High above Tidewater | Night-only stardust, **Nova the Star Sprite**; the **Astra** shrine on an isle too high for the broom (Bubble up to it); the Comet Nook, only reachable with Blink |
 | Secret isle | South, high up | Reached by a hidden path that only appears near a Wisp or while Glimmering. Moonpetals and crystal |
 
 ## First five minutes
@@ -79,6 +82,7 @@ The brew is judged against every recipe: following steps exactly gives a perfect
 | Featherfall Elixir | Drift down slowly | Scroll on the spire summit, or Bramble |
 | Glimmer Draught | Glow and reveal hidden paths | Pip |
 | Skyward Draught | Tireless broom | Hoot |
+| Seafoam Draught | Walk on water | Tilly |
 
 ## Spells
 
@@ -92,6 +96,9 @@ Glyphs come from shrines out in the world. In the spellbook (B) you place up to 
 | Gust | Aer + Motus | A wind dash: long leap on the ground, one air dash per jump, a burst on the broom |
 | Bloom | Vita + Terra | Grow enchanted soil, such as the herb planters at home |
 | Wisp | Lux + Vita | A light that follows you and reveals hidden paths |
+| Bubble | Aqua + Aer | Float upwards for a few seconds, steering as you rise. Once per landing; jump to pop |
+| Rain Call | Aqua + Vita | Call a shower (or clear one). Herbs regrow twice as fast in the rain |
+| Blink | Astra + Motus | Vanish and reappear 7m ahead, up hillsides but stopping at walls. Once per jump |
 
 You start knowing Forma, Terra and Aer, so Conjure and Levitate are available from the first visit to the spellbook.
 
@@ -121,6 +128,8 @@ Others are met out in the world and ask for something before they move in. At ho
 | Bramble the Hedgehog | Forest | 4 Wild Berries | Featherfall Elixir |
 | Hoot the Owl | Sky island | A Swiftness Brew | Skyward Draught |
 | Ember the Fox Spirit | Crystal cave | A Glimmer Draught | A hint about Wisp |
+| Tilly the Turtle | Tidewater Isle | 3 Pearls | Seafoam Draught |
+| Nova the Star Sprite (nocturnal) | Starfall Ridge | 4 Stardust | A hint about Blink |
 
 Ember needs a potion only Pip can teach you, and Hoot needs you to brew, so the companions pull you through the other systems.
 

@@ -28,6 +28,8 @@ namespace Character.Movement
 
 		public CharacterStats Stats => stats;
 
+		public bool IsFloating => Time.time < floatUntil;
+
 		public event Action Jumped;
 
 		public event Action Landed;
@@ -60,6 +62,12 @@ namespace Character.Movement
 
 		private MovingPlatform groundPlatform;
 
+		private LayerMask waterMask;
+
+		private float floatUntil;
+
+		private float floatRise;
+
 
 		private void Awake()
 		{
@@ -75,6 +83,7 @@ namespace Character.Movement
 				Debug.LogError($"{nameof(potionEffects)} is null");
 
 			groundMask = LayerMask.GetMask("Ground", "Environment");
+			waterMask = LayerMask.GetMask("Water");
 
 			rigidbody.useGravity = false;
 
@@ -171,6 +180,21 @@ namespace Character.Movement
 				airJumpsUsed = 0;
 		}
 
+		public void Float(float seconds, float riseSpeed)
+		{
+			floatUntil = Time.time + seconds;
+			floatRise = riseSpeed;
+
+			// Counts as being in the air, so the ground check doesn't cancel it on take-off
+			isJumping = true;
+			lastGroundedTime = float.NegativeInfinity;
+		}
+
+		public void StopFloating()
+		{
+			floatUntil = 0f;
+		}
+
 		public void Teleport(Vector3 position)
 		{
 			rigidbody.position = position;
@@ -184,6 +208,10 @@ namespace Character.Movement
 		{
 			if (Time.time - lastJumpPressedTime > stats.JumpBufferTime)
 				return;
+
+			// Jumping inside a bubble pops it, and the jump becomes an air jump from there
+			if (IsFloating)
+				StopFloating();
 
 			var canGroundJump = !isJumping && Time.time - lastGroundedTime <= stats.CoyoteTime;
 
@@ -220,6 +248,13 @@ namespace Character.Movement
 		private void ApplyGravity()
 		{
 			var velocity = rigidbody.linearVelocity;
+
+			if (IsFloating)
+			{
+				velocity.y = Mathf.MoveTowards(velocity.y, floatRise, stats.Gravity * Time.fixedDeltaTime);
+				rigidbody.linearVelocity = velocity;
+				return;
+			}
 
 			if (IsGrounded && !isJumping)
 			{
@@ -266,7 +301,10 @@ namespace Character.Movement
 
 			var origin = bottomSphereCentre + Vector3.up * 0.05f;
 
-			var rising = rigidbody.linearVelocity.y > 0.5f && isJumping;
+			var rising = rigidbody.linearVelocity.y > 0.5f && isJumping || IsFloating;
+
+			// Seafoam Draught makes the sea solid underfoot
+			LayerMask mask = potionEffects.IsActive(PotionEffect.Tidewalk) ? groundMask.value | waterMask.value : groundMask.value;
 
 			var hit = default(RaycastHit);
 
@@ -276,7 +314,7 @@ namespace Character.Movement
 				Vector3.down,
 				out hit,
 				groundCheckDistance + 0.05f,
-				groundMask,
+				mask,
 				QueryTriggerInteraction.Ignore
 			) && hit.normal.y > 0.55f;
 

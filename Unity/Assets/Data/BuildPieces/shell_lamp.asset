@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3626cf25d716c47f98f30db555969a34, type: 3}
+  m_Name: shell_lamp
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.BuildPieceDefinition
+  Id: shell_lamp
+  DisplayName: Shell Lamp
+  Category: 1
+  Snap: 3
+  Prefab: {fileID: 8185130684133928660, guid: b95f22ecb2a314d808908fbfc60b2c32, type: 3}
+  RequiredHomeLevel: 1
+  Comfort: 3
+  Cost:
+  - Item: {fileID: 11400000, guid: a9f0425399bec46b38f52e7f97c60114, type: 2}
+    Amount: 3
+  - Item: {fileID: 11400000, guid: 4f1495fa81bf442f9b5cd30c36ecc63d, type: 2}
+    Amount: 1

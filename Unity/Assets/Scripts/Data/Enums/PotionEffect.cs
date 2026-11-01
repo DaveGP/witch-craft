@@ -8,5 +8,6 @@ namespace Data.Enums
 		Featherfall = 3,
 		Glimmer = 4,
 		Skyward = 5,
+		Tidewalk = 6,
 	}
 }

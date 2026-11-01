@@ -22,16 +22,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 00f614802af1f4c6d80c57bbc0bfebdc, type: 2}
   - {fileID: 11400000, guid: cded7103c10224607b67ac8943dbbe89, type: 2}
   - {fileID: 11400000, guid: 48ca9d15d44c84b179673120ad807a6e, type: 2}
+  - {fileID: 11400000, guid: b5d363d6bc0354d27aea89d79b1baf6e, type: 2}
+  - {fileID: 11400000, guid: 0b8a6bce99c824808bc2410cdba3d0d6, type: 2}
   - {fileID: 11400000, guid: e3fab1ace76e44eafaf51969cc4f70b1, type: 2}
   - {fileID: 11400000, guid: 7eabde70e5f084e0389827b7c192e473, type: 2}
   - {fileID: 11400000, guid: e3d956d272f864699a9bbfd6530f45cd, type: 2}
   - {fileID: 11400000, guid: 788150d39cdd24b93919084cc5b8f179, type: 2}
+  - {fileID: 11400000, guid: a9f0425399bec46b38f52e7f97c60114, type: 2}
+  - {fileID: 11400000, guid: 4f1495fa81bf442f9b5cd30c36ecc63d, type: 2}
   - {fileID: 11400000, guid: 3722690083b8c470183bd59a4377530c, type: 2}
   - {fileID: 11400000, guid: 4ba4f1c8ab72043a3b35ddda89ef478b, type: 2}
   - {fileID: 11400000, guid: 59bea374c70534337b136bcc1d51039f, type: 2}
   - {fileID: 11400000, guid: d8d156d9838ac47fb930974a1ccf4bc0, type: 2}
   - {fileID: 11400000, guid: 847b9d9fb9a224a59acd6e2cdf4182de, type: 2}
   - {fileID: 11400000, guid: 172eb6d2470934873af8eca062aac9c6, type: 2}
+  - {fileID: 11400000, guid: 5065f3e070f0545cd881258884f5cb4b, type: 2}
   - {fileID: 11400000, guid: 57f18eb8819d84e13becd26822d63f56, type: 2}
   Glyphs:
   - {fileID: 11400000, guid: 55119a711421047e1b840cfdcf36ede3, type: 2}
@@ -41,12 +46,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ff1b84353de1241c49e06e576b7ca2e2, type: 2}
   - {fileID: 11400000, guid: 211fe8475911841a6aa8143eb06d8beb, type: 2}
   - {fileID: 11400000, guid: 6bdb482396ee94da7938f4b9e7292aed, type: 2}
+  - {fileID: 11400000, guid: 5f5537ed17c4a4cf8a281e5223e14ece, type: 2}
+  - {fileID: 11400000, guid: a6dbdf4a508564792aad29be15b479a1, type: 2}
   Spells:
   - {fileID: 11400000, guid: 88663ebe038a94982865e4a25158d710, type: 2}
   - {fileID: 11400000, guid: 410991193dc054b0191c8faa95259965, type: 2}
   - {fileID: 11400000, guid: 224fc0cddd43c4aa6a5514f94d8543d1, type: 2}
   - {fileID: 11400000, guid: 7c41fd528dee240759b382c47aa97941, type: 2}
   - {fileID: 11400000, guid: df8bc50c136a54f6ab2da10c64a1162e, type: 2}
+  - {fileID: 11400000, guid: b174db365f6a546899a759b0fd259519, type: 2}
+  - {fileID: 11400000, guid: ae4f51d6ba2c840be95a7b4e8f0572dc, type: 2}
+  - {fileID: 11400000, guid: 2631f1039ec31416ca7ed1a586f82be8, type: 2}
   - {fileID: 11400000, guid: 499a14f31c7e04961804a07506f3ae7d, type: 2}
   Recipes:
   - {fileID: 11400000, guid: 03894c85215cd4412910955374e78faa, type: 2}
@@ -54,6 +64,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8f5cb1760f350447092e0ab80908f718, type: 2}
   - {fileID: 11400000, guid: de0b4fea927134bd6a8cd721d8abef21, type: 2}
   - {fileID: 11400000, guid: 50856f6be3f9f4f39b1608decc0f257d, type: 2}
+  - {fileID: 11400000, guid: ca49928842f064083b84b937eb9ea37b, type: 2}
   BuildPieces:
   - {fileID: 11400000, guid: 586c47dab0ec048618941e039b3f046a, type: 2}
   - {fileID: 11400000, guid: 877db90cda7e444c8bf0e2719d25ab45, type: 2}
@@ -76,11 +87,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 62dda366a99e244dbb1731d5f5e62764, type: 2}
   - {fileID: 11400000, guid: a97a037b24e4340cf9121090ef4c1967, type: 2}
   - {fileID: 11400000, guid: 0f50dcf90b7c3421a8e39670893495e0, type: 2}
+  - {fileID: 11400000, guid: 9d42bcfa0b2b548f58571b6264bb0d32, type: 2}
+  - {fileID: 11400000, guid: 42267a2d817de4ad9a06676ccb2df001, type: 2}
   Companions:
   - {fileID: 11400000, guid: 804ad1aea4b814ccbabf14592cde3817, type: 2}
   - {fileID: 11400000, guid: f58017273e68d443db82d37a5588272b, type: 2}
   - {fileID: 11400000, guid: 3860ce389f66f4753b011a3819fcffb0, type: 2}
   - {fileID: 11400000, guid: 567bf2a60152a488d87459f33907bc7e, type: 2}
+  - {fileID: 11400000, guid: 44bdab7b624ba4fc292f9370d8896702, type: 2}
+  - {fileID: 11400000, guid: f4cdaab99d6264374a083638a03f04f6, type: 2}
   HomeLevels:
   - PlotCells: 8
     RequiredCompanions: 0

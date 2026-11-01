@@ -44,5 +44,14 @@ namespace Character.Movement.Interfaces
 		public void Launch(Vector3 velocity, bool restoreAirJumps);
 
 		public void Teleport(Vector3 position);
+
+		/// <summary>
+		/// Rises steadily without gravity for a while, for the Bubble spell. Jumping pops it early.
+		/// </summary>
+		public void Float(float seconds, float riseSpeed);
+
+		public bool IsFloating { get; }
+
+		public void StopFloating();
 	}
 }

@@ -465,6 +465,87 @@ namespace Debugging
 			var fromCentre = Vector2.Distance(new Vector2(onSummit.x, onSummit.z), new Vector2(spireCentre.x, spireCentre.z));
 			Check($"The last spire jump lands on the summit (height {onSummit.y:0.0}, {fromCentre:0.0}m from centre)", onSummit.y > 21.3f && onSummit.y < 22.5f && fromCentre < 4.5f && movement.IsGrounded);
 
+			// New lands: glyphs, spells and companions beyond the sea
+			Check($"Nine glyphs and nine spells exist ({database.Glyphs.Count}, {database.Spells.Count})", database.Glyphs.Count == 9 && database.Spells.Count == 9);
+
+			var recruits = FindObjectsByType<CompanionRecruit>(FindObjectsSortMode.None).Select(found => found.name).ToList();
+			Check("Tilly waits on Tidewater and Nova on Starfall Ridge", recruits.Any(found => found.StartsWith("Tilly")) && recruits.Any(found => found.StartsWith("Nova")));
+
+			foreach (var glyphId in new[] { "aqua", "astra", "motus", "vita" })
+				spellBook.LearnGlyph(database.FindGlyph(glyphId));
+
+			var bubbleSpell = spellBook.Inscribe(new[] { database.FindGlyph("aqua"), database.FindGlyph("aer") }).Spell;
+			var blinkSpell = spellBook.Inscribe(new[] { database.FindGlyph("motus"), database.FindGlyph("astra") }).Spell;
+			var rainSpell = spellBook.Inscribe(new[] { database.FindGlyph("vita"), database.FindGlyph("aqua") }).Spell;
+			Check("Aqua + Aer, Astra + Motus and Aqua + Vita discover Bubble, Blink and Rain Call",
+				bubbleSpell?.Id == "bubble" && blinkSpell?.Id == "blink" && rainSpell?.Id == "rain_call");
+
+			spellBook.Equip(bubbleSpell, 2);
+			spellBook.Equip(blinkSpell, 3);
+			spellBook.Equip(rainSpell, 0);
+
+			movement.Teleport(new Vector3(-12f, 0.3f, -26f));
+			yield return new WaitForSeconds(0.8f);
+
+			Tap(Key.Digit3);
+			yield return new WaitForSeconds(0.3f);
+			Check("Key 3 readies Bubble", caster.ActiveSpell?.Id == "bubble");
+
+			var floatStart = player.transform.position.y;
+			caster.Cast();
+			var floatPeak = 0f;
+
+			for (var t = 0f; t < 2.6f; t += Time.deltaTime)
+			{
+				floatPeak = Mathf.Max(floatPeak, player.transform.position.y - floatStart);
+				yield return null;
+			}
+
+			Check($"Bubble floats the witch upwards ({floatPeak:0.0}m)", floatPeak > 7f);
+			yield return new WaitForSeconds(2.5f);
+
+			Tap(Key.Digit4);
+			yield return new WaitForSeconds(0.3f);
+			Check("Key 4 readies Blink", caster.ActiveSpell?.Id == "blink");
+
+			typeof(global::Camera.CameraController).GetField("yaw", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(cameraController, 180f);
+			yield return null;
+
+			var blinkStart = player.transform.position;
+			var blocker = Physics.SphereCast(blinkStart + Vector3.up * 1.04f, 0.3f, cameraController.Forward, out var blockHit, 7f, LayerMask.GetMask("Ground", "Environment"), QueryTriggerInteraction.Ignore)
+				? $"{blockHit.collider.name} at {blockHit.distance:0.0}m" : "nothing";
+			caster.Cast();
+			yield return new WaitForSeconds(0.2f);
+			var blinked = Vector3.Distance(Flat(blinkStart), Flat(player.transform.position));
+			Check($"Blink steps the witch forward ({blinked:0.0}m; in the way: {blocker}; grounded {movement.IsGrounded})", blinked > 5f && blinked < 8f);
+
+			Tap(Key.Digit1);
+			yield return new WaitForSeconds(0.3f);
+			Check("Key 1 now readies Rain Call", caster.ActiveSpell?.Id == "rain_call");
+
+			var weatherService = ServiceLocator.Get<IWeather>();
+			weatherService.SetWeather(WeatherKind.Clear);
+			caster.Cast();
+			Check("Rain Call brings the rain", weatherService.Current == WeatherKind.Rain);
+			weatherService.SetWeather(WeatherKind.Clear);
+
+			// Seafoam Draught: walk out onto the sea
+			var seafoam = database.FindItem("seafoam_draught");
+			inventory.Add(seafoam, 1);
+			Check("Drinking Seafoam Draught works", potions.Drink(seafoam) && potions.IsActive(PotionEffect.Tidewalk));
+			yield return null;
+
+			movement.Teleport(new Vector3(0f, 0.3f, -100f));
+			yield return new WaitForSeconds(1.5f);
+			Check($"With Seafoam the sea holds the witch up (height {player.transform.position.y:0.0})", player.transform.position.y > -1f && movement.IsGrounded);
+
+			potions.Clear();
+			movement.Teleport(new Vector3(0f, 0.3f, -14f));
+			yield return new WaitForSeconds(0.8f);
+
+			yield return View("19_tidewater", new Vector3(-28f, 20f, 92f), new Vector3(10f, 0f, 145f));
+			yield return View("20_starfall", new Vector3(-12f, 54f, 130f), new Vector3(19f, 49f, 156f));
+
 			// A new morning makes residents fonder, more so with comfort and their favourite piece about
 			var friendshipBefore = roster.Friendship(pip);
 			ServiceLocator.Get<IDayCycle>().SkipTo(6.5f);

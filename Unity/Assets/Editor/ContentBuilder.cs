@@ -94,10 +94,15 @@ namespace WitchCraftEditor
 			AddItem("feather_down", "Feather Down", ItemCategory.Ingredient, new Color(1f, 0.97f, 0.9f), "Impossibly light. Drifts about the sky islands.");
 			AddItem("ember_moss", "Ember Moss", ItemCategory.Ingredient, new Color(1f, 0.45f, 0.2f), "Warm to the touch. Clings to the walls of the crystal cave.");
 
+			AddItem("kelp", "Kelp", ItemCategory.Ingredient, new Color(0.3f, 0.58f, 0.38f), "Ribbons of sea kelp from Tidewater's shallows.");
+			AddItem("stardust", "Stardust", ItemCategory.Ingredient, new Color(1f, 0.93f, 0.65f), "Glittering dust that settles on Starfall Ridge after dark.");
+
 			AddItem("timber", "Timber", ItemCategory.Material, new Color(0.62f, 0.43f, 0.26f), "Fallen branches and logs. Builds walls, floors and furniture.");
 			AddItem("stone", "Stone", ItemCategory.Material, new Color(0.62f, 0.62f, 0.66f), "Smooth grey stone from the hills.");
 			AddItem("reed", "Reed", ItemCategory.Material, new Color(0.8f, 0.72f, 0.42f), "Pond reeds, good for thatch and weaving.");
 			AddItem("clay", "Clay", ItemCategory.Material, new Color(0.78f, 0.46f, 0.35f), "Sticky red clay from the pond bank.");
+			AddItem("seashell", "Seashell", ItemCategory.Material, new Color(0.98f, 0.82f, 0.78f), "Pearly pink shells from Tidewater's beach.");
+			AddItem("pearl", "Pearl", ItemCategory.Material, new Color(0.95f, 0.95f, 1f), "A rare pearl from one of Tidewater's giant clams.");
 			AddItem("crystal", "Crystal", ItemCategory.Material, new Color(0.6f, 0.9f, 1f), "Humming crystal from the cave. Makes glass and lamps.");
 
 			AddPotion("swiftness_brew", "Swiftness Brew", new Color(0.4f, 0.85f, 1f), PotionEffect.Swiftness, 60f, "Your feet feel feather light. Run faster for a minute.");
@@ -105,6 +110,7 @@ namespace WitchCraftEditor
 			AddPotion("featherfall_elixir", "Featherfall Elixir", new Color(1f, 0.95f, 0.8f), PotionEffect.Featherfall, 60f, "You drift down like a dandelion seed.");
 			AddPotion("glimmer_draught", "Glimmer Draught", new Color(0.55f, 1f, 0.9f), PotionEffect.Glimmer, 90f, "You glow softly, and hidden paths shimmer into being.");
 			AddPotion("skyward_draught", "Skyward Draught", new Color(0.65f, 0.7f, 1f), PotionEffect.Skyward, 30f, "Your broom will not tire for a while.");
+			AddPotion("seafoam_draught", "Seafoam Draught", new Color(0.55f, 0.85f, 0.85f), PotionEffect.Tidewalk, 90f, "The sea holds you up like an old friend. Walk on water for a while.");
 			AddPotion("murky_sludge", "Murky Sludge", new Color(0.42f, 0.42f, 0.36f), PotionEffect.None, 0f, "A failed brew. It smells like regret.");
 		}
 
@@ -147,6 +153,8 @@ namespace WitchCraftEditor
 			AddGlyph("vita", "Vita", "♣", new Color(0.45f, 0.9f, 0.45f), "The glyph of life and growth.");
 			AddGlyph("lux", "Lux", "☼", new Color(1f, 0.92f, 0.5f), "The glyph of light.");
 			AddGlyph("nihil", "Nihil", "○", new Color(0.55f, 0.45f, 0.75f), "The glyph of emptiness and undoing.");
+			AddGlyph("aqua", "Aqua", "≈", new Color(0.45f, 0.75f, 0.95f), "The glyph of water and tides.");
+			AddGlyph("astra", "Astra", "♦", new Color(1f, 0.9f, 0.55f), "The glyph of the stars.");
 		}
 
 		private static void AddGlyph(string id, string name, string rune, Color colour, string description)
@@ -189,6 +197,18 @@ namespace WitchCraftEditor
 				"Make enchanted soil burst into growth. Vines to climb, herbs to harvest.",
 				"Life sown into the earth.");
 
+			AddSpell("bubble", "Bubble", SpellEffectType.Bubble, new Color(0.65f, 0.9f, 1f), new[] { "aqua", "aer" },
+				"Float upwards in a bubble for a few seconds, steering as you rise. Once per landing.",
+				"Water wrapped around a breath of air.");
+
+			AddSpell("rain_call", "Rain Call", SpellEffectType.RainCall, new Color(0.5f, 0.72f, 0.95f), new[] { "aqua", "vita" },
+				"Call a gentle shower (or send one away). Herbs regrow twice as fast in the rain.",
+				"The water that every living thing waits for.");
+
+			AddSpell("blink", "Blink", SpellEffectType.Blink, new Color(1f, 0.93f, 0.62f), new[] { "astra", "motus" },
+				"Vanish and reappear a few steps ahead, once per jump.",
+				"How a star crosses the sky in the blink of an eye.");
+
 			AddSpell("wisp", "Wisp", SpellEffectType.Wisp, new Color(1f, 0.95f, 0.6f), new[] { "lux", "vita" },
 				"Call a little living light that reveals hidden paths.",
 				"A light that is alive.");
@@ -229,6 +249,9 @@ namespace WitchCraftEditor
 
 			AddRecipe("skyward", "Skyward Draught", "skyward_draught", "Hoot's recipe for tireless wings and tireless brooms.",
 				Pour("spring_water"), Whole("moonpetal"), Ground("feather_down"), Whole("ember_moss"), Boil(3), Bottle());
+
+			AddRecipe("seafoam", "Seafoam Draught", "seafoam_draught", "Tilly's grandmother's recipe, for visiting friends across the water.",
+				Pour("spring_water"), Whole("kelp", 2), Boil(2), Ground("glowcap"), Bottle());
 
 			Database.FailedBrew = items["murky_sludge"];
 		}
@@ -305,6 +328,8 @@ namespace WitchCraftEditor
 			Furniture("potion_shelf", "Potion Shelf", 2, PotionShelf(), ("timber", 2), ("crystal", 1));
 			Furniture("armchair", "Armchair", 2, Armchair(), ("timber", 2), ("reed", 3));
 			Furniture("glowcap_lamp", "Glowcap Lamp", 3, GlowcapLamp(), ("crystal", 2), ("clay", 1));
+			Furniture("shell_lamp", "Shell Lamp", 1, ShellLamp(), ("seashell", 3), ("pearl", 1));
+			Furniture("telescope", "Telescope", 2, Telescope(), ("timber", 2), ("crystal", 2), ("stardust", 1));
 		}
 
 		private static void Structure(string id, string name, BuildSnap snap, int level, GameObject prefab, params (string item, int amount)[] cost)
@@ -318,7 +343,7 @@ namespace WitchCraftEditor
 		{
 			{ "wall_window", 1 }, { "roof_thatch", 1 }, { "roof_slate", 1 },
 			{ "bed", 3 }, { "table", 2 }, { "chair", 1 }, { "rug", 2 }, { "cat_bed", 2 }, { "planter", 2 },
-			{ "lamp", 2 }, { "bookshelf", 3 }, { "potion_shelf", 2 }, { "armchair", 4 }, { "glowcap_lamp", 4 },
+			{ "lamp", 2 }, { "shell_lamp", 3 }, { "telescope", 3 }, { "bookshelf", 3 }, { "potion_shelf", 2 }, { "armchair", 4 }, { "glowcap_lamp", 4 },
 		};
 
 		private static readonly HashSet<string> paintableMaterials = new()
@@ -696,6 +721,44 @@ namespace WitchCraftEditor
 			return Save(root, "Furniture");
 		}
 
+		private static GameObject ShellLamp()
+		{
+			var root = Root("ShellLamp");
+			var t = root.transform;
+
+			var shell = Lit("Seashell", new Color(0.98f, 0.82f, 0.78f), 0.6f);
+
+			Prim(PrimitiveType.Cylinder, "Base", t, new Vector3(0, 0.06f, 0), new Vector3(0.45f, 0.06f, 0.45f), Wood);
+			Prim(PrimitiveType.Cylinder, "Post", t, new Vector3(0, 0.45f, 0), new Vector3(0.06f, 0.4f, 0.06f), DarkWood, false);
+
+			// A fan of shells around a glowing pearl
+			for (var i = 0; i < 5; i++)
+				Prim(PrimitiveType.Sphere, "Shell", t, new Vector3(0, 1.0f, 0) + Quaternion.Euler(0, 0, -60 + i * 30) * Vector3.up * 0.18f, new Vector3(0.26f, 0.32f, 0.08f), shell, false, new Vector3(0, 0, -60 + i * 30));
+
+			Prim(PrimitiveType.Sphere, "Pearl", t, new Vector3(0, 0.98f, 0.04f), Vector3.one * 0.16f, Lit("PearlGlow", new Color(0.95f, 0.95f, 1f), 0.9f, new Color(0.9f, 0.9f, 1f) * 1.5f), false);
+
+			PointLight(t, new Vector3(0, 1f, 0.2f), new Color(1f, 0.85f, 0.85f), 6f, 1.8f);
+
+			return Save(root, "Furniture");
+		}
+
+		private static GameObject Telescope()
+		{
+			var root = Root("Telescope");
+			var t = root.transform;
+
+			foreach (var angle in new[] { 0f, 120f, 240f })
+				Prim(PrimitiveType.Cylinder, "Leg", t, Quaternion.Euler(0, angle, 0) * new Vector3(0, 0.55f, 0.22f), new Vector3(0.05f, 0.58f, 0.05f), Wood, false,
+					new Vector3(-20f, angle, 0));
+
+			var brass = Lit("Brass", new Color(0.85f, 0.65f, 0.3f), 0.8f);
+
+			Prim(PrimitiveType.Cylinder, "Tube", t, new Vector3(0, 1.2f, 0.1f), new Vector3(0.16f, 0.55f, 0.16f), brass, true, new Vector3(-55f, 0, 0));
+			Prim(PrimitiveType.Cylinder, "Lens", t, new Vector3(0, 1.52f, 0.55f), new Vector3(0.2f, 0.04f, 0.2f), Lit("LensGlow", new Color(0.6f, 0.8f, 1f), 0.95f, new Color(0.4f, 0.6f, 1f) * 0.8f), false, new Vector3(-55f, 0, 0));
+
+			return Save(root, "Furniture");
+		}
+
 		private static GameObject GlowcapLamp()
 		{
 			var root = Root("GlowcapLamp");
@@ -747,7 +810,7 @@ namespace WitchCraftEditor
 				"\"I'd come down to live with you, but my wings are tired. A Swiftness Brew would see me there in no time.\"",
 				("swiftness_brew", 1),
 				"\"Hoo hoo! Already I feel younger. I'll meet you at your hearth.\"",
-				new[] { "\"From my perch, your home looks like a little lantern.\"", "\"Wisdom is mostly sitting still and listening. And snacks.\"", "\"The fox spirit in the crystal cave is lonely. Bring her something that glows.\"" },
+				new[] { "\"From my perch, your home looks like a little lantern.\"", "\"Wisdom is mostly sitting still and listening. And snacks.\"", "\"The fox spirit in the crystal cave is lonely. Bring her something that glows.\"", "\"Far to the north, past the sea stacks, there's an island with a turtle who never hurries. A broom could hop the stacks.\"" },
 				new[] { "moonpetal", "feather_down", "leaping_tonic" });
 
 			hoot.Nocturnal = true;
@@ -764,6 +827,31 @@ namespace WitchCraftEditor
 				new[] { "ember_moss", "crystal", "glimmer_draught" });
 
 			ember.FavouriteFurniture = Database.FindBuildPiece("lamp");
+
+			var tilly = AddCompanion("tilly", "Tilly", "Turtle", new Color(0.4f, 0.68f, 0.55f), Turtle(),
+				"\"Oh, hello dear. Slowly does it. I'm Tilly. I've been sunning myself on this beach since before the sea stacks were stacked.\"",
+				"\"I've always fancied a garden to doze in. Bring me three pearls from the giant clams and I'll make the trip. It may take me a while.\"",
+				("pearl", 3),
+				"\"Off we go then. Don't wait up, I'll be there by supper. Possibly next supper.\"",
+				new[] { "\"Hurrying is for crabs.\"", "\"When the sea is calm you can walk on it, if you know the right brew.\"", "\"That little star sprite up on the ridge only comes out at night. Lovely girl. Terribly bright.\"" },
+				new[] { "kelp", "seashell", "moonpetal" });
+
+			tilly.FavouriteFurniture = Database.FindBuildPiece("shell_lamp");
+
+			AddReward(tilly, 4, recipes["seafoam"], null, "\"Here's my grandmother's Seafoam Draught. Spring Water, two Kelp, boil twice, then a ground Glowcap. The sea will hold you up like a friend.\"");
+
+			var nova = AddCompanion("nova", "Nova", "Star Sprite", new Color(1f, 0.88f, 0.55f), StarSprite(),
+				"\"Twinkle! A visitor from all the way down there? Nobody visits!\"",
+				"\"My light's been fading lately. Four pinches of stardust would brighten me right up. It only settles up here after dark.\"",
+				("stardust", 4),
+				"\"Ooh, a real house, with a roof to sit on! I'll shine for you every night.\"",
+				new[] { "\"I can see your house from here. It's the cosy little light.\"", "\"Stars don't walk. We sort of... skip.\"", "\"Have you seen a telescope? I'd love to see the stars from the other side.\"" },
+				new[] { "stardust", "crystal", "glimmer_draught" });
+
+			nova.Nocturnal = true;
+			nova.FavouriteFurniture = Database.FindBuildPiece("telescope");
+
+			AddReward(nova, 5, null, null, "\"A secret, from one star to another: Astra and Motus together make a star's quick step. Try it in your spellbook!\"");
 
 			AddReward(ember, 6, null, null, "\"I will tell you a secret, friend: light and life together make a little friend of their own. Lux and Vita.\"");
 		}
@@ -901,6 +989,58 @@ namespace WitchCraftEditor
 			}
 
 			MeshObject("Beak", v, Cone(), new Vector3(0, 0.52f, 0.27f), new Vector3(0.06f, 0.1f, 0.06f), amber, false, new Vector3(150f, 0, 0));
+
+			return SaveCompanion(root);
+		}
+
+		private static GameObject Turtle()
+		{
+			var root = CompanionRoot("Turtle", out var v);
+
+			var shell = Lit("TurtleShell", new Color(0.38f, 0.5f, 0.3f), 0.5f);
+			var plates = Lit("TurtlePlates", new Color(0.55f, 0.65f, 0.35f), 0.5f);
+			var skin = Lit("TurtleSkin", new Color(0.55f, 0.75f, 0.6f));
+
+			Prim(PrimitiveType.Sphere, "Shell", v, new Vector3(0, 0.3f, 0), new Vector3(0.85f, 0.5f, 1f), shell, false);
+
+			for (var i = 0; i < 6; i++)
+			{
+				var angle = i * 60f * Mathf.Deg2Rad;
+				Prim(PrimitiveType.Sphere, "Plate", v, new Vector3(Mathf.Cos(angle) * 0.22f, 0.5f, Mathf.Sin(angle) * 0.26f), new Vector3(0.22f, 0.06f, 0.22f), plates, false);
+			}
+
+			Prim(PrimitiveType.Sphere, "Head", v, new Vector3(0, 0.3f, 0.58f), new Vector3(0.28f, 0.26f, 0.32f), skin, false);
+
+			foreach (var side in new[] { -1f, 1f })
+			{
+				Prim(PrimitiveType.Sphere, "Flipper", v, new Vector3(side * 0.4f, 0.12f, 0.3f), new Vector3(0.3f, 0.08f, 0.18f), skin, false, new Vector3(0, side * 30f, 0));
+				Prim(PrimitiveType.Sphere, "Flipper", v, new Vector3(side * 0.35f, 0.12f, -0.35f), new Vector3(0.22f, 0.07f, 0.15f), skin, false, new Vector3(0, -side * 30f, 0));
+			}
+
+			Eyes(v, 0.37f, 0.7f, 0.08f, 0.07f);
+
+			return SaveCompanion(root);
+		}
+
+		private static GameObject StarSprite()
+		{
+			var root = CompanionRoot("StarSprite", out var v);
+
+			var glow = Lit("StarGlow", new Color(1f, 0.92f, 0.6f), 0.6f, new Color(1f, 0.85f, 0.45f) * 2.5f);
+			var wing = Transparent("StarWing", new Color(0.85f, 0.9f, 1f, 0.45f), 0.9f);
+
+			// A five pointed star body around a round, smiling core
+			for (var i = 0; i < 5; i++)
+				Prim(PrimitiveType.Cube, "Point", v, new Vector3(0, 0.75f, 0) + Quaternion.Euler(0, 0, i * 72f) * Vector3.up * 0.22f, new Vector3(0.14f, 0.3f, 0.1f), glow, false, new Vector3(0, 0, i * 72f));
+
+			Prim(PrimitiveType.Sphere, "Core", v, new Vector3(0, 0.75f, 0), Vector3.one * 0.34f, glow, false);
+
+			foreach (var side in new[] { -1f, 1f })
+				Prim(PrimitiveType.Sphere, "Wing", v, new Vector3(side * 0.28f, 0.85f, -0.12f), new Vector3(0.3f, 0.18f, 0.04f), wing, false, new Vector3(0, side * 25f, side * 20f));
+
+			Eyes(v, 0.8f, 0.16f, 0.07f, 0.06f);
+
+			PointLight(v, new Vector3(0, 0.75f, 0), new Color(1f, 0.88f, 0.55f), 6f, 2f);
 
 			return SaveCompanion(root);
 		}
