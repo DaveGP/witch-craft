@@ -49,7 +49,10 @@ namespace Spells.Effects
 				return;
 
 			if (hovered != null)
+			{
 				RendererTint.Clear(hovered.gameObject);
+				hovered.GetComponent<Paintable>()?.Apply();
+			}
 
 			hovered = piece;
 

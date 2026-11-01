@@ -535,6 +535,7 @@ GameObject:
   m_Component:
   - component: {fileID: 755247253827347515}
   - component: {fileID: 7247932976580328251}
+  - component: {fileID: 6487701888741943467}
   m_Layer: 6
   m_Name: Bed
   m_TagString: Untagged
@@ -575,3 +576,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84b5ca6dbb7a3410982430016173d835, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Home.Bed
+--- !u!114 &6487701888741943467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8787739208973386722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47dd2bd2d900b4445a6ec6f04e8d036f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
+  surfaces:
+  - {fileID: 936593427335381983}
+  - {fileID: 5727469962593456625}
+  - {fileID: 2839942418055459376}

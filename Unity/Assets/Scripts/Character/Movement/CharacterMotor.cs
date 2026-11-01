@@ -148,6 +148,12 @@ namespace Character.Movement
 			if (action.HasFlag(CharacterAction.AltCast))
 				actionController.OnAltCast();
 
+			if (action.HasFlag(CharacterAction.Undo))
+				actionController.OnUndo();
+
+			if (action.HasFlag(CharacterAction.Pick))
+				actionController.OnPick();
+
 			actionController.OnSpellAdjust(characterInput.Rotate, characterInput.Scroll);
 		}
 

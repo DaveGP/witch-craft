@@ -71,6 +71,10 @@ namespace Spells.Effects
 
 		public virtual void AltCast() { }
 
+		public virtual void Undo() { }
+
+		public virtual void Pick() { }
+
 		public virtual void Adjust(float rotate, float scroll) { }
 
 		/// <summary>

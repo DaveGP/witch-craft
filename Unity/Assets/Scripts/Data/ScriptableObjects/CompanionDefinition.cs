@@ -33,6 +33,9 @@ namespace Data.ScriptableObjects
 
 		public List<ItemDefinition> LikedGifts = new();
 
+		[Tooltip("A piece of furniture that makes them especially happy to have at home")]
+		public BuildPieceDefinition FavouriteFurniture;
+
 		public List<FriendshipReward> Rewards = new();
 	}
 

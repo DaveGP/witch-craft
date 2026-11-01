@@ -3,6 +3,7 @@ using Alchemy;
 using Character.Interfaces;
 using Data.ScriptableObjects;
 using Interaction.Interfaces;
+using Spells.Interfaces;
 using UnityEngine;
 using UserInterface;
 
@@ -45,5 +46,7 @@ namespace Events.Interfaces
 		event Action<Vector3> PieceRemoved;
 
 		event Action<string> ObjectiveChanged;
+
+		event Action<IBuildPalette> BuildCatalogueRequested;
 	}
 }

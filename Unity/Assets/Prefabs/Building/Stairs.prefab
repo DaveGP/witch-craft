@@ -905,6 +905,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8789205915517983906}
+  - component: {fileID: 4993023413031247452}
   m_Layer: 6
   m_Name: Stairs
   m_TagString: Untagged
@@ -935,3 +936,24 @@ Transform:
   - {fileID: 8328552776415672443}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4993023413031247452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7241872460100368831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47dd2bd2d900b4445a6ec6f04e8d036f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
+  surfaces:
+  - {fileID: 194222063211353204}
+  - {fileID: 795255780301556159}
+  - {fileID: 1293445706517738073}
+  - {fileID: 7878795200306403555}
+  - {fileID: 2627873695800204161}
+  - {fileID: 1622608538496353790}
+  - {fileID: 6966860785212577179}
+  - {fileID: 930554111307317235}

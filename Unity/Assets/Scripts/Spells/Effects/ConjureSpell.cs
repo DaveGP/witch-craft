@@ -6,16 +6,20 @@ using DependencyInjection;
 using Home;
 using Home.Interfaces;
 using Items.Interfaces;
+using Spells.Interfaces;
 using UnityEngine;
 using Utilities;
 
 namespace Spells.Effects
 {
 	// Terra + Forma. The building spell: shows a ghost of the chosen piece snapped to the home grid and
-	// conjures it from materials in the satchel. Scroll picks the piece, right-click swaps between
-	// structures and furniture, Q/R rotates.
-	public class ConjureSpell : SpellEffect
+	// conjures it, in the chosen colour, from materials in the satchel. Right-click opens the build catalogue
+	// (pieces, colours, the paintbrush and undo); scroll steps through pieces, Q/R rotates, Z undoes the last
+	// piece and middle-click copies a built piece's type, colour and rotation.
+	public class ConjureSpell : SpellEffect, IBuildPalette
 	{
+		private const int UndoDepth = 30;
+
 		public override SpellEffectType Type => SpellEffectType.Conjure;
 
 		public override bool CapturesScroll => true;
@@ -24,28 +28,49 @@ namespace Spells.Effects
 		{
 			get
 			{
-				var piece = Current;
+				var colourName = HomePalette.Entries[colour].Name;
+
+				if (painting)
+					return hoveredPiece != null
+						? $"Paint {hoveredPiece.Definition.DisplayName} {colourName}: click · right-click: catalogue"
+						: $"Paintbrush ({colourName}): aim at something you built · right-click: catalogue";
+
+				var piece = selected;
 
 				if (piece == null)
 					return "Conjure: nothing to build yet";
 
-				var other = category == BuildCategory.Structure ? "furniture" : "structures";
-
-				return $"Conjure {piece.DisplayName} ({piece.CostSummary}) · scroll: next · Q/R: rotate · right-click: {other}";
+				return $"Conjure {piece.DisplayName} ({piece.CostSummary}) · {colourName} · scroll: next · Q/R: rotate · right-click: catalogue · Z: undo · middle-click: copy";
 			}
 		}
+
+		public BuildPieceDefinition Selected => painting ? null : selected;
+
+		public bool Painting => painting;
+
+		public int Colour => colour;
+
+		public bool CanUndo => history.Any(piece => piece != null);
+
+		public IReadOnlyList<BuildPieceDefinition> AllPieces => Database.BuildPieces;
+
+		public int HomeLevel => home?.Level ?? 1;
 
 		private readonly Color validColour = new(0.55f, 1f, 0.65f, 0.45f);
 
 		private readonly Color invalidColour = new(1f, 0.4f, 0.4f, 0.4f);
 
+		private readonly List<PlacedPiece> history = new();
+
 		private IInventory inventory;
 
 		private IHomeService home;
 
-		private BuildCategory category = BuildCategory.Structure;
+		private BuildPieceDefinition selected;
 
-		private int index;
+		private bool painting;
+
+		private int colour;
 
 		private int rotationSteps;
 
@@ -67,6 +92,8 @@ namespace Spells.Effects
 
 		private Quaternion spotRotation;
 
+		private PlacedPiece hoveredPiece;
+
 		protected override void Awake()
 		{
 			base.Awake();
@@ -77,24 +104,13 @@ namespace Spells.Effects
 				Debug.LogError($"{nameof(inventory)} is null");
 		}
 
-		private List<BuildPieceDefinition> Pieces
-			=> home == null
-				? new List<BuildPieceDefinition>()
-				: Database.BuildPieces.Where(piece => piece.Category == category && piece.RequiredHomeLevel <= home.Level).ToList();
-
-		private BuildPieceDefinition Current
-		{
-			get
-			{
-				var pieces = Pieces;
-
-				return pieces.Count == 0 ? null : pieces[Mathf.Abs(index) % pieces.Count];
-			}
-		}
+		private bool Unlocked(BuildPieceDefinition piece) => home != null && piece.RequiredHomeLevel <= home.Level;
 
 		protected override void OnBegin()
 		{
 			home = ServiceLocator.Get<IHomeService>();
+
+			selected ??= Database.BuildPieces.FirstOrDefault(Unlocked);
 
 			validMaterial ??= new Material(Database.GhostMaterial) { color = validColour };
 			invalidMaterial ??= new Material(Database.GhostMaterial) { color = invalidColour };
@@ -103,18 +119,84 @@ namespace Spells.Effects
 		protected override void OnEnd()
 		{
 			DestroyGhost();
+			SetHovered(null);
 		}
+
+		#region Build palette
+
+		public void Select(BuildPieceDefinition piece)
+		{
+			if (piece == null || !Unlocked(piece))
+				return;
+
+			selected = piece;
+			painting = false;
+		}
+
+		public void SelectPaintbrush()
+		{
+			painting = true;
+		}
+
+		public void SetColour(int newColour)
+		{
+			colour = HomePalette.Clamp(newColour);
+		}
+
+		public override void Undo()
+		{
+			// Skip anything already unmade or moved out of existence
+			while (history.Count > 0)
+			{
+				var last = history[^1];
+				history.RemoveAt(history.Count - 1);
+
+				if (last == null)
+					continue;
+
+				var name = last.Definition.DisplayName;
+
+				home.Remove(last, true);
+
+				EventBus.Notify($"Undid {name}. Materials returned.");
+				return;
+			}
+
+			EventBus.Notify("Nothing to undo.");
+		}
+
+		#endregion
 
 		public override void AltCast()
 		{
-			category = category == BuildCategory.Structure ? BuildCategory.Furniture : BuildCategory.Structure;
-			index = 0;
+			if (home != null)
+				EventBus.OpenBuildCatalogue(this);
+		}
+
+		public override void Pick()
+		{
+			if (!Aim(out var hit))
+				return;
+
+			var piece = hit.collider.GetComponentInParent<PlacedPiece>();
+
+			if (piece == null)
+				return;
+
+			selected = piece.Definition;
+			painting = false;
+			colour = piece.Record.Colour;
+
+			var step = piece.Definition.Snap == BuildSnap.Free ? 45f : 90f;
+			rotationSteps = Mathf.RoundToInt(piece.Record.Yaw / step);
+
+			EventBus.Notify($"Copied {piece.Definition.DisplayName} ({HomePalette.Entries[colour].Name}).");
 		}
 
 		public override void Adjust(float rotate, float scroll)
 		{
-			if (Mathf.Abs(scroll) > 0.01f)
-				index += scroll > 0 ? 1 : -1;
+			if (Mathf.Abs(scroll) > 0.01f && !painting)
+				Step(scroll > 0 ? 1 : -1);
 
 			// Rotate is an axis; step once per press
 			var sign = Mathf.Abs(rotate) > 0.5f ? Mathf.Sign(rotate) : 0f;
@@ -125,9 +207,28 @@ namespace Spells.Effects
 			lastRotate = sign;
 		}
 
+		// Scroll through unlocked pieces of the same kind as the current one
+		private void Step(int direction)
+		{
+			if (selected == null)
+				return;
+
+			var pieces = Database.BuildPieces.Where(piece => piece.Category == selected.Category && Unlocked(piece)).ToList();
+
+			var index = pieces.IndexOf(selected);
+
+			selected = pieces[(index + direction + pieces.Count) % pieces.Count];
+		}
+
 		public override void Cast()
 		{
-			var piece = Current;
+			if (painting)
+			{
+				PaintHovered();
+				return;
+			}
+
+			var piece = selected;
 
 			if (piece == null)
 				return;
@@ -152,7 +253,27 @@ namespace Spells.Effects
 
 			inventory.RemoveAll(piece.Cost);
 
-			home.Place(piece, spotPosition, spotRotation);
+			var placed = home.Place(piece, spotPosition, spotRotation, colour);
+
+			history.Add(placed);
+
+			if (history.Count > UndoDepth)
+				history.RemoveAt(0);
+		}
+
+		private void PaintHovered()
+		{
+			if (hoveredPiece == null)
+			{
+				EventBus.Notify("Aim at something you built to paint it.");
+				return;
+			}
+
+			var piece = hoveredPiece;
+
+			SetHovered(null);
+
+			home.Paint(piece, colour);
 		}
 
 		private void LateUpdate()
@@ -160,7 +281,21 @@ namespace Spells.Effects
 			if (!IsReadied || home == null)
 				return;
 
-			var piece = Current;
+			if (painting)
+			{
+				DestroyGhost();
+				SetHovered(Aim(out var paintHit) ? paintHit.collider.GetComponentInParent<PlacedPiece>() : null);
+				return;
+			}
+
+			SetHovered(null);
+
+			UpdateGhost();
+		}
+
+		private void UpdateGhost()
+		{
+			var piece = selected;
 
 			if (piece != ghostPiece)
 				CreateGhost(piece);
@@ -194,6 +329,24 @@ namespace Spells.Effects
 			var valid = inPlot && hasSpot && inventory.Has(piece.Cost);
 
 			RendererTint.SetMaterial(ghost, valid ? validMaterial : invalidMaterial);
+		}
+
+		// Preview the paint on whatever the brush is over
+		private void SetHovered(PlacedPiece piece)
+		{
+			if (piece == hoveredPiece)
+				return;
+
+			if (hoveredPiece != null)
+			{
+				RendererTint.Clear(hoveredPiece.gameObject);
+				hoveredPiece.GetComponent<Paintable>()?.Apply();
+			}
+
+			hoveredPiece = piece;
+
+			if (hoveredPiece != null)
+				RendererTint.Apply(hoveredPiece.gameObject, colour == 0 ? Color.white : HomePalette.Entries[colour].Colour, 0.3f);
 		}
 
 		private void CreateGhost(BuildPieceDefinition piece)

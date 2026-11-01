@@ -30,6 +30,10 @@ namespace Spells.Interfaces
 
 		void AltCast();
 
+		void Undo();
+
+		void Pick();
+
 		void Adjust(float rotate, float scroll);
 	}
 }

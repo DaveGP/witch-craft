@@ -20,6 +20,9 @@ namespace Data.ScriptableObjects
 
 		public int RequiredHomeLevel = 1;
 
+		[Tooltip("How much this piece adds to the home's comfort")]
+		public int Comfort;
+
 		public List<ItemStack> Cost = new();
 
 		public string CostSummary

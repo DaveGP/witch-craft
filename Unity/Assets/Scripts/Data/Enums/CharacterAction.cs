@@ -30,6 +30,10 @@ namespace Data.Enums
 
 		Spell3 = 1 << 10,
 
-		Spell4 = 1 << 11
+		Spell4 = 1 << 11,
+
+		Undo = 1 << 12,
+
+		Pick = 1 << 13
 	}
 }

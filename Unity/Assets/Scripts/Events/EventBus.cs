@@ -3,6 +3,7 @@ using Alchemy;
 using Character.Interfaces;
 using Data.ScriptableObjects;
 using Interaction.Interfaces;
+using Spells.Interfaces;
 using UnityEngine;
 using UserInterface;
 
@@ -48,6 +49,8 @@ namespace Events
 		public event Action<Vector3> PieceRemoved;
 
 		public event Action<string> ObjectiveChanged;
+
+		public event Action<IBuildPalette> BuildCatalogueRequested;
 
 
 		public void SetActiveTarget(IObserverTarget target)
@@ -103,5 +106,8 @@ namespace Events
 
 		public void SetObjective(string objective)
 			=> ObjectiveChanged?.Invoke(objective);
+
+		public void OpenBuildCatalogue(IBuildPalette palette)
+			=> BuildCatalogueRequested?.Invoke(palette);
 	}
 }

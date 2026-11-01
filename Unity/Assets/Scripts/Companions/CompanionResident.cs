@@ -96,6 +96,8 @@ namespace Companions
 
 			var friendship = roster.Friendship(companion);
 
+			var home = ServiceLocator.Get<IHomeService>();
+
 			var line = companion.ChatLines.Count > 0 ? companion.ChatLines[Random.Range(0, companion.ChatLines.Count)] : companion.Greeting;
 
 			var body = $"{line}\n\n<i>Friendship: {Hearts(friendship)}</i>";
@@ -105,10 +107,19 @@ namespace Companions
 			if (next > 0)
 				body += $"<i>  ({next - friendship} more until they share a secret)</i>";
 
+			var favourite = companion.FavouriteFurniture;
+
+			if (favourite != null && home != null)
+				body += home.Has(favourite)
+					? $"\n<i>They adore your {favourite.DisplayName}.</i>"
+					: $"\n<i>They keep mentioning how lovely a {favourite.DisplayName} would be.</i>";
+
 			if (Time.time >= nextChatFriendship)
 			{
 				nextChatFriendship = Time.time + ChatCooldown;
-				Grant(1);
+
+				// A comfortable home makes for warmer chats
+				Grant(home != null && home.Comfort >= 12 ? 2 : 1);
 			}
 
 			var options = companion.LikedGifts
@@ -128,7 +139,9 @@ namespace Companions
 
 			FxUtility.Burst(transform.position + Vector3.up * 0.8f, new Color(1f, 0.5f, 0.7f), 20, 2f, 0.22f);
 
-			var rewards = Grant(3);
+			var comfort = ServiceLocator.Get<IHomeService>()?.Comfort ?? 0;
+
+			var rewards = Grant(3 + Mathf.Min(2, comfort / 15));
 
 			var body = $"\"Oh! {item.DisplayName}! You remembered!\"";
 

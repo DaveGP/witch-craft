@@ -38,6 +38,8 @@ namespace UserInterface
 
 		private TitleView title;
 
+		private CatalogueView catalogue;
+
 		private View current;
 
 		private void Awake()
@@ -65,18 +67,21 @@ namespace UserInterface
 			pause = AddView<PauseView>(canvas, "Pause");
 			settings = AddView<SettingsView>(canvas, "Settings");
 			title = AddView<TitleView>(canvas, "Title");
+			catalogue = AddView<CatalogueView>(canvas, "Catalogue");
 
 			pause.OpenSettings = () => ShowSettings(pause);
 			title.OpenSettings = () => ShowSettings(title);
 
 			eventBus.AlchemyOpened += OpenAlchemy;
 			eventBus.DialogueRequested += OpenDialogue;
+			eventBus.BuildCatalogueRequested += OpenCatalogue;
 		}
 
 		private void OnDestroy()
 		{
 			eventBus.AlchemyOpened -= OpenAlchemy;
 			eventBus.DialogueRequested -= OpenDialogue;
+			eventBus.BuildCatalogueRequested -= OpenCatalogue;
 		}
 
 		private void Start()
@@ -203,6 +208,16 @@ namespace UserInterface
 			current = alchemy;
 
 			alchemy.Show(station);
+		}
+
+		private void OpenCatalogue(Spells.Interfaces.IBuildPalette palette)
+		{
+			if (current != null)
+				return;
+
+			current = catalogue;
+
+			catalogue.Show(palette);
 		}
 
 		private void OpenDialogue(DialogueRequest request)

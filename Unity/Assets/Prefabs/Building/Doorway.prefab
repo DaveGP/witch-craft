@@ -413,6 +413,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6376372759159174178}
+  - component: {fileID: 2530845156180550864}
   m_Layer: 6
   m_Name: Doorway
   m_TagString: Untagged
@@ -440,6 +441,24 @@ Transform:
   - {fileID: 9220095310760457357}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2530845156180550864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7056142476136245009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47dd2bd2d900b4445a6ec6f04e8d036f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
+  surfaces:
+  - {fileID: 4566048642518951914}
+  - {fileID: 6470648940769529196}
+  - {fileID: 8395921051405685375}
+  - {fileID: 5450372815666396419}
+  - {fileID: 4438564425206272694}
 --- !u!1 &8463391869274399961
 GameObject:
   m_ObjectHideFlags: 0

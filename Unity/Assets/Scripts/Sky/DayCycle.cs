@@ -26,6 +26,8 @@ namespace Sky
 
 		public float Darkness { get; private set; }
 
+		public event System.Action<int> NewDay;
+
 		public string PeriodName => Hour switch
 		{
 			< DawnHour => "Night",
@@ -123,6 +125,7 @@ namespace Sky
 			{
 				Hour -= 24f;
 				Day++;
+				NewDay?.Invoke(Day);
 			}
 
 			Apply();
@@ -130,10 +133,15 @@ namespace Sky
 
 		public void SkipTo(float hour)
 		{
-			if (hour <= Hour)
-				Day++;
+			var nextDay = hour <= Hour;
 
 			Hour = Mathf.Repeat(hour, 24f);
+
+			if (nextDay)
+			{
+				Day++;
+				NewDay?.Invoke(Day);
+			}
 
 			Apply();
 		}

@@ -8,6 +8,8 @@ namespace Data.Enums
 			CharacterAction.Cast |
 			CharacterAction.AltCast |
 			CharacterAction.ToggleBroom |
+			CharacterAction.Undo |
+			CharacterAction.Pick |
 			SpellSlots;
 
 		public const CharacterAction Continuous =

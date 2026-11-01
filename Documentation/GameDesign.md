@@ -99,6 +99,10 @@ You start knowing Forma, Terra and Aer, so Conjure and Levitate are available fr
 
 The plot starts 8 cells (16m) across with a starter hut. Walls snap to cell edges, floors and roofs to cells, and pieces stack in storeys of 2.5m, so stairs and upper floors work. Furniture sits freely on a finer grid.
 
+**Conjuring.** Right-click opens the build catalogue: every piece with its cost (red when you're short), its comfort, and the home level it unlocks at, plus ten paint colours. New pieces are conjured in the chosen colour; the catalogue's paintbrush repaints anything already built, for free. Z undoes the last piece conjured with a full refund, and middle-click (or V) copies a built piece's type, colour and rotation, which makes building runs of matching walls quick.
+
+**Comfort.** Furniture (and windows and roofs, a little) add comfort, shown on the HUD and at the hearth. Each morning every resident grows fonder: +1, plus 1 for every 10 comfort (up to +3), plus 1 if their favourite piece is in the home. A comfortable home (12+) also makes chats worth more, and gifts are worth more as comfort rises. Favourites: Pip the herb planter, Bramble the rug, Hoot the bookshelf, Ember the crystal lamp.
+
 | Level | Plot | Needs |
 | ----- | ---- | ----- |
 | 1 | 8 × 8 cells | - |

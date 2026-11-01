@@ -8,6 +8,10 @@ namespace Spells.Interfaces
 
 		public void AltCast();
 
+		public void Undo();
+
+		public void Pick();
+
 		/// <summary>
 		/// Continuous rotate axis and buffered scroll for spells that position things.
 		/// </summary>

@@ -23,6 +23,10 @@ namespace Home
 
 		public HomePlot Plot => plot;
 
+		public int Comfort => pieces.Where(piece => piece != null).Sum(piece => piece.Definition.Comfort);
+
+		public bool Has(BuildPieceDefinition piece) => pieces.Any(placed => placed != null && placed.Definition == piece);
+
 		public HomeLevel NextLevel => Level < database.HomeLevels.Count ? database.HomeLevels[Level] : null;
 
 		[SerializeField] private HomePlot plot;
@@ -141,9 +145,9 @@ namespace Home
 				&& (piece.Snap != BuildSnap.Wall || Quaternion.Angle(placed.transform.rotation, snappedRotation) < 1f || Quaternion.Angle(placed.transform.rotation, snappedRotation) > 179f));
 		}
 
-		public PlacedPiece Place(BuildPieceDefinition piece, Vector3 position, Quaternion rotation)
+		public PlacedPiece Place(BuildPieceDefinition piece, Vector3 position, Quaternion rotation, int colour = 0)
 		{
-			var pieceRecord = new PieceRecord { Id = piece.Id, Position = position, Yaw = rotation.eulerAngles.y };
+			var pieceRecord = new PieceRecord { Id = piece.Id, Position = position, Yaw = rotation.eulerAngles.y, Colour = HomePalette.Clamp(colour) };
 
 			record.Pieces.Add(pieceRecord);
 
@@ -173,6 +177,22 @@ namespace Home
 			Destroy(piece.gameObject);
 		}
 
+		public void Paint(PlacedPiece piece, int colour)
+		{
+			if (piece == null)
+				return;
+
+			piece.Record.Colour = HomePalette.Clamp(colour);
+
+			piece.GetComponent<Paintable>()?.Paint(piece.Record.Colour);
+
+			var shade = HomePalette.Entries[piece.Record.Colour].Colour;
+
+			FxUtility.Burst(piece.transform.position + Vector3.up * 0.8f, shade, 24, 2f, 0.2f);
+
+			eventBus.PlacePiece(piece.transform.position);
+		}
+
 		public void NotifyMoved(PlacedPiece piece)
 		{
 			if (piece == null)
@@ -191,6 +211,8 @@ namespace Home
 			var placed = instance.GetComponent<PlacedPiece>() ?? instance.AddComponent<PlacedPiece>();
 
 			placed.Initialise(piece, pieceRecord);
+
+			instance.GetComponent<Paintable>()?.Paint(pieceRecord.Colour);
 
 			if (piece.Category == BuildCategory.Furniture && instance.GetComponent<Movable>() == null)
 				instance.AddComponent<Movable>();

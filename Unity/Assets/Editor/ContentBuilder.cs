@@ -313,6 +313,29 @@ namespace WitchCraftEditor
 		private static void Furniture(string id, string name, int level, GameObject prefab, params (string item, int amount)[] cost)
 			=> AddPiece(id, name, BuildCategory.Furniture, BuildSnap.Free, level, prefab, cost);
 
+		// How cosy each piece makes the home
+		private static readonly Dictionary<string, int> comfort = new()
+		{
+			{ "wall_window", 1 }, { "roof_thatch", 1 }, { "roof_slate", 1 },
+			{ "bed", 3 }, { "table", 2 }, { "chair", 1 }, { "rug", 2 }, { "cat_bed", 2 }, { "planter", 2 },
+			{ "lamp", 2 }, { "bookshelf", 3 }, { "potion_shelf", 2 }, { "armchair", 4 }, { "glowcap_lamp", 4 },
+		};
+
+		private static readonly HashSet<string> paintableMaterials = new()
+		{
+			"Plaster", "Wood", "Stone", "Thatch", "Slate", "Clay", "Cloth_Plum", "Cloth_Rose", "Cloth_Moss",
+		};
+
+		// Main surfaces take paint; trims, glass, cushions and lights keep their own colour
+		private static void AddPaintable(GameObject root)
+		{
+			var surfaces = root.GetComponentsInChildren<Renderer>(true)
+				.Where(renderer => renderer.sharedMaterial != null && paintableMaterials.Contains(renderer.sharedMaterial.name))
+				.ToArray();
+
+			root.AddComponent<Paintable>().SetSurfaces(surfaces);
+		}
+
 		private static void AddPiece(string id, string name, BuildCategory category, BuildSnap snap, int level, GameObject prefab, (string item, int amount)[] cost)
 		{
 			var piece = LoadOrCreate<BuildPieceDefinition>($"{DataFolder}/BuildPieces/{id}.asset");
@@ -322,6 +345,7 @@ namespace WitchCraftEditor
 			piece.Category = category;
 			piece.Snap = snap;
 			piece.RequiredHomeLevel = level;
+			piece.Comfort = comfort.TryGetValue(id, out var cosiness) ? cosiness : 0;
 			piece.Prefab = prefab;
 			piece.Cost = cost.Select(entry => new ItemStack(items[entry.item], entry.amount)).ToList();
 
@@ -341,6 +365,8 @@ namespace WitchCraftEditor
 		private static GameObject Save(GameObject root, string folder)
 		{
 			SetLayer(root, EnvironmentLayer);
+
+			AddPaintable(root);
 
 			return SavePrefab(root, $"{PrefabFolder}/{folder}/{root.name}.prefab");
 		}
@@ -452,6 +478,8 @@ namespace WitchCraftEditor
 
 			root.AddComponent<Bed>();
 
+			AddPaintable(root);
+
 			var zone = Node("Interact", t, new Vector3(0, 0.6f, 0));
 			Trigger(zone, 1.1f);
 
@@ -556,6 +584,8 @@ namespace WitchCraftEditor
 
 			SetLayer(root, EnvironmentLayer);
 			SetLayer(harvest, Interactable);
+
+			AddPaintable(root);
 
 			return SavePrefab(root, $"{PrefabFolder}/Furniture/{root.name}.prefab");
 		}
@@ -695,6 +725,8 @@ namespace WitchCraftEditor
 				new[] { "\"Did you know lily pads are just pond plates?\"", "\"I counted the stars last night. I got to eleven and fell asleep.\"", "\"Sable keeps watching me. I don't think she wants to be friends. I think she wants a snack.\"" },
 				new[] { "glowcap", "wild_berry", "moonpetal" });
 
+			pip.FavouriteFurniture = Database.FindBuildPiece("planter");
+
 			AddReward(pip, 3, recipes["glimmer"], null, "\"Here, my family's secret: Glimmer Draught. Moon Dew, two ground Glowcaps, boil, a Moonpetal, boil again. You'll sparkle!\"");
 			AddReward(pip, 9, null, null, "\"You're my best friend. Don't tell the newts.\"");
 
@@ -705,6 +737,8 @@ namespace WitchCraftEditor
 				"\"Right then. I'll pack my things. Which is to say, I'll roll there.\"",
 				new[] { "\"The lavender in your planters wants more sun. Or less. One of those.\"", "\"Nettles are misunderstood. Like me.\"", "\"I heard the owl up in the sky islands keeps recipes in his nest.\"" },
 				new[] { "wild_berry", "lavender", "nettle" });
+
+			bramble.FavouriteFurniture = Database.FindBuildPiece("rug");
 
 			AddReward(bramble, 5, recipes["featherfall"], null, "\"Found this page in a hedge. Featherfall Elixir. Moon Dew, two Feather Down, ground Lavender, one boil.\"");
 
@@ -717,6 +751,7 @@ namespace WitchCraftEditor
 				new[] { "moonpetal", "feather_down", "leaping_tonic" });
 
 			hoot.Nocturnal = true;
+			hoot.FavouriteFurniture = Database.FindBuildPiece("bookshelf");
 
 			AddReward(hoot, 4, recipes["skyward"], null, "\"Take this: Skyward Draught. Spring Water, a Moonpetal, ground Feather Down, Ember Moss, and three long boils. Your broom will never tire.\"");
 
@@ -727,6 +762,8 @@ namespace WitchCraftEditor
 				"\"It's so bright! Thank you, witch. I will keep your hearth warm, always.\"",
 				new[] { "\"Your hearth is the cosiest fire I've ever slept beside.\"", "\"Crystals hum if you listen closely. These ones hum in B flat.\"", "\"Pip asked if I was a very orange dog. I have decided to allow it.\"" },
 				new[] { "ember_moss", "crystal", "glimmer_draught" });
+
+			ember.FavouriteFurniture = Database.FindBuildPiece("lamp");
 
 			AddReward(ember, 6, null, null, "\"I will tell you a secret, friend: light and life together make a little friend of their own. Lux and Vita.\"");
 		}

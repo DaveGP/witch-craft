@@ -16,6 +16,8 @@ Run, jump and fly around a little island gathering herbs for potions, glyphs for
 * An alchemy bench brewing minigame: follow recipes step by step, grind in the mortar, keep the fire in the boiling band with the bellows while the hourglass runs
 * A spellbook where you combine glyphs to discover spells
 * Building spells: Conjure walls, floors, roofs and furniture onto a snapping grid, Levitate furniture to rearrange it, Unmake to get materials back
+* A build catalogue with costs and comfort, ten paint colours and a paintbrush, undo, and copying a built piece's type and colour
+* Home comfort: furniture makes companions fonder each morning, especially their favourite piece
 * Companions to recruit with gifts, who live at home and reward friendship with recipes
 * A home plot that expands as you gather materials and friends
 * A guided first five minutes: Sable suggests what to try next, with a beacon showing where
@@ -105,6 +107,9 @@ The playtest deletes your local save before it runs.
 | Cast                | Left mouse       |
 | Spell alternate (cancel, swap category) | Right mouse |
 | Rotate held or conjured piece | Q / R  |
+| Build catalogue (with Conjure) | Right mouse |
+| Undo last conjured piece | Z |
+| Copy a built piece (with Conjure) | Middle mouse or V |
 | Next piece / push and pull levitated object | Mouse wheel |
 | Satchel             | Tab              |
 | Spellbook           | B                |

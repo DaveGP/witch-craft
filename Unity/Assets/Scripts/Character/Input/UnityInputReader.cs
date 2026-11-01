@@ -43,6 +43,8 @@ namespace Character.Input
 			OnPress(player.Spell2, CharacterAction.Spell2);
 			OnPress(player.Spell3, CharacterAction.Spell3);
 			OnPress(player.Spell4, CharacterAction.Spell4);
+			OnPress(player.Undo, CharacterAction.Undo);
+			OnPress(player.Pick, CharacterAction.Pick);
 			OnPress(player.Satchel, CharacterAction.None, MenuAction.Satchel);
 			OnPress(player.Spellbook, CharacterAction.None, MenuAction.Spellbook);
 			OnPress(player.Cancel, CharacterAction.None, MenuAction.Cancel);

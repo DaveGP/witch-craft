@@ -1,3 +1,5 @@
+using System;
+
 namespace Sky.Interfaces
 {
 	public interface IDayCycle
@@ -20,6 +22,11 @@ namespace Sky.Interfaces
 		/// Morning, Afternoon, Evening or Night.
 		/// </summary>
 		string PeriodName { get; }
+
+		/// <summary>
+		/// Raised with the new day number when a day ends, by passing midnight or by sleeping through it.
+		/// </summary>
+		event Action<int> NewDay;
 
 		/// <summary>
 		/// Moves time forward to the given hour, into the next day if it has passed.

@@ -3,6 +3,8 @@ using Data.ScriptableObjects;
 using DependencyInjection;
 using Events.Interfaces;
 using Home.Interfaces;
+using Sky.Interfaces;
+using System.Linq;
 using UnityEngine;
 using Utilities;
 
@@ -16,6 +18,8 @@ namespace Companions
 
 		private IEventBus eventBus;
 
+		private IDayCycle dayCycle;
+
 		private void Start()
 		{
 			roster = ServiceLocator.Get<ICompanionRoster>();
@@ -28,12 +32,50 @@ namespace Companions
 				Spawn(companion, false);
 
 			eventBus.CompanionRecruited += SpawnNew;
+
+			dayCycle = ServiceLocator.Get<IDayCycle>();
+
+			if (dayCycle != null)
+				dayCycle.NewDay += MorningBonus;
 		}
 
 		private void OnDestroy()
 		{
 			if (eventBus != null)
 				eventBus.CompanionRecruited -= SpawnNew;
+
+			if (dayCycle != null)
+				dayCycle.NewDay -= MorningBonus;
+		}
+
+		// Companions who slept somewhere cosy wake up a little fonder of the witch
+		private void MorningBonus(int day)
+		{
+			var home = ServiceLocator.Get<IHomeService>();
+
+			if (home == null || roster.Residents.Count == 0)
+				return;
+
+			var comfortBonus = Mathf.Min(3, home.Comfort / 10);
+
+			var delighted = new System.Collections.Generic.List<string>();
+
+			foreach (var companion in roster.Residents)
+			{
+				var favourite = companion.FavouriteFurniture != null && home.Has(companion.FavouriteFurniture);
+
+				if (favourite)
+					delighted.Add(companion.DisplayName);
+
+				roster.AddFriendship(companion, 1 + comfortBonus + (favourite ? 1 : 0));
+			}
+
+			var message = $"Your companions wake up content (home comfort {home.Comfort}).";
+
+			if (delighted.Count > 0)
+				message += $" {string.Join(" and ", delighted)} especially love{(delighted.Count == 1 ? "s" : "")} their favourite things.";
+
+			ServiceLocator.Get<IEventBusSender>()?.Notify(message);
 		}
 
 		private void SpawnNew(CompanionDefinition companion) => Spawn(companion, true);

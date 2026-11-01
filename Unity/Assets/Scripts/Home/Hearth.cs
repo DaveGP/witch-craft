@@ -40,7 +40,7 @@ namespace Home
 		{
 			var next = homeService.NextLevel;
 
-			var body = $"Your home is level {homeService.Level}. ";
+			var body = $"Your home is level {homeService.Level}, with a comfort of {homeService.Comfort}. Cosier homes make companions fonder of you each morning. ";
 
 			body += next == null
 				? "It has grown as large as it can."

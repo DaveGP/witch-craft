@@ -34,6 +34,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 48ca9d15d44c84b179673120ad807a6e, type: 2}
   - {fileID: 11400000, guid: 3722690083b8c470183bd59a4377530c, type: 2}
   - {fileID: 11400000, guid: 847b9d9fb9a224a59acd6e2cdf4182de, type: 2}
+  FavouriteFurniture: {fileID: 11400000, guid: 219c417a894a64b9db9eb7e6615ccefe, type: 2}
   Rewards:
   - Friendship: 6
     Recipe: {fileID: 0}

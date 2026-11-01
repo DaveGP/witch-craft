@@ -23,7 +23,19 @@ namespace Home.Interfaces
 		/// </summary>
 		bool TrySnap(BuildPieceDefinition piece, Vector3 point, int rotationSteps, out Vector3 position, out Quaternion rotation);
 
-		PlacedPiece Place(BuildPieceDefinition piece, Vector3 position, Quaternion rotation);
+		/// <summary>
+		/// Total comfort of everything built, which speeds up companions' friendship.
+		/// </summary>
+		int Comfort { get; }
+
+		bool Has(BuildPieceDefinition piece);
+
+		PlacedPiece Place(BuildPieceDefinition piece, Vector3 position, Quaternion rotation, int colour = 0);
+
+		/// <summary>
+		/// Repaints something already built. Free, and saved.
+		/// </summary>
+		void Paint(PlacedPiece piece, int colour);
 
 		void Remove(PlacedPiece piece, bool refund);
 

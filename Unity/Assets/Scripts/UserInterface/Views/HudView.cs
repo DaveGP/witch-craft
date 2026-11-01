@@ -239,7 +239,7 @@ namespace UserInterface.Views
 		{
 			var home = ServiceLocator.Get<IHomeService>();
 
-			return home != null ? $"Home level {home.Level}  ·  {roster.Residents.Count} companions" : "";
+			return home != null ? $"Home level {home.Level}  ·  Comfort {home.Comfort}  ·  {roster.Residents.Count} companions" : "";
 		}
 
 		private void SetObjective(string text)

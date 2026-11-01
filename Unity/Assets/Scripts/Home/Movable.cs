@@ -69,6 +69,8 @@ namespace Home
 				Destroy(aura.gameObject);
 
 			RendererTint.Clear(gameObject);
+
+			GetComponent<Paintable>()?.Apply();
 		}
 
 		private float MeasureBottomOffset()

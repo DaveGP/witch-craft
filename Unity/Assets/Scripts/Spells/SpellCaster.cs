@@ -109,6 +109,16 @@ namespace Spells
 			activeEffect?.AltCast();
 		}
 
+		public void Undo()
+		{
+			activeEffect?.Undo();
+		}
+
+		public void Pick()
+		{
+			activeEffect?.Pick();
+		}
+
 		public void Adjust(float rotate, float scroll)
 		{
 			activeEffect?.Adjust(rotate, scroll);

@@ -18,6 +18,7 @@ MonoBehaviour:
   Snap: 3
   Prefab: {fileID: 1118092762963434609, guid: 6e3c57feff9834c6381d5f59afb2501f, type: 3}
   RequiredHomeLevel: 2
+  Comfort: 2
   Cost:
   - Item: {fileID: 11400000, guid: e3fab1ace76e44eafaf51969cc4f70b1, type: 2}
     Amount: 2

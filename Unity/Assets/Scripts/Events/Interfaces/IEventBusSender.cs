@@ -2,6 +2,7 @@ using Alchemy;
 using Character.Interfaces;
 using Data.ScriptableObjects;
 using Interaction.Interfaces;
+using Spells.Interfaces;
 using UnityEngine;
 using UserInterface;
 
@@ -47,5 +48,7 @@ namespace Events.Interfaces
 		/// Sets the HUD's current objective. Empty clears it.
 		/// </summary>
 		public void SetObjective(string objective);
+
+		public void OpenBuildCatalogue(IBuildPalette palette);
 	}
 }

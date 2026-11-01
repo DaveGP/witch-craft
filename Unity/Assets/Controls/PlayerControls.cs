@@ -45,6 +45,8 @@ namespace Controls
 			public InputAction Satchel { get; }
 			public InputAction Spellbook { get; }
 			public InputAction Cancel { get; }
+			public InputAction Undo { get; }
+			public InputAction Pick { get; }
 
 			private readonly InputActionMap map;
 
@@ -100,6 +102,8 @@ namespace Controls
 				Satchel = Button("Satchel", "<Keyboard>/tab", "<Gamepad>/select");
 				Spellbook = Button("Spellbook", "<Keyboard>/b", "<Gamepad>/rightStickPress");
 				Cancel = Button("Cancel", "<Keyboard>/escape", "<Gamepad>/start");
+				Undo = Button("Undo", "<Keyboard>/z");
+				Pick = Button("Pick", "<Mouse>/middleButton", "<Keyboard>/v");
 			}
 
 			public void Enable() => map.Enable();

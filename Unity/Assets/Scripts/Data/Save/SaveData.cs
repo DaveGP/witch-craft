@@ -66,5 +66,10 @@ namespace Data.Save
 		public Vector3 Position;
 
 		public float Yaw;
+
+		/// <summary>
+		/// Index into HomePalette. 0 is the material's natural colour.
+		/// </summary>
+		public int Colour;
 	}
 }

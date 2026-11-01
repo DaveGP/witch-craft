@@ -102,6 +102,10 @@ namespace Character.Actions
 
 		public void OnAltCast() => spellCaster.AltCast();
 
+		public void OnUndo() => spellCaster.Undo();
+
+		public void OnPick() => spellCaster.Pick();
+
 		public void OnSelectSpell(int slot) => spellCaster.SelectSlot(slot);
 
 		public void OnSpellAdjust(float rotate, float scroll) => spellCaster.Adjust(rotate, scroll);

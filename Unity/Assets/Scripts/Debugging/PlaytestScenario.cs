@@ -383,6 +383,72 @@ namespace Debugging
 			yield return new WaitForSeconds(0.6f);
 			Check("Doing everything Sable suggests finishes the tutorial", !tutorial.IsActive);
 
+			// Comfort, paint, the catalogue, coloured building and undo
+			Check($"The starter hut is cosy (comfort {home.Comfort})", home.Comfort >= 15);
+
+			var wall = FindObjectsByType<PlacedPiece>(FindObjectsSortMode.None).First(piece => piece.Definition.Id == "wall_timber");
+			home.Paint(wall, 6);
+			Check("Painting a wall changes and saves its colour", wall.Record.Colour == 6 && wall.GetComponent<Paintable>().Colour == 6);
+
+			Tap(Key.Digit1);
+			yield return new WaitForSeconds(0.3f);
+
+			if (caster.ActiveSpell == null || caster.ActiveSpell.Id != "conjure")
+			{
+				Tap(Key.Digit1);
+				yield return new WaitForSeconds(0.3f);
+			}
+
+			Check("Conjure is readied for building", caster.ActiveSpell != null && caster.ActiveSpell.Id == "conjure");
+
+			caster.AltCast();
+			yield return new WaitForSeconds(0.5f);
+			Check("Right-click opens the build catalogue", FindAnyObjectByType<UserInterface.Views.CatalogueView>().IsOpen);
+			Shot("17_catalogue");
+
+			Tap(Key.Escape);
+			yield return new WaitForSeconds(0.4f);
+
+			var conjureSpell = player.GetComponent<Spells.Effects.ConjureSpell>();
+			conjureSpell.Select(database.FindBuildPiece("floor_timber"));
+			conjureSpell.SetColour(5);
+
+			// Aim straight down at an empty cell of the plot
+			var aim = new GameObject("BuildAim").transform;
+			aim.position = new Vector3(-7f, 9f, 7f);
+			aim.LookAt(new Vector3(-7f, 0f, 7f));
+			movement.Teleport(new Vector3(-7f, 0.2f, 3f));
+			eventBus.SetCameraOverride(aim);
+			yield return new WaitForSeconds(1.2f);
+
+			var piecesBefore = FindObjectsByType<PlacedPiece>(FindObjectsSortMode.None).Length;
+			var timber = database.FindItem("timber");
+			var timberBeforeBuild = inventory.Count(timber);
+
+			caster.Cast();
+			yield return new WaitForSeconds(0.3f);
+
+			var built = FindObjectsByType<PlacedPiece>(FindObjectsSortMode.None);
+			var newest = built.FirstOrDefault(piece => piece.Definition.Id == "floor_timber" && Vector3.Distance(piece.transform.position, new Vector3(-7f, 0f, 7f)) < 2f);
+
+			Check($"Conjure places a coloured floor where it aims ({built.Length - piecesBefore} new)", built.Length == piecesBefore + 1 && newest != null && newest.Record.Colour == 5);
+			Shot("18_painted_build");
+
+			caster.Undo();
+			yield return new WaitForSeconds(0.3f);
+
+			Check("Z undoes it and refunds the timber", FindObjectsByType<PlacedPiece>(FindObjectsSortMode.None).Length == piecesBefore && inventory.Count(timber) == timberBeforeBuild);
+
+			eventBus.SetCameraOverride(null);
+			Destroy(aim.gameObject);
+
+			// A new morning makes residents fonder, more so with comfort and their favourite piece about
+			var friendshipBefore = roster.Friendship(pip);
+			ServiceLocator.Get<IDayCycle>().SkipTo(6.5f);
+			yield return null;
+			var gained = roster.Friendship(pip) - friendshipBefore;
+			Check($"Each morning Pip grows fonder (+{gained}, with comfort and their favourite planter)", gained >= 3);
+
 			// Scenic shots
 			movement.Teleport(new Vector3(0f, 0.2f, -9f));
 			yield return new WaitForSeconds(1.5f);
