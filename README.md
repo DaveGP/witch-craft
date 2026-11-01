@@ -55,6 +55,7 @@ witch-craft/
 ├────── Prefabs/               # Generated building, furniture and companion prefabs
 ├────── Resources/             # GameDatabase
 ├────── Scenes/                # Generated WitchCraft scene
+├────── ThirdParty/            # Local only: Synty/ and AssetStore/ packs (not committed, see its README)
 ├──── Packages/
 ├──── ProjectSettings/
 │

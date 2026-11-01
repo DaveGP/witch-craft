@@ -31,3 +31,7 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 ## Brews judged against every recipe
 
 01/11/2026 - The brew is scored by edit distance against all recipes, not only the selected one. This makes mistakes degrade gracefully (one wrong step is a worse potion, not nothing) and lets players discover recipes by experimenting or following a companion's description.
+
+## Third-party assets stay local
+
+01/11/2026 - Asset packs from Synty and the Unity Asset Store go in `Unity/Assets/ThirdParty/Synty` and `Unity/Assets/ThirdParty/AssetStore`. Git tracks those folders and a README but ignores their contents: the repo is public and the packs' licences don't allow redistributing them, and Crewfall's Synty packs blew through the Git LFS storage limit. As on Crewfall, the parts we actually use and modify get copied into the project proper, so a fresh clone still builds.

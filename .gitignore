@@ -98,8 +98,10 @@ Builds/*
 # But track the Builds folder itself (keep empty folder tracked)
 !Builds/.gitkeep
 
-# Third-party Synty assets
-Unity/[Aa]ssets/[Ss]ynty/
+# Third-party asset packs (Synty, Asset Store) live in ThirdParty and stay local.
+# The folders, their metas and the README are tracked; everything dropped into them is not.
+Unity/[Aa]ssets/[Tt]hird[Pp]arty/*/*
+!Unity/[Aa]ssets/[Tt]hird[Pp]arty/*/.gitkeep
 
 # Player builds (the web build is published on the gh-pages branch)
 Unity/[Bb]uilds/
