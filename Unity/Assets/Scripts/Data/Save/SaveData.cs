@@ -24,6 +24,10 @@ namespace Data.Save
 		public HomeRecord Home = new();
 
 		public int TutorialStep;
+
+		public float Hour = 8f;
+
+		public int Day = 1;
 	}
 
 	[Serializable]

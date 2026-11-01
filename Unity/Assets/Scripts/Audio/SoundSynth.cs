@@ -12,11 +12,28 @@ namespace Audio
 
 		private const float Tau = Mathf.PI * 2f;
 
+		public const int StepVariants = 4;
+
+		/// <summary>
+		/// One of several footsteps, so walking doesn't repeat the same sound.
+		/// </summary>
+		public static AudioClip CreateStep(int variant)
+		{
+			var samples = Step(variant);
+
+			Normalise(samples, 0.9f);
+
+			var clip = AudioClip.Create($"Step{variant}", samples.Length, 1, SampleRate, false);
+			clip.SetData(samples, 0);
+
+			return clip;
+		}
+
 		public static AudioClip Create(Sound sound)
 		{
 			var samples = sound switch
 			{
-				Sound.Step => Step(),
+				Sound.Step => Step(0),
 				Sound.Jump => Sweep(0.18f, 320f, 760f, 0.6f),
 				Sound.Land => Land(),
 				Sound.Pickup => Notes(0.45f, 0.07f, 1046.5f, 1568f),
@@ -32,6 +49,8 @@ namespace Audio
 				Sound.Chirp => Chirp(),
 				Sound.BroomWind => Loop(Wind(2f)),
 				Sound.Bubbling => Loop(Bubbles(2.5f)),
+				Sound.Rain => Loop(Rain(3f)),
+				Sound.Cricket => Cricket(),
 				Sound.Music => Music(),
 				_ => new float[1]
 			};
@@ -46,17 +65,36 @@ namespace Audio
 
 		#region Sounds
 
-		private static float[] Step()
+		// A foot on grass: a soft, muffled heel then a brushy crunch of blades, with no hard attack
+		private static float[] Step(int variant)
 		{
-			var samples = Buffer(0.08f);
-			var noise = new Random(1);
+			var samples = Buffer(0.14f);
+			var noise = new Random(100 + variant * 17);
+
+			var heelPitch = 70f + variant * 6f;
+			var crunchStart = 0.018f + variant * 0.004f;
+
 			var low = 0f;
+			var lower = 0f;
+			var phase = 0f;
 
 			for (var i = 0; i < samples.Length; i++)
 			{
 				var t = Time(i);
-				low += (Noise(noise) - low) * 0.18f;
-				samples[i] = low * Decay(t, 0.003f, 0.05f);
+
+				phase += Tau * heelPitch * (1f - t * 2f) / SampleRate;
+				var heel = Mathf.Sin(phase) * Decay(t, 0.006f, 0.03f) * 0.35f;
+
+				// Band of mid frequencies: the rustle of grass rather than a thump or a hiss
+				var raw = Noise(noise);
+				low += (raw - low) * 0.32f;
+				lower += (low - lower) * 0.06f;
+				var band = low - lower;
+
+				var crunchTime = t - crunchStart;
+				var crunch = crunchTime < 0f ? 0f : band * Decay(crunchTime, 0.012f, 0.045f) * (0.75f + 0.25f * Mathf.Sin(Tau * 55f * crunchTime));
+
+				samples[i] = heel + crunch;
 			}
 
 			return samples;
@@ -301,6 +339,56 @@ namespace Audio
 					phase += Tau * pitch * (1f + t * 25f) / SampleRate;
 					samples[start + i] += Mathf.Sin(phase) * Decay(t, 0.002f, 0.025f) * 0.5f;
 				}
+			}
+
+			return samples;
+		}
+
+		private static float[] Rain(float length)
+		{
+			var samples = Buffer(length);
+			var random = new Random(9);
+			var low = 0f;
+			var lower = 0f;
+
+			for (var i = 0; i < samples.Length; i++)
+			{
+				low += (Noise(random) - low) * 0.5f;
+				lower += (low - lower) * 0.08f;
+				samples[i] = (low - lower) * 0.5f;
+			}
+
+			// Individual drops pattering on leaves
+			for (var d = 0; d < 260; d++)
+			{
+				var start = random.Next(0, samples.Length - SampleRate / 40);
+				var pitch = 1800f + (float)random.NextDouble() * 2600f;
+				var level = 0.15f + (float)random.NextDouble() * 0.35f;
+
+				for (var i = 0; i < SampleRate / 50; i++)
+				{
+					var t = i / (float)SampleRate;
+					samples[start + i] += Mathf.Sin(Tau * pitch * t) * Decay(t, 0.0005f, 0.006f) * level;
+				}
+			}
+
+			return samples;
+		}
+
+		private static float[] Cricket()
+		{
+			var samples = Buffer(0.6f);
+
+			for (var i = 0; i < samples.Length; i++)
+			{
+				var t = Time(i);
+
+				// Three quick trills, each a burst of rapid pulses
+				var trill = t % 0.2f;
+				var active = t < 0.58f && trill < 0.11f;
+				var pulse = Mathf.Sin(Tau * 32f * trill) > 0f ? 1f : 0.2f;
+
+				samples[i] = active ? Mathf.Sin(Tau * 4300f * t) * pulse * Mathf.Sin(trill / 0.11f * Mathf.PI) : 0f;
 			}
 
 			return samples;

@@ -17,6 +17,9 @@ namespace Data.ScriptableObjects
 
 		public GameObject Prefab;
 
+		[Tooltip("Awake at night and asleep by day")]
+		public bool Nocturnal;
+
 		[TextArea] public string Greeting;
 
 		[Tooltip("What they say they need before moving in")]

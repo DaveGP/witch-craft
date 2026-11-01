@@ -2,7 +2,9 @@ using System;
 using Character;
 using Data.ScriptableObjects;
 using DependencyInjection;
+using Events.Interfaces;
 using Items.Interfaces;
+using Sky.Interfaces;
 using UnityEngine;
 using Utilities;
 
@@ -29,13 +31,30 @@ namespace Interaction
 
 		[SerializeField] private GameObject visual;
 
+		[Tooltip("Only opens, and can only be gathered, at night")]
+		[SerializeField] private bool nightOnly;
+
 		private IInventory inventory;
 
 		private Collider[] colliders;
 
 		private bool available = true;
 
-		public string Prompt => $"{verb} {item.DisplayName}";
+		private float regrowRemaining;
+
+		private Vector3 visualScale;
+
+		private IDayCycle dayCycle;
+
+		private IWeather weather;
+
+		private IDayCycle DayCycle => dayCycle ??= ServiceLocator.Get<IDayCycle>();
+
+		private IWeather Weather => weather ??= ServiceLocator.Get<IWeather>();
+
+		private bool InSeason => !nightOnly || DayCycle == null || DayCycle.IsNight;
+
+		public string Prompt => InSeason ? $"{verb} {item.DisplayName}" : $"{item.DisplayName} (opens at night)";
 
 		public bool CanInteract => available && !collectOnTouch;
 
@@ -52,16 +71,25 @@ namespace Interaction
 				Debug.LogError($"{name}: {nameof(item)} is null");
 
 			colliders = GetComponents<Collider>();
+
+			if (visual != null)
+				visualScale = visual.transform.localScale;
 		}
 
 		public void Interact(GameObject interactor)
 		{
+			if (!InSeason)
+			{
+				ServiceLocator.Get<IEventBusSender>()?.Notify($"The {item.DisplayName} is closed up tight. Come back after dusk.");
+				return;
+			}
+
 			Collect();
 		}
 
 		private void OnTriggerEnter(Collider other)
 		{
-			if (!collectOnTouch || !available || other.GetComponentInParent<PlayerCharacter>() == null)
+			if (!collectOnTouch || !available || !InSeason || other.GetComponentInParent<PlayerCharacter>() == null)
 				return;
 
 			Collect();
@@ -84,11 +112,45 @@ namespace Interaction
 			SetAvailable(false);
 
 			if (respawnSeconds > 0f)
-				Invoke(nameof(Regrow), respawnSeconds);
+				regrowRemaining = respawnSeconds;
+		}
+
+		private void Update()
+		{
+			UpdateRegrowth();
+
+			UpdateBloom();
+		}
+
+		// Rain makes things grow back twice as fast
+		private void UpdateRegrowth()
+		{
+			if (regrowRemaining <= 0f)
+				return;
+
+			regrowRemaining -= Time.deltaTime * (Weather != null && Weather.IsRaining ? 2f : 1f);
+
+			if (regrowRemaining <= 0f)
+				Regrow();
+		}
+
+		// Night flowers close up into small buds by day
+		private void UpdateBloom()
+		{
+			if (!nightOnly || visual == null || !available)
+				return;
+
+			var target = InSeason ? 1f : 0.35f;
+
+			var scale = visual.transform.localScale.x / Mathf.Max(0.0001f, visualScale.x);
+
+			visual.transform.localScale = visualScale * Mathf.MoveTowards(scale, target, Time.deltaTime * 0.5f);
 		}
 
 		public void Regrow()
 		{
+			regrowRemaining = 0f;
+
 			SetAvailable(true);
 		}
 

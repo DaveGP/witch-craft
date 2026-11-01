@@ -17,6 +17,7 @@ MonoBehaviour:
   Species: Hedgehog
   Color: {r: 0.62, g: 0.45, b: 0.3, a: 1}
   Prefab: {fileID: 7785332836048652414, guid: 074f56bebec904adfa7ba3328e1f9f27, type: 3}
+  Nocturnal: 0
   Greeting: '"Hm? Oh, hullo. Mind the prickles. I''m Bramble. I mostly forage and
     complain about weather."'
   Plea: '"Your home has a garden, does it? Bring me four Wild Berries and I''ll come

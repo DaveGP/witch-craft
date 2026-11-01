@@ -11,6 +11,7 @@ using Home.Interfaces;
 using Interaction.Interfaces;
 using Items.Interfaces;
 using Potions.Interfaces;
+using Sky.Interfaces;
 using Spells.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
@@ -154,7 +155,7 @@ namespace UserInterface.Views
 			UIFactory.Place(potions.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(30, -300), new Vector2(420, -30));
 			potions.gameObject.AddComponent<Shadow>();
 
-			homeInfo = UIFactory.Label(root, "", 18, UIFactory.TextMuted, TextAnchor.UpperRight);
+			homeInfo = UIFactory.Label(root, "", 20, UIFactory.Text, TextAnchor.UpperRight);
 			UIFactory.Place(homeInfo.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-520, -120), new Vector2(-30, -30));
 			homeInfo.gameObject.AddComponent<Shadow>();
 
@@ -178,6 +179,35 @@ namespace UserInterface.Views
 				16, UIFactory.TextMuted, TextAnchor.LowerRight);
 			UIFactory.Place(help.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-640, 24), new Vector2(-30, 80));
 			help.gameObject.AddComponent<Shadow>();
+		}
+
+		private static string Clock()
+		{
+			var dayCycle = ServiceLocator.Get<IDayCycle>();
+
+			if (dayCycle == null)
+				return "";
+
+			// Shown in ten minute steps so the clock ticks calmly rather than racing
+			var minutes = Mathf.FloorToInt(dayCycle.Hour * 6f) * 10;
+
+			var weather = ServiceLocator.Get<IWeather>();
+
+			var sky = weather?.Current switch
+			{
+				Data.Enums.WeatherKind.Rain => "  ·  Rain",
+				Data.Enums.WeatherKind.Cloudy => "  ·  Cloudy",
+				_ => ""
+			};
+
+			return $"Day {dayCycle.Day}  ·  {minutes / 60:00}:{minutes % 60:00}  ·  {dayCycle.PeriodName}{sky}";
+		}
+
+		private string HomeSummary()
+		{
+			var home = ServiceLocator.Get<IHomeService>();
+
+			return home != null ? $"Home level {home.Level}  ·  {roster.Residents.Count} companions" : "";
 		}
 
 		private void SetObjective(string text)
@@ -263,9 +293,7 @@ namespace UserInterface.Views
 
 			potions.text = string.Join("\n", potionEffects.Active.Select(pair => $"{pair.Key}  {Mathf.CeilToInt(pair.Value)}s"));
 
-			var home = ServiceLocator.Get<IHomeService>();
-
-			homeInfo.text = home != null ? $"Home level {home.Level}  ·  {roster.Residents.Count} companions" : "";
+			homeInfo.text = $"{Clock()}\n<size=17><color=#{UIFactory.Hex(UIFactory.TextMuted)}>{HomeSummary()}</color></size>";
 
 			if (Time.frameCount % 10 == 0)
 				RefreshSlots();

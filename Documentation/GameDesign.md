@@ -38,6 +38,16 @@ Sable guides a new witch through the core loop, one suggestion at a time, shown 
 
 Each step checks game state, so doing things early or out of order still counts. It can be skipped from the pause menu.
 
+## Day, night and weather
+
+A day lasts about fourteen minutes: dawn at 06:00, dusk at 20:00. The HUD shows the day, time and weather.
+
+* Nights are moonlit and blue, with fireflies, crickets and softer music.
+* Silverbells (Moon Dew) and moonpetals are closed buds by day and only open at night.
+* Companions sleep at night. Hoot the owl is nocturnal and sleeps by day instead.
+* Any bed lets you sleep until morning, or nap until evening. Sleeping saves.
+* Every few hours the weather may change: clear, cloudy or rain. Rain greys the sky, brings the fog in, hushes the birds and makes herbs regrow twice as fast.
+
 ## Sound
 
 All sound is synthesised at startup (`Audio/SoundSynth`): footsteps, jumps and landings, pickups, learning chimes, building pops, spell shimmer, gust whooshes, bounce boings, the bellows, grinding, a bubbling cauldron that gets louder with the heat, Sable's purr, broom wind and birdsong, plus a gentle music loop. Music and sound can be toggled in the pause menu.

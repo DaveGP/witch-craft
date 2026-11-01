@@ -17,6 +17,7 @@ MonoBehaviour:
   Species: Fox Spirit
   Color: {r: 1, g: 0.55, b: 0.25, a: 1}
   Prefab: {fileID: 949660837117588396, guid: a0f5c0816080a4e8d8ec5bd55f498a0e, type: 3}
+  Nocturnal: 0
   Greeting: '"...You can see me? Most people only see a flicker. I am Ember."'
   Plea: '"It''s so dark down here. If you brought me a Glimmer Draught, I think I
     could find my way out."'

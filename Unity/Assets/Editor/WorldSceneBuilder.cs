@@ -18,6 +18,7 @@ using Potions;
 using Spells;
 using Spells.Effects;
 using SystemManagement;
+using Sky;
 using Tutorial;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -184,6 +185,20 @@ namespace WitchCraftEditor
 			sun.shadows = LightShadows.Soft;
 			sun.shadowStrength = 0.75f;
 			sun.transform.rotation = Quaternion.Euler(48f, -35f, 0f);
+
+			var moon = new GameObject("Moon").AddComponent<Light>();
+			moon.type = LightType.Directional;
+			moon.color = new Color(0.62f, 0.7f, 1f);
+			moon.intensity = 0f;
+			moon.shadows = LightShadows.Soft;
+			moon.shadowStrength = 0.5f;
+			moon.enabled = false;
+
+			var sky = new GameObject("Sky");
+			var dayCycle = sky.AddComponent<DayCycle>();
+			Set(dayCycle, "sun", sun);
+			Set(dayCycle, "moon", moon);
+			sky.AddComponent<WeatherSystem>();
 
 			RenderSettings.sun = sun;
 			RenderSettings.skybox = Skybox("Sky");
@@ -369,7 +384,7 @@ namespace WitchCraftEditor
 			ReplaceWithMeshCollider(boulder);
 		}
 
-		private static GameObject Gatherable(Transform parent, string name, Vector3 position, string itemId, int amount, float respawn, Action<Transform> visual, bool touch = false, string verb = "Gather")
+		private static GameObject Gatherable(Transform parent, string name, Vector3 position, string itemId, int amount, float respawn, Action<Transform> visual, bool touch = false, string verb = "Gather", bool nightOnly = false)
 		{
 			var root = Node(name, parent, position, Range(0, 360));
 			root.layer = Interactable;
@@ -390,6 +405,7 @@ namespace WitchCraftEditor
 			SetBool(gatherable, "collectOnTouch", touch);
 			SetString(gatherable, "verb", verb);
 			Set(gatherable, "visual", look);
+			SetBool(gatherable, "nightOnly", nightOnly);
 
 			return root;
 		}
@@ -955,13 +971,13 @@ namespace WitchCraftEditor
 				{
 					Flowers(visual, new Color(0.88f, 0.86f, 1f), 7, 0.45f);
 					PointLight(visual, new Vector3(0, 0.4f, 0), dew, 2.5f, 0.7f);
-				}, false, "Shake the dew from");
+				}, false, "Shake the dew from", true);
 			}
 
 			var moonpetal = ContentBuilder.Item("moonpetal").Color;
 
 			for (var i = 0; i < 2; i++)
-				Gatherable(hillLife, "Moonpetal", Around(hills[1].centre, 0f, 2.5f), "moonpetal", 1, 150f, visual => Flowers(visual, moonpetal, 4, 0.3f));
+				Gatherable(hillLife, "Moonpetal", Around(hills[1].centre, 0f, 2.5f), "moonpetal", 1, 150f, visual => Flowers(visual, moonpetal, 4, 0.3f), false, "Gather", true);
 
 			for (var i = 0; i < 6; i++)
 				Boulder(hillLife, Around(HillsCentre, 8f, 26f), Range(1.5f, 3.5f));
@@ -1116,7 +1132,7 @@ namespace WitchCraftEditor
 			var moonpetal = ContentBuilder.Item("moonpetal").Color;
 
 			for (var i = 0; i < 3; i++)
-				Gatherable(isle, "Moonpetal", SkyIsleCentre + new Vector3(Range(-4f, 4f), 0f, Range(-4f, 4f)), "moonpetal", 1, 150f, visual => Flowers(visual, moonpetal, 4, 0.3f));
+				Gatherable(isle, "Moonpetal", SkyIsleCentre + new Vector3(Range(-4f, 4f), 0f, Range(-4f, 4f)), "moonpetal", 1, 150f, visual => Flowers(visual, moonpetal, 4, 0.3f), false, "Gather", true);
 		}
 
 		private static void BuildSecretIsle()
@@ -1145,7 +1161,7 @@ namespace WitchCraftEditor
 			var moonpetal = ContentBuilder.Item("moonpetal").Color;
 
 			for (var i = 0; i < 4; i++)
-				Gatherable(secret, "Moonpetal", SecretIsleCentre + new Vector3(Range(-3f, 3f), 0f, Range(-3f, 3f)), "moonpetal", 1, 150f, visual => Flowers(visual, moonpetal, 4, 0.3f));
+				Gatherable(secret, "Moonpetal", SecretIsleCentre + new Vector3(Range(-3f, 3f), 0f, Range(-3f, 3f)), "moonpetal", 1, 150f, visual => Flowers(visual, moonpetal, 4, 0.3f), false, "Gather", true);
 
 			for (var i = 0; i < 2; i++)
 				Gatherable(secret, "CrystalShard", SecretIsleCentre + new Vector3(Range(-3f, 3f), 0f, Range(-3f, 3f)), "crystal", 2, 200f, visual =>

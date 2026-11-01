@@ -20,6 +20,7 @@ Run, jump and fly around a little island gathering herbs for potions, glyphs for
 * A home plot that expands as you gather materials and friends
 * A guided first five minutes: Sable suggests what to try next, with a beacon showing where
 * Sound effects, ambience and a music loop, all generated in code
+* Day and night with moonlit nights and fireflies, night-only flowers, companions who sleep, beds to sleep or nap in, and passing rain showers that make herbs regrow faster
 * Autosave, and save by resting at the hearth
 
 ## Development

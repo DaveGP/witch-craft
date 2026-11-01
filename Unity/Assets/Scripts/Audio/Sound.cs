@@ -18,6 +18,8 @@ namespace Audio
 		Chirp,
 		BroomWind,
 		Bubbling,
+		Rain,
+		Cricket,
 		Music,
 	}
 }

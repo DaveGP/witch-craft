@@ -7,6 +7,7 @@ using Events.Interfaces;
 using Home.Interfaces;
 using Interaction.Interfaces;
 using Items.Interfaces;
+using Sky.Interfaces;
 using UnityEngine;
 using UserInterface;
 using Utilities;
@@ -42,6 +43,15 @@ namespace Companions
 
 		private LayerMask groundMask;
 
+		private IDayCycle dayCycle;
+
+		private float nextSnore;
+
+		/// <summary>
+		/// Residents sleep at night, except nocturnal ones, who sleep by day.
+		/// </summary>
+		public bool IsAsleep => dayCycle != null && dayCycle.IsNight != companion.Nocturnal;
+
 		public string Prompt => $"Visit with {companion.DisplayName}";
 
 		public bool CanInteract => true;
@@ -59,6 +69,7 @@ namespace Companions
 			inventory = ServiceLocator.Get<IInventory>();
 			eventBus = ServiceLocator.Get<IEventBusSender>();
 			home = ServiceLocator.Get<IHomeService>();
+			dayCycle = ServiceLocator.Get<IDayCycle>();
 
 			// Ground only, so they walk round the house rather than over its roof
 			groundMask = LayerMask.GetMask("Ground");
@@ -69,6 +80,18 @@ namespace Companions
 		public void Interact(GameObject interactor)
 		{
 			witch = interactor.transform;
+
+			if (IsAsleep)
+			{
+				var when = companion.Nocturnal ? "nightfall" : "morning";
+
+				eventBus.RequestDialogue(new DialogueRequest($"{companion.DisplayName} the {companion.Species}",
+					$"{companion.DisplayName} is curled up fast asleep, snoring softly. Best visit again in the {when}.",
+					companion.Color, new List<DialogueOption> { new("Tiptoe away", null) }));
+
+				return;
+			}
+
 			talkingUntil = Time.time + 4f;
 
 			var friendship = roster.Friendship(companion);
@@ -131,6 +154,12 @@ namespace Companions
 			if (companion == null || home == null)
 				return;
 
+			if (IsAsleep)
+			{
+				Sleep();
+				return;
+			}
+
 			if (Time.time < talkingUntil && witch != null)
 			{
 				Face(witch.position - transform.position);
@@ -138,6 +167,19 @@ namespace Companions
 			}
 
 			Wander();
+		}
+
+		// Stay put and let little z's drift up now and then
+		private void Sleep()
+		{
+			transform.GetChild(0).localPosition = Vector3.up * (Mathf.Sin(Time.time * 1.5f) * 0.02f);
+
+			if (Time.time < nextSnore)
+				return;
+
+			nextSnore = Time.time + Random.Range(2f, 3.5f);
+
+			FxUtility.Burst(transform.position + Vector3.up * 1f, new Color(0.85f, 0.85f, 1f), 3, 0.6f, 0.15f);
 		}
 
 		private void Wander()

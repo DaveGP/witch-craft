@@ -22,6 +22,8 @@ using Home.Interfaces;
 using Items.Interfaces;
 using Potions.Interfaces;
 using Spells.Interfaces;
+using Sky.Interfaces;
+using Interaction;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -355,6 +357,53 @@ namespace Debugging
 			yield return View("12_cave", new Vector3(20f, 3.5f, -46f), new Vector3(38f, 1.5f, -46f));
 			yield return View("13_forest", new Vector3(14f, 6f, 22f), new Vector3(32f, 2f, 38f));
 			yield return View("14_sky_isle", new Vector3(30f, 40f, 0f), new Vector3(44f, 34f, 14f));
+
+			// Day, night and weather
+			var dayCycle = ServiceLocator.Get<IDayCycle>();
+			var weather = ServiceLocator.Get<IWeather>();
+
+			Check("Day cycle and weather are running", dayCycle != null && weather != null);
+
+			var startHour = dayCycle.Hour;
+			yield return new WaitForSeconds(1f);
+			Check($"Time passes ({startHour:0.00} to {dayCycle.Hour:0.00})", dayCycle.Hour > startHour);
+
+			var moonpetal = FindObjectsByType<Gatherable>(FindObjectsSortMode.None).First(found => found.name == "Moonpetal");
+			Check($"By day, moonpetals are closed (\"{moonpetal.Prompt}\")", moonpetal.Prompt.Contains("opens at night"));
+
+			var day = dayCycle.Day;
+			dayCycle.SkipTo(22f);
+			yield return new WaitForSeconds(1f);
+
+			Check("Skipping to 22:00 makes it night", dayCycle.IsNight && dayCycle.Darkness > 0.9f);
+			Check($"At night, moonpetals open (\"{moonpetal.Prompt}\")", !moonpetal.Prompt.Contains("opens at night"));
+
+			var pipResident = FindObjectsByType<CompanionResident>(FindObjectsSortMode.None).First();
+			Check("Pip sleeps at night", pipResident.IsAsleep);
+
+			movement.Teleport(new Vector3(0f, 0.2f, -9f));
+			yield return View("15_night", new Vector3(9f, 6f, -14f), new Vector3(0f, 1.5f, 0f));
+
+			// Sleep in the starter bed through the dialogue, as a player would
+			var bed = FindAnyObjectByType<Bed>();
+			bed.Interact(player.gameObject);
+			yield return new WaitForSeconds(0.3f);
+
+			var sleep = FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None)
+				.FirstOrDefault(button => button.isActiveAndEnabled && button.GetComponentInChildren<UnityEngine.UI.Text>().text.StartsWith("Sleep"));
+
+			Check("The bed offers to sleep until morning", sleep != null);
+			sleep?.onClick.Invoke();
+			yield return new WaitForSeconds(0.5f);
+
+			Check($"Sleeping wakes you next morning (day {dayCycle.Day}, {dayCycle.Hour:0.0}h)", dayCycle.Day == day + 1 && dayCycle.Hour >= 7f && dayCycle.Hour < 8f);
+
+			weather.SetWeather(WeatherKind.Rain);
+			yield return new WaitForSeconds(9f);
+			Check("Rain sets in", weather.IsRaining);
+			yield return View("16_rain", new Vector3(9f, 6f, -14f), new Vector3(0f, 1.5f, 0f));
+
+			weather.SetWeather(WeatherKind.Clear);
 
 			report.AppendLine($"Inventory: {string.Join(", ", inventory.Items.Select(stack => stack.ToString()))}");
 		}

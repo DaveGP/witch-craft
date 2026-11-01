@@ -450,7 +450,15 @@ namespace WitchCraftEditor
 			Prim(PrimitiveType.Cube, "Pillow", t, new Vector3(0, 0.56f, 0.68f), new Vector3(0.65f, 0.14f, 0.35f), Cloth("White", Color.white), false);
 			Prim(PrimitiveType.Cube, "Headboard", t, new Vector3(0, 0.55f, 0.97f), new Vector3(1.05f, 1.1f, 0.08f), Wood, false);
 
-			return Save(root, "Furniture");
+			root.AddComponent<Bed>();
+
+			var zone = Node("Interact", t, new Vector3(0, 0.6f, 0));
+			Trigger(zone, 1.1f);
+
+			SetLayer(root, EnvironmentLayer);
+			zone.layer = Interactable;
+
+			return SavePrefab(root, $"{PrefabFolder}/Furniture/{root.name}.prefab");
 		}
 
 		private static GameObject Table()
@@ -708,6 +716,8 @@ namespace WitchCraftEditor
 				new[] { "\"From my perch, your home looks like a little lantern.\"", "\"Wisdom is mostly sitting still and listening. And snacks.\"", "\"The fox spirit in the crystal cave is lonely. Bring her something that glows.\"" },
 				new[] { "moonpetal", "feather_down", "leaping_tonic" });
 
+			hoot.Nocturnal = true;
+
 			AddReward(hoot, 4, recipes["skyward"], null, "\"Take this: Skyward Draught. Spring Water, a Moonpetal, ground Feather Down, Ember Moss, and three long boils. Your broom will never tire.\"");
 
 			var ember = AddCompanion("ember", "Ember", "Fox Spirit", new Color(1f, 0.55f, 0.25f), Fox(),
@@ -731,6 +741,7 @@ namespace WitchCraftEditor
 			companion.Species = species;
 			companion.Color = colour;
 			companion.Prefab = prefab;
+			companion.Nocturnal = false;
 			companion.Greeting = greeting;
 			companion.Plea = plea;
 			companion.RecruitGift = new ItemStack(items[gift.item], gift.amount);

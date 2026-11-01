@@ -79,7 +79,9 @@ namespace Camera
 
 		private float overrideBlend;
 
-		private Transform lastViewpoint;
+		private Vector3 lastViewpointPosition;
+
+		private Quaternion lastViewpointRotation = Quaternion.identity;
 
 		private UnityEngine.Camera viewCamera;
 
@@ -237,17 +239,18 @@ namespace Camera
 				return;
 			}
 
-			// Remember the last viewpoint so blending back out has somewhere to come from
+			// Remember where the last viewpoint was, so blending back out still works if it has been destroyed
 			if (overrideViewpoint != null)
-				lastViewpoint = overrideViewpoint;
-
-			var viewpoint = lastViewpoint;
+			{
+				lastViewpointPosition = overrideViewpoint.position;
+				lastViewpointRotation = overrideViewpoint.rotation;
+			}
 
 			var eased = Mathf.SmoothStep(0f, 1f, overrideBlend);
 
 			cameraTransform.SetPositionAndRotation(
-				Vector3.Lerp(orbitPosition, viewpoint.position, eased),
-				Quaternion.Slerp(orbitRotation, viewpoint.rotation, eased));
+				Vector3.Lerp(orbitPosition, lastViewpointPosition, eased),
+				Quaternion.Slerp(orbitRotation, lastViewpointRotation, eased));
 		}
 	}
 }

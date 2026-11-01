@@ -5,6 +5,7 @@ using Data.ScriptableObjects;
 using DependencyInjection;
 using Events.Interfaces;
 using GameState.Interfaces;
+using Sky.Interfaces;
 using UnityEngine;
 
 
@@ -29,6 +30,10 @@ namespace Audio
 		private readonly Dictionary<Sound, AudioClip> clips = new();
 
 		private readonly List<AudioSource> worldSources = new();
+
+		private readonly List<AudioClip> stepClips = new();
+
+		private int lastStep;
 
 		private AudioSource interfaceSource;
 
@@ -83,6 +88,9 @@ namespace Audio
 
 			foreach (Sound sound in System.Enum.GetValues(typeof(Sound)))
 				clips[sound] = SoundSynth.Create(sound);
+
+			for (var i = 0; i < SoundSynth.StepVariants; i++)
+				stepClips.Add(SoundSynth.CreateStep(i));
 
 			interfaceSource = CreateSource("Interface", false, 0f);
 			musicSource = CreateSource("Music", true, 0f);
@@ -232,6 +240,21 @@ namespace Audio
 			UpdateFootsteps();
 			UpdateWind();
 			UpdateAmbience();
+			UpdateMusic();
+		}
+
+		// A little hush at night, and under the rain
+		private void UpdateMusic()
+		{
+			if (!musicEnabled)
+				return;
+
+			var darkness = ServiceLocator.Get<IDayCycle>()?.Darkness ?? 0f;
+			var raining = ServiceLocator.Get<IWeather>()?.IsRaining ?? false;
+
+			var target = musicVolume * Mathf.Lerp(1f, 0.65f, darkness) * (raining ? 0.75f : 1f);
+
+			musicSource.volume = Mathf.MoveTowards(musicSource.volume, target, Time.deltaTime * 0.1f);
 		}
 
 		private void UpdateFootsteps()
@@ -255,7 +278,19 @@ namespace Audio
 
 			stepTimer = 1f;
 
-			Play(Sound.Step, 0.35f, 0.12f);
+			PlayStep();
+		}
+
+		// Footsteps sit well under everything else, and never repeat the same variant twice running
+		private void PlayStep()
+		{
+			if (!soundEnabled)
+				return;
+
+			lastStep = (lastStep + Random.Range(1, stepClips.Count)) % stepClips.Count;
+
+			interfaceSource.pitch = 1f + Random.Range(-0.08f, 0.08f);
+			interfaceSource.PlayOneShot(stepClips[lastStep], 0.09f * soundVolume);
 		}
 
 		private void UpdateWind()
@@ -275,15 +310,24 @@ namespace Audio
 			if (Time.time < nextChirp)
 				return;
 
-			nextChirp = Time.time + Random.Range(5f, 13f);
+			var dayCycle = ServiceLocator.Get<IDayCycle>();
+			var night = dayCycle != null && dayCycle.IsNight;
+			var raining = ServiceLocator.Get<IWeather>()?.IsRaining ?? false;
 
-			if (inputModeService.Mode != InputMode.Gameplay)
+			// Crickets chirp more often than birds sing
+			nextChirp = Time.time + (night ? Random.Range(2.5f, 6f) : Random.Range(5f, 13f));
+
+			// Birds shelter from the rain
+			if (inputModeService.Mode != InputMode.Gameplay || raining && !night)
 				return;
 
-			// A bird somewhere nearby, off to one side
+			// Something small somewhere nearby, off to one side
 			var offset = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f) * Vector3.forward * Random.Range(8f, 20f);
 
-			PlayAt(Sound.Chirp, witch.Transform.position + offset + Vector3.up * 4f, Random.Range(0.25f, 0.45f));
+			if (night)
+				PlayAt(Sound.Cricket, witch.Transform.position + offset, Random.Range(0.12f, 0.25f));
+			else
+				PlayAt(Sound.Chirp, witch.Transform.position + offset + Vector3.up * 4f, Random.Range(0.25f, 0.45f));
 		}
 	}
 }

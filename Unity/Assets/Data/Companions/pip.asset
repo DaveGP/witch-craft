@@ -17,6 +17,7 @@ MonoBehaviour:
   Species: Frog
   Color: {r: 0.45, g: 0.82, b: 0.38, a: 1}
   Prefab: {fileID: 2528627024512764033, guid: fd3205cef425c49b184cd83473a89a8c, type: 3}
+  Nocturnal: 0
   Greeting: '"Ribbit! Oh! A witch! I''ve always wanted to live somewhere with a roof.
     Ponds are so... damp."'
   Plea: '"If you brought me three Glowcaps, I''d hop right over to your house. They
