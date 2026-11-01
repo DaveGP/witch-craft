@@ -6,6 +6,8 @@
 
 Run, jump and fly around a little island gathering herbs for potions, glyphs for spells and materials for your house. Return home to brew, inscribe and build, then head back out to explore further. Magical companions you befriend along the way move in, and you can visit with them, give gifts and learn their secrets.
 
+**Play it in your browser: https://davegp.github.io/witch-craft/**
+
 ## Features
 
 * Snappy platforming: coyote time, buffered and variable height jumps, double jump, bounce mushrooms, moving platforms
@@ -62,6 +64,14 @@ The data assets, prefabs and the scene are generated from code. After changing a
 
 ```bash
 /Applications/Unity/Hub/Editor/6000.5.3f1/Unity.app/Contents/MacOS/Unity -batchmode -projectPath Unity -executeMethod WitchCraftEditor.WorldSceneBuilder.BuildEverythingBatch -logFile Unity/Logs/build.log
+```
+
+### Web build
+
+The browser version is served by GitHub Pages from the `gh-pages` branch. To build and publish it (close the Unity Editor first):
+
+```bash
+./deploy-webgl.sh
 ```
 
 ### Automated playtest
