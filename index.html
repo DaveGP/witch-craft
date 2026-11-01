@@ -1,133 +1,93 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en-gb">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity Web Player | Witch Craft</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <title>Witch Craft</title>
+    <meta name="description" content="A cosy 3D platformer about a young witch building her home.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 L46 46 H18 Z' fill='%235c3d85'/%3E%3Crect x='6' y='44' width='52' height='8' rx='4' fill='%233d2858'/%3E%3Crect x='20' y='38' width='24' height='6' fill='%23f2c46e'/%3E%3C/svg%3E">
     <link rel="stylesheet" href="TemplateData/style.css">
   </head>
   <body>
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=1280 height=720 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
-      <div id="unity-footer">
-        <div id="unity-logo-title-footer"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Witch Craft</div>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+
+    <div id="loading">
+      <div class="card">
+        <div class="hat" aria-hidden="true"></div>
+        <h1>Witch Craft</h1>
+        <p class="tagline">A cosy island, a cauldron, a cat, and a home to build.</p>
+        <div class="bar"><div id="bar-fill"></div></div>
+        <p id="status">Gathering herbs&hellip;</p>
+        <p class="hint">Click the game to look around with the mouse. Esc opens the menu.</p>
       </div>
     </div>
+
+    <div id="banner"></div>
+
     <script>
       var canvas = document.querySelector("#unity-canvas");
+      var statusText = document.querySelector("#status");
 
-      // Shows a temporary message banner/ribbon for a few seconds, or
-      // a permanent error message on top of the canvas if type=='error'.
-      // If type=='warning', a yellow highlight color is used.
-      // Modify or remove this function to customize the visually presented
-      // way that non-critical warnings and error messages are presented to the
-      // user.
-      function unityShowBanner(msg, type) {
-        var warningBanner = document.querySelector("#unity-warning");
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
+      function showBanner(message, type) {
+        var banner = document.querySelector("#banner");
+        var line = document.createElement("div");
+        line.className = "banner-line " + (type || "");
+        line.innerHTML = message;
+        banner.appendChild(line);
+
+        if (type != "error")
+          setTimeout(function () { banner.removeChild(line); }, 5000);
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/132b8149172154915ab01c612baf66c6.loader.js";
+      var loaderUrl = buildUrl + "/bb8c8e24bbffc1455cfc05b4438ff232.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/6f1ac5f7493180c95ba8b6d78596d9de.data.unityweb",
+        dataUrl: buildUrl + "/d6609af9117eee4ecd09580df9d4d066.data.unityweb",
         frameworkUrl: buildUrl + "/560d4ac523c6109350cf48552d669b60.framework.js.unityweb",
-        codeUrl: buildUrl + "/5bdd048356b5fef4ca309668ed4f44c6.wasm.unityweb",
+        codeUrl: buildUrl + "/b67b15fe6b193c0a7fcfec292dca90d9.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "David Pearson",
         productName: "Witch Craft",
         productVersion: "0.1.0",
-        showBanner: unityShowBanner,
-        // errorHandler: function(err, url, line) {
-        //    alert("error " + err + " occurred at line " + line);
-        //    // Return 'true' if you handled this error and don't want Unity
-        //    // to process it further, 'false' otherwise.
-        //    return true;
-        // },
+        showBanner: showBanner,
+        // Keep saves between visits: write the save folder through to browser storage as it changes
+        autoSyncPersistentDataPath: true,
       };
 
-      // By default, Unity keeps WebGL canvas render target size matched with
-      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
-      // Set this to false if you want to decouple this synchronization from
-      // happening inside the engine, and you would instead like to size up
-      // the canvas DOM size and WebGL render target sizes yourself.
-      // config.matchWebGLToCanvasSize = false;
-
-      // If you would like all file writes inside Unity Application.persistentDataPath
-      // directory to automatically persist so that the contents are remembered when
-      // the user revisits the site the next time, uncomment the following line:
-      // config.autoSyncPersistentDataPath = true;
-      // This autosyncing is currently not the default behavior to avoid regressing
-      // existing user projects that might rely on the earlier manual
-      // JS_FileSystem_Sync() behavior, but in future Unity version, this will be
-      // expected to change.
-
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        // Mobile device style: fill the whole browser client area with the game canvas:
-
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        document.querySelector("#unity-container").className = "unity-mobile";
-        canvas.className = "unity-mobile";
-
-        // To lower canvas resolution on mobile devices to gain some
-        // performance, uncomment the following line:
-        // config.devicePixelRatio = 1;
-
-
-      } else {
-        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        canvas.style.width = "1280px";
-        canvas.style.height = "720px";
-      }
-
-      document.querySelector("#unity-loading-bar").style.display = "block";
+      // Friendly loading messages as the bar fills
+      var stages = [
+        [0.0, "Gathering herbs…"],
+        [0.25, "Filling the cauldron…"],
+        [0.5, "Waking the cat…"],
+        [0.75, "Sweeping the broom…"],
+        [0.92, "Lighting the hearth…"],
+      ];
 
       var script = document.createElement("script");
       script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-                document.querySelector("#unity-fullscreen-button").onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
+      script.onload = function () {
+        createUnityInstance(canvas, config, function (progress) {
+          document.querySelector("#bar-fill").style.width = Math.round(100 * progress) + "%";
 
-              }).catch((message) => {
-                alert(message);
-              });
-            };
+          for (var i = stages.length - 1; i >= 0; i--) {
+            if (progress >= stages[i][0]) {
+              statusText.textContent = stages[i][1];
+              break;
+            }
+          }
+        }).then(function () {
+          var loading = document.querySelector("#loading");
+          loading.classList.add("done");
+          setTimeout(function () { loading.remove(); }, 700);
+          canvas.focus();
+        }).catch(function (message) {
+          statusText.textContent = "Something went wrong loading the game: " + message;
+          statusText.classList.add("error");
+        });
+      };
 
       document.body.appendChild(script);
-
     </script>
   </body>
 </html>
