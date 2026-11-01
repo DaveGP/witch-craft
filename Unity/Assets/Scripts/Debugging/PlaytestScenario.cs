@@ -152,6 +152,30 @@ namespace Debugging
 			Check("Started with two recipes", recipeBook.Known.Count == 2);
 			Check("Started with three glyphs", spellBook.KnownGlyphs.Count == 3);
 
+			// The art swap layer: every slot listed, and assigning a prefab swaps the look but not the collision
+			var artSet = Art.ArtSwap.Set;
+			var artKeys = artSet != null ? artSet.Entries.Select(entry => entry.Key).ToList() : new List<string>();
+			Check($"The Art Set lists every slot ({artKeys.Count})",
+				new[] { "witch", "cat", "broom", "piece:bed", "piece:wall_timber", "companion:pip", "companion:nova", "tree:pine", "tree:palm", "rock:boulder", "prop:crate", "gather:Lavender", "gather:GiantClam" }.All(artKeys.Contains));
+
+			var crateEntry = artSet.Find("prop:crate");
+			crateEntry.Prefab = database.FindBuildPiece("lamp").Prefab;
+			artSet.NotifyChanged();
+			yield return null;
+
+			var crateSwap = FindObjectsByType<Art.ArtSwap>(FindObjectsSortMode.None).First(swap => swap.Key == "prop:crate");
+			var crateRenderer = crateSwap.GetComponent<Renderer>();
+			var crateArt = crateSwap.transform.Cast<Transform>().FirstOrDefault(child => child.name.StartsWith("Art ("));
+
+			Check("Assigning art shows it and hides the placeholder, keeping the placeholder's collider",
+				crateSwap.HasArt && crateArt != null && !crateRenderer.enabled && crateSwap.GetComponent<Collider>().enabled && crateArt.GetComponentsInChildren<Collider>().Length == 0);
+
+			crateEntry.Prefab = null;
+			artSet.NotifyChanged();
+			yield return null;
+
+			Check("Clearing the art brings the placeholder back", !crateSwap.HasArt && crateRenderer.enabled);
+
 			var audio = ServiceLocator.Get<IAudioService>();
 			Check("Audio generated its sounds and music", audio != null && audio.Clip(Sound.Music) != null && audio.Clip(Sound.Music).length > 30f);
 

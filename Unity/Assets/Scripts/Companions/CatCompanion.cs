@@ -1,3 +1,4 @@
+using Art;
 using Audio;
 using Audio.Interfaces;
 using Character.Interfaces;
@@ -50,6 +51,16 @@ namespace Companions
 
 		private Vector3 bodyRestScale;
 
+		private static readonly int SpeedParameter = Animator.StringToHash("Speed");
+
+		private static readonly int SittingParameter = Animator.StringToHash("IsSitting");
+
+		private ArtSwap artSwap;
+
+		private Animator rig;
+
+		private AnimatorParameters rigParameters;
+
 		public string Prompt => $"Pet {catName}";
 
 		public bool CanInteract => !riding;
@@ -65,6 +76,8 @@ namespace Companions
 				Debug.LogError($"{nameof(eventBus)} is null");
 
 			groundMask = LayerMask.GetMask("Ground", "Environment");
+
+			artSwap = GetComponent<ArtSwap>();
 
 			if (body != null)
 				bodyRestScale = body.localScale;
@@ -128,6 +141,8 @@ namespace Companions
 				body.localScale = new Vector3(bodyRestScale.x, bodyRestScale.y * 0.8f, bodyRestScale.z);
 
 			WagTail(4f);
+
+			UpdateRig(0f, true);
 		}
 
 		private void Hop()
@@ -218,6 +233,8 @@ namespace Companions
 
 			var sitting = idleTime > 1.5f;
 
+			UpdateRig(moving, sitting || riding);
+
 			stepPhase += Time.deltaTime * moving * 3.5f;
 
 			var bounce = moving > 0.1f ? Mathf.Abs(Mathf.Sin(stepPhase)) * 0.06f : 0f;
@@ -234,6 +251,21 @@ namespace Companions
 				head.localRotation = Quaternion.Euler(Mathf.Sin(Time.time * 0.7f) * 8f, Mathf.Sin(Time.time * 0.4f) * 20f, 0f);
 
 			WagTail(moving > 0.1f ? 8f : 2f);
+		}
+
+		// A rigged cat from the Art Set gets Speed and IsSitting, when its controller has them
+		private void UpdateRig(float speed, bool sitting)
+		{
+			var animator = artSwap != null ? artSwap.ArtAnimator : null;
+
+			if (animator != rig)
+			{
+				rig = animator;
+				rigParameters = rig != null ? new AnimatorParameters(rig) : null;
+			}
+
+			rigParameters?.SetFloat(SpeedParameter, speed);
+			rigParameters?.SetBool(SittingParameter, sitting);
 		}
 
 		private void WagTail(float speed)

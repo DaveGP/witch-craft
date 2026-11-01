@@ -149,6 +149,8 @@ namespace WitchCraftEditor
 			BuildCat(player);
 			BuildCamera();
 
+			SyncArtSet();
+
 			EnsureFolder("Assets/Scenes");
 
 			EditorSceneManager.SaveScene(scene, ScenePath);
@@ -389,6 +391,9 @@ namespace WitchCraftEditor
 				Prim(PrimitiveType.Sphere, "Crown", tree, new Vector3(-0.8f, 3.4f, -0.5f), new Vector3(2.1f, 1.9f, 2.1f), leaf, false);
 			}
 
+			var kind = style switch { 0 => "pine", 3 => "autumn", _ => "broadleaf" };
+			ArtSlot(tree.gameObject, $"tree:{kind}", $"Tree ({kind})");
+
 			return tree.gameObject;
 		}
 
@@ -398,6 +403,8 @@ namespace WitchCraftEditor
 				new Vector3(Range(-10, 10), Range(0, 360), Range(-10, 10)));
 			boulder.layer = Ground;
 			ReplaceWithMeshCollider(boulder);
+
+			ArtSlot(boulder, "rock:boulder", "Boulder (art stretches with the placeholder's shape)");
 		}
 
 		private static GameObject Gatherable(Transform parent, string name, Vector3 position, string itemId, int amount, float respawn, Action<Transform> visual, bool touch = false, string verb = "Gather", bool nightOnly = false)
@@ -410,6 +417,8 @@ namespace WitchCraftEditor
 			var look = Node("Visual", root.transform);
 			visual(look.transform);
 			SetLayer(look, Interactable);
+
+			ArtSlot(look, $"gather:{name}", $"{name} ({ContentBuilder.Item(itemId).DisplayName})");
 
 			foreach (var collider in look.GetComponentsInChildren<Collider>())
 				Object.DestroyImmediate(collider);
@@ -491,6 +500,9 @@ namespace WitchCraftEditor
 			zone.layer = Interactable;
 			Trigger(zone, 1.8f);
 
+			// The floating rune and its carving stay visible over any art
+			ArtSlot(root, "prop:shrine", "Glyph shrine (rune and carving always show)", rune.transform, root.transform.Find("Carving"));
+
 			var shrine = root.AddComponent<GlyphShrine>();
 			Set(shrine, "glyph", glyph);
 			Set(shrine, "rune", rune);
@@ -545,6 +557,8 @@ namespace WitchCraftEditor
 			trigger.isTrigger = true;
 			trigger.center = new Vector3(0, 1.85f, 0);
 			trigger.size = new Vector3(2.2f, 0.5f, 2.2f);
+
+			ArtSlot(root, "prop:bounce-mushroom", "Bounce mushroom");
 
 			var pad = root.AddComponent<BouncePad>();
 			SetValue(pad, "bounceSpeed", bounce);
@@ -661,6 +675,8 @@ namespace WitchCraftEditor
 			body.mass = 2f;
 
 			crate.AddComponent<Movable>();
+
+			ArtSlot(crate, "prop:crate", "Crate (levitate practice by home)");
 		}
 
 		private static void BuildAlchemyBench(Transform parent, Vector3 position, float yaw)
@@ -1314,6 +1330,9 @@ namespace WitchCraftEditor
 			mesh.alignment = TextAlignment.Center;
 			mesh.color = new Color(0.25f, 0.15f, 0.12f);
 			label.GetComponent<MeshRenderer>().sharedMaterial = mesh.font.material;
+
+			// The sign keeps its words over any art
+			ArtSlot(post, "prop:signpost", "Signpost", label.transform);
 		}
 
 		private static void BuildTidewater()
@@ -1381,6 +1400,8 @@ namespace WitchCraftEditor
 			for (var i = 0; i < 6; i++)
 				Prim(PrimitiveType.Sphere, "Frond", palm, crown + Quaternion.Euler(0, i * 60f, 0) * new Vector3(0, -0.1f, 0.9f), new Vector3(0.5f, 0.12f, 2f), Leaf(1), false,
 					new Vector3(15f, i * 60f, 0));
+
+			ArtSlot(palm.gameObject, "tree:palm", "Palm tree (Tidewater)");
 		}
 
 		private static void Clam(Transform parent, Vector3 position)
@@ -1561,6 +1582,9 @@ namespace WitchCraftEditor
 
 			Set(player.AddComponent<PotionAura>(), "glimmerLight", glimmer);
 
+			ArtSlot(visual, "witch", "The witch (an Animator using Crewfall's locomotion parameters is driven)");
+			ArtSlot(broom, "broom", "The broom (shown while flying)");
+
 			var animator = visual.AddComponent<CharacterAnimator>();
 			Set(animator, "body", figure.transform);
 			Set(animator, "hat", hat);
@@ -1660,6 +1684,8 @@ namespace WitchCraftEditor
 			Prim(PrimitiveType.Sphere, "Bell", head.transform, new Vector3(0, -0.13f, 0.08f), Vector3.one * 0.04f, Lit("Gold", new Color(1f, 0.8f, 0.35f), 0.9f), false);
 
 			SetLayer(cat, Interactable);
+
+			ArtSlot(cat, "cat", "Sable the cat (an Animator gets Speed and IsSitting)");
 
 			var companion = cat.AddComponent<CatCompanion>();
 			Set(companion, "body", body.transform);

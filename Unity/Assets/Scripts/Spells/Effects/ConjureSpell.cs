@@ -365,8 +365,10 @@ namespace Spells.Effects
 			foreach (var collider in ghost.GetComponentsInChildren<Collider>())
 				DestroyImmediate(collider);
 
+			// Keep the art swap so the ghost previews the real art, if any
 			foreach (var behaviour in ghost.GetComponentsInChildren<MonoBehaviour>())
-				DestroyImmediate(behaviour);
+				if (behaviour is not Art.ArtSwap)
+					DestroyImmediate(behaviour);
 
 			foreach (var light in ghost.GetComponentsInChildren<Light>())
 				light.enabled = false;

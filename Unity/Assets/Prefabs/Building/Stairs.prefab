@@ -906,6 +906,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8789205915517983906}
   - component: {fileID: 4993023413031247452}
+  - component: {fileID: 8094858970234321609}
   m_Layer: 6
   m_Name: Stairs
   m_TagString: Untagged
@@ -949,6 +950,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
   surfaces:
+  - {fileID: 194222063211353204}
+  - {fileID: 795255780301556159}
+  - {fileID: 1293445706517738073}
+  - {fileID: 7878795200306403555}
+  - {fileID: 2627873695800204161}
+  - {fileID: 1622608538496353790}
+  - {fileID: 6966860785212577179}
+  - {fileID: 930554111307317235}
+--- !u!114 &8094858970234321609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7241872460100368831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34da00f4d3d0a452a859ac0659a09ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Art.ArtSwap
+  key: piece:stairs
+  placeholder:
   - {fileID: 194222063211353204}
   - {fileID: 795255780301556159}
   - {fileID: 1293445706517738073}

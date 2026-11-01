@@ -35,3 +35,7 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 ## Third-party assets stay local
 
 01/11/2026 - Asset packs from Synty and the Unity Asset Store go in `Unity/Assets/ThirdParty/Synty` and `Unity/Assets/ThirdParty/AssetStore`. Git tracks those folders and a README but ignores their contents: the repo is public and the packs' licences don't allow redistributing them, and Crewfall's Synty packs blew through the Git LFS storage limit. As on Crewfall, the parts we actually use and modify get copied into the project proper, so a fresh clone still builds.
+
+## Art swaps over placeholders
+
+01/11/2026 - Rather than building the world from asset packs, every placeholder gets an art slot in `Assets/Resources/ArtSet.asset`. A slot's prefab replaces only the placeholder's looks at runtime; collision and behaviour stay on the placeholder. Because the packs are local only, a clone without them must still build and play: a missing prefab simply leaves the placeholder showing. It also keeps gameplay tuning independent of how big or oddly shaped a pack's models are.

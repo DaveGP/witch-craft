@@ -423,6 +423,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4757167573239577413}
   - component: {fileID: 1498605635738027257}
+  - component: {fileID: 1398176536772920769}
   m_Layer: 6
   m_Name: Lamp
   m_TagString: Untagged
@@ -463,3 +464,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
   surfaces:
   - {fileID: 6324403366910891939}
+--- !u!114 &1398176536772920769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5060704907007680001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34da00f4d3d0a452a859ac0659a09ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Art.ArtSwap
+  key: piece:lamp
+  placeholder:
+  - {fileID: 6324403366910891939}
+  - {fileID: 4129149844621946482}
+  - {fileID: 1899920477553103373}

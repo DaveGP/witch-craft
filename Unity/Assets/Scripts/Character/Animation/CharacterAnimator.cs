@@ -1,12 +1,15 @@
+using Art;
 using Character.Movement.Interfaces;
 using Data.Enums;
 using UnityEngine;
+using Utilities;
 
 
 namespace Character.Animation
 {
 	// Procedural animation for the placeholder witch: squash and stretch on jumps and landings,
-	// a running bob and lean, and a seated pose on the broom. Swap for an Animator once a rigged model lands.
+	// a running bob and lean, and a seated pose on the broom. When the Art Set gives the witch a rigged model,
+	// its Animator is driven too, using Crewfall's locomotion parameter names.
 	public class CharacterAnimator : MonoBehaviour
 	{
 		[SerializeField] private Transform body;
@@ -25,6 +28,12 @@ namespace Character.Animation
 
 		private float bobPhase;
 
+		private ArtSwap artSwap;
+
+		private Animator rig;
+
+		private AnimatorParameters rigParameters;
+
 
 		private void Awake()
 		{
@@ -38,11 +47,17 @@ namespace Character.Animation
 
 			restScale = body.localScale;
 			restPosition = body.localPosition;
+
+			artSwap = GetComponent<ArtSwap>();
 		}
 
 		private void Start()
 		{
-			movementState.Jumped += () => squash = -0.25f;
+			movementState.Jumped += () =>
+			{
+				squash = -0.25f;
+				rigParameters?.SetTrigger(CharacterAnimationParameters.Jump);
+			};
 			movementState.Landed += () => squash = 0.3f;
 		}
 
@@ -51,6 +66,36 @@ namespace Character.Animation
 			UpdateSquash();
 
 			UpdateBody();
+
+			UpdateRig();
+		}
+
+		private void UpdateRig()
+		{
+			var animator = artSwap != null ? artSwap.ArtAnimator : null;
+
+			if (animator != rig)
+			{
+				rig = animator;
+				rigParameters = rig != null ? new AnimatorParameters(rig) : null;
+			}
+
+			if (rigParameters == null)
+				return;
+
+			var local = movementState.LocalVelocity;
+			var flying = movementState.Mode == MovementMode.Broom;
+
+			rigParameters.SetFloat(CharacterAnimationParameters.ForwardVelocity, local.z);
+			rigParameters.SetFloat(CharacterAnimationParameters.StrafeVelocity, local.x);
+			rigParameters.SetFloat(CharacterAnimationParameters.Velocity, new Vector2(local.x, local.z).magnitude);
+			rigParameters.SetFloat(CharacterAnimationParameters.VerticalVelocity, movementState.Velocity.y);
+			rigParameters.SetBool(CharacterAnimationParameters.Grounded, movementState.IsGrounded || flying);
+			rigParameters.SetBool(CharacterAnimationParameters.Flying, flying);
+
+			// Crewfall's controller reads Gait 4 as crouching, so flying shows as idle unless IsFlying is wired up
+			rigParameters.SetInteger(CharacterAnimationParameters.Gait, flying ? 0 : (int)movementState.Gait);
+			rigParameters.SetInteger(CharacterAnimationParameters.MovementDirection, (int)MovementDirectionUtility.FromLocalVelocity(local));
 		}
 
 		private void UpdateSquash()

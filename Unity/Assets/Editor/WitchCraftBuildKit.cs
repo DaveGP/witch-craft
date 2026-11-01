@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Art;
+using Data.ScriptableObjects;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -460,6 +463,81 @@ namespace WitchCraftEditor
 			Object.DestroyImmediate(root);
 
 			return prefab;
+		}
+
+		#endregion
+
+		#region Art slots
+
+		public const string ArtSetPath = "Assets/Resources/ArtSet.asset";
+
+		private static readonly SortedDictionary<string, string> artSlots = new();
+
+		/// <summary>
+		/// Gives a placeholder an Art Set slot. The placeholder renderers are hidden while the slot has art;
+		/// everything under an excluded transform (a harvestable herb, a sign's words) always shows.
+		/// </summary>
+		public static void ArtSlot(GameObject target, string key, string note, params Transform[] keepVisible)
+		{
+			var placeholder = target.GetComponentsInChildren<Renderer>(true)
+				.Where(renderer => renderer is not ParticleSystemRenderer)
+				.Where(renderer => !keepVisible.Any(kept => kept != null && renderer.transform.IsChildOf(kept)))
+				.ToArray();
+
+			var swap = target.GetComponent<ArtSwap>() ?? target.AddComponent<ArtSwap>();
+			swap.Configure(key, placeholder);
+
+			artSlots[key] = note;
+		}
+
+		/// <summary>
+		/// Same, for a prefab asset already saved.
+		/// </summary>
+		public static void ArtSlotOnPrefab(GameObject prefab, string childPath, string key, string note, string keepVisibleName = null)
+		{
+			var path = AssetDatabase.GetAssetPath(prefab);
+			var contents = PrefabUtility.LoadPrefabContents(path);
+
+			try
+			{
+				var target = string.IsNullOrEmpty(childPath) ? contents : contents.transform.Find(childPath).gameObject;
+
+				var kept = string.IsNullOrEmpty(keepVisibleName)
+					? new Transform[0]
+					: contents.GetComponentsInChildren<Transform>(true).Where(child => child.name == keepVisibleName).ToArray();
+
+				ArtSlot(target, key, note, kept);
+
+				PrefabUtility.SaveAsPrefabAsset(contents, path);
+			}
+			finally
+			{
+				PrefabUtility.UnloadPrefabContents(contents);
+			}
+		}
+
+		/// <summary>
+		/// Makes sure the Art Set lists every slot the builders made. Never touches an existing entry's art.
+		/// </summary>
+		public static void SyncArtSet()
+		{
+			var set = LoadOrCreate<ArtSet>(ArtSetPath);
+
+			foreach (var (key, note) in artSlots)
+			{
+				var entry = set.Entries.FirstOrDefault(existing => existing.Key == key);
+
+				if (entry == null)
+					set.Entries.Add(new ArtEntry { Key = key, Note = note });
+				else
+					entry.Note = note;
+			}
+
+			set.Entries = set.Entries.OrderBy(entry => entry.Key).ToList();
+			set.NotifyChanged();
+
+			EditorUtility.SetDirty(set);
+			AssetDatabase.SaveAssets();
 		}
 
 		#endregion

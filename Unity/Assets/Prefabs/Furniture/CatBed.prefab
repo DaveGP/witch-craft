@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3916137369364968534}
   - component: {fileID: 435995500083611252}
+  - component: {fileID: 3335717888923532273}
   m_Layer: 6
   m_Name: CatBed
   m_TagString: Untagged
@@ -47,6 +48,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
   surfaces:
+  - {fileID: 4442005565565700033}
+  - {fileID: 8029804355032551324}
+--- !u!114 &3335717888923532273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7298083427828911632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34da00f4d3d0a452a859ac0659a09ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Art.ArtSwap
+  key: piece:cat_bed
+  placeholder:
   - {fileID: 4442005565565700033}
   - {fileID: 8029804355032551324}
 --- !u!1 &7754885510985177677

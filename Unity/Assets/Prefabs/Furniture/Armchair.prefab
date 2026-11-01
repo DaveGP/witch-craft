@@ -190,6 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7722640544202292127}
   - component: {fileID: 8596995237484393347}
+  - component: {fileID: 1943498144885223934}
   m_Layer: 6
   m_Name: Armchair
   m_TagString: Untagged
@@ -234,6 +235,25 @@ MonoBehaviour:
   - {fileID: 5513741142676318272}
   - {fileID: 4436294079091712834}
   - {fileID: 3830011671170661308}
+--- !u!114 &1943498144885223934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2774675946826740485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34da00f4d3d0a452a859ac0659a09ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Art.ArtSwap
+  key: piece:armchair
+  placeholder:
+  - {fileID: 6093020492618045030}
+  - {fileID: 5513741142676318272}
+  - {fileID: 4436294079091712834}
+  - {fileID: 3830011671170661308}
+  - {fileID: 2235791932826651538}
 --- !u!1 &3667717955029710001
 GameObject:
   m_ObjectHideFlags: 0

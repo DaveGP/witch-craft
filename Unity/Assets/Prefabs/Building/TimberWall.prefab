@@ -302,6 +302,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4377098665122638141}
   - component: {fileID: 983370339593321227}
+  - component: {fileID: 1019764364219564771}
   m_Layer: 6
   m_Name: TimberWall
   m_TagString: Untagged
@@ -340,6 +341,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
   surfaces:
+  - {fileID: 2759398392441939288}
+  - {fileID: 7268313701010121113}
+  - {fileID: 5316775460707494173}
+--- !u!114 &1019764364219564771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7078492408563329429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34da00f4d3d0a452a859ac0659a09ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Art.ArtSwap
+  key: piece:wall_timber
+  placeholder:
   - {fileID: 2759398392441939288}
   - {fileID: 7268313701010121113}
   - {fileID: 5316775460707494173}

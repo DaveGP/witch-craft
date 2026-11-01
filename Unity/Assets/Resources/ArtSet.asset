@@ -1,0 +1,435 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb01de3ffe41140ae96ef1188da429e2, type: 3}
+  m_Name: ArtSet
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.ArtSet
+  Entries:
+  - Key: broom
+    Note: The broom (shown while flying)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: cat
+    Note: Sable the cat (an Animator gets Speed and IsSitting)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: companion:bramble
+    Note: Bramble the Hedgehog
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: companion:ember
+    Note: Ember the Fox Spirit
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: companion:hoot
+    Note: Hoot the Owl
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: companion:nova
+    Note: Nova the Star Sprite
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: companion:pip
+    Note: Pip the Frog
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: companion:tilly
+    Note: Tilly the Turtle
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:BerryBush
+    Note: BerryBush (Wild Berry)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Boulder
+    Note: Boulder (Stone)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:ClayBank
+    Note: ClayBank (Clay)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:CrystalShard
+    Note: CrystalShard (Crystal)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Driftwood
+    Note: Driftwood (Timber)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:EmberMoss
+    Note: EmberMoss (Ember Moss)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:FallenLog
+    Note: FallenLog (Timber)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:FeatherDown
+    Note: FeatherDown (Feather Down)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:GiantClam
+    Note: GiantClam (Pearl)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Glowcap
+    Note: Glowcap (Glowcap)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Kelp
+    Note: Kelp (Kelp)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Lavender
+    Note: Lavender (Lavender)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Moonpetal
+    Note: Moonpetal (Moonpetal)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Nettle
+    Note: Nettle (Nettle)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Reeds
+    Note: Reeds (Reed)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Seashell
+    Note: Seashell (Seashell)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Silverbells
+    Note: Silverbells (Moon Dew)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Spring
+    Note: Spring (Spring Water)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: gather:Stardust
+    Note: Stardust (Stardust)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:armchair
+    Note: Armchair
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:bed
+    Note: Cosy Bed
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:bookshelf
+    Note: Bookshelf
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:cat_bed
+    Note: Cat Bed
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:chair
+    Note: Chair
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:fence
+    Note: Garden Fence
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:floor_stone
+    Note: Flagstone Floor
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:floor_timber
+    Note: Timber Floor
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:glowcap_lamp
+    Note: Glowcap Lamp
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:lamp
+    Note: Crystal Lamp
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:planter
+    Note: Herb Planter
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:potion_shelf
+    Note: Potion Shelf
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:roof_slate
+    Note: Slate Roof
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:roof_thatch
+    Note: Thatch Roof
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:rug
+    Note: Woven Rug
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:shell_lamp
+    Note: Shell Lamp
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:stairs
+    Note: Stairs
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:table
+    Note: Table
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:telescope
+    Note: Telescope
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:wall_door
+    Note: Doorway
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:wall_stone
+    Note: Stone Wall
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:wall_timber
+    Note: Timber Wall
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: piece:wall_window
+    Note: Window Wall
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: prop:bounce-mushroom
+    Note: Bounce mushroom
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: prop:crate
+    Note: Crate (levitate practice by home)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: prop:shrine
+    Note: Glyph shrine (rune and carving always show)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: prop:signpost
+    Note: Signpost
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: rock:boulder
+    Note: Boulder (art stretches with the placeholder's shape)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: tree:autumn
+    Note: Tree (autumn)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: tree:broadleaf
+    Note: Tree (broadleaf)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: tree:palm
+    Note: Palm tree (Tidewater)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: tree:pine
+    Note: Tree (pine)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: witch
+    Note: The witch (an Animator using Crewfall's locomotion parameters is driven)
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0

@@ -212,6 +212,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2849639145092564313}
   - component: {fileID: 9070152216782449315}
+  - component: {fileID: 6803572726073685610}
   m_Layer: 6
   m_Name: WindowWall
   m_TagString: Untagged
@@ -259,6 +260,28 @@ MonoBehaviour:
   - {fileID: 2975752546830985254}
   - {fileID: 3644519618267924455}
   - {fileID: 2020333688181626518}
+  - {fileID: 9161020078803831437}
+  - {fileID: 8958182316196394243}
+  - {fileID: 425133942745456190}
+--- !u!114 &6803572726073685610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4306929609545743745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34da00f4d3d0a452a859ac0659a09ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Art.ArtSwap
+  key: piece:wall_window
+  placeholder:
+  - {fileID: 7794114155707245485}
+  - {fileID: 2975752546830985254}
+  - {fileID: 3644519618267924455}
+  - {fileID: 2020333688181626518}
+  - {fileID: 6689199709696471046}
   - {fileID: 9161020078803831437}
   - {fileID: 8958182316196394243}
   - {fileID: 425133942745456190}

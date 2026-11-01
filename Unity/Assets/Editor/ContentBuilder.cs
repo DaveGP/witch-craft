@@ -64,6 +64,8 @@ namespace WitchCraftEditor
 			EditorUtility.SetDirty(Database);
 			AssetDatabase.SaveAssets();
 
+			SyncArtSet();
+
 			Debug.Log($"ContentBuilder: {Database.Items.Count} items, {Database.Glyphs.Count} glyphs, {Database.Spells.Count} spells, " +
 			          $"{Database.Recipes.Count} recipes, {Database.BuildPieces.Count} build pieces, {Database.Companions.Count} companions.");
 		}
@@ -373,6 +375,9 @@ namespace WitchCraftEditor
 			piece.Comfort = comfort.TryGetValue(id, out var cosiness) ? cosiness : 0;
 			piece.Prefab = prefab;
 			piece.Cost = cost.Select(entry => new ItemStack(items[entry.item], entry.amount)).ToList();
+
+			// The planter's herbs stay visible over any art: they're the harvest
+			ArtSlotOnPrefab(prefab, null, $"piece:{id}", name, "Growth");
 
 			EditorUtility.SetDirty(piece);
 
@@ -867,6 +872,8 @@ namespace WitchCraftEditor
 			companion.Color = colour;
 			companion.Prefab = prefab;
 			companion.Nocturnal = false;
+
+			ArtSlotOnPrefab(prefab, "Visual", $"companion:{id}", $"{name} the {species}");
 			companion.Greeting = greeting;
 			companion.Plea = plea;
 			companion.RecruitGift = new ItemStack(items[gift.item], gift.amount);

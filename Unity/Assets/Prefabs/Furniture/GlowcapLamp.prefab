@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3668743613542039220}
   - component: {fileID: 2984471362852330254}
+  - component: {fileID: 8794885503640550419}
   m_Layer: 6
   m_Name: GlowcapLamp
   m_TagString: Untagged
@@ -48,6 +49,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
   surfaces: []
+--- !u!114 &8794885503640550419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2765385709015506147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34da00f4d3d0a452a859ac0659a09ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Art.ArtSwap
+  key: piece:glowcap_lamp
+  placeholder:
+  - {fileID: 2521035323650830893}
+  - {fileID: 1243759330731378294}
 --- !u!1 &4491719177536713127
 GameObject:
   m_ObjectHideFlags: 0
