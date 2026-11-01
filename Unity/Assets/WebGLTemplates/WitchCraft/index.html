@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <meta name="description" content="A cosy 3D platformer about a young witch building her home.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4 L46 46 H18 Z' fill='%235c3d85'/%3E%3Crect x='6' y='44' width='52' height='8' rx='4' fill='%233d2858'/%3E%3Crect x='20' y='38' width='24' height='6' fill='%23f2c46e'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+
+    <div id="loading">
+      <div class="card">
+        <div class="hat" aria-hidden="true"></div>
+        <h1>{{{ PRODUCT_NAME }}}</h1>
+        <p class="tagline">A cosy island, a cauldron, a cat, and a home to build.</p>
+        <div class="bar"><div id="bar-fill"></div></div>
+        <p id="status">Gathering herbs&hellip;</p>
+        <p class="hint">Click the game to look around with the mouse. Esc opens the menu.</p>
+      </div>
+    </div>
+
+    <div id="banner"></div>
+
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+      var statusText = document.querySelector("#status");
+
+      function showBanner(message, type) {
+        var banner = document.querySelector("#banner");
+        var line = document.createElement("div");
+        line.className = "banner-line " + (type || "");
+        line.innerHTML = message;
+        banner.appendChild(line);
+
+        if (type != "error")
+          setTimeout(function () { banner.removeChild(line); }, 5000);
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+#if USE_WASM
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+        showBanner: showBanner,
+        // Keep saves between visits: write the save folder through to browser storage as it changes
+        autoSyncPersistentDataPath: true,
+      };
+
+      // Friendly loading messages as the bar fills
+      var stages = [
+        [0.0, "Gathering herbs…"],
+        [0.25, "Filling the cauldron…"],
+        [0.5, "Waking the cat…"],
+        [0.75, "Sweeping the broom…"],
+        [0.92, "Lighting the hearth…"],
+      ];
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = function () {
+        createUnityInstance(canvas, config, function (progress) {
+          document.querySelector("#bar-fill").style.width = Math.round(100 * progress) + "%";
+
+          for (var i = stages.length - 1; i >= 0; i--) {
+            if (progress >= stages[i][0]) {
+              statusText.textContent = stages[i][1];
+              break;
+            }
+          }
+        }).then(function () {
+          var loading = document.querySelector("#loading");
+          loading.classList.add("done");
+          setTimeout(function () { loading.remove(); }, 700);
+          canvas.focus();
+        }).catch(function (message) {
+          statusText.textContent = "Something went wrong loading the game: " + message;
+          statusText.classList.add("error");
+        });
+      };
+
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>

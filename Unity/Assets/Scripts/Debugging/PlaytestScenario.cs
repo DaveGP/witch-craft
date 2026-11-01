@@ -117,6 +117,21 @@ namespace Debugging
 		{
 			yield return new WaitForSeconds(1.5f);
 
+			// Title screen first: start the empty slot
+			var inputMode = ServiceLocator.Get<GameState.Interfaces.IInputModeService>();
+			Check("The title screen opens first", inputMode.Mode == InputMode.Menu);
+			Shot("00_title");
+
+			// Slot one specifically: the others would load a different world
+			var startButton = FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None)
+				.FirstOrDefault(button => button.isActiveAndEnabled && button.transform.parent.name == "Slot1" && button.GetComponentInChildren<UnityEngine.UI.Text>().text == "Start");
+
+			Check("An empty slot offers Start", startButton != null);
+			startButton?.onClick.Invoke();
+			yield return new WaitForSeconds(1.5f);
+
+			Check("Starting a slot goes into play", inputMode.Mode == InputMode.Gameplay);
+
 			var player = FindAnyObjectByType<PlayerCharacter>();
 			var movement = player.GetComponent<IMovementController>();
 			var broom = player.GetComponent<IBroomController>();
@@ -307,6 +322,28 @@ namespace Debugging
 			Shot("06_satchel");
 			Tap(Key.Tab);
 			yield return new WaitForSeconds(0.3f);
+
+			// Settings from the pause menu, and back out to play
+			Tap(Key.Escape);
+			yield return new WaitForSeconds(0.4f);
+
+			var settingsButton = FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None)
+				.FirstOrDefault(button => button.isActiveAndEnabled && button.GetComponentInChildren<UnityEngine.UI.Text>().text == "Settings");
+
+			Check("The pause menu has Settings", settingsButton != null);
+			settingsButton?.onClick.Invoke();
+			yield return new WaitForSeconds(0.5f);
+
+			Check("Settings opens", FindAnyObjectByType<UserInterface.Views.SettingsView>().IsOpen);
+			Shot("06b_settings");
+
+			Tap(Key.Escape);
+			yield return new WaitForSeconds(0.4f);
+			Check("Escape from settings returns to the pause menu", FindAnyObjectByType<UserInterface.Views.PauseView>().IsOpen);
+
+			Tap(Key.Escape);
+			yield return new WaitForSeconds(0.4f);
+			Check("Escape again returns to play", inputMode.Mode == InputMode.Gameplay);
 
 			// Companions: gift Pip what they ask for and they move in
 			var pip = database.FindCompanion("pip");

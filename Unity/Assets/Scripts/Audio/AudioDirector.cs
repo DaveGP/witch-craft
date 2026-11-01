@@ -5,6 +5,7 @@ using Data.ScriptableObjects;
 using DependencyInjection;
 using Events.Interfaces;
 using GameState.Interfaces;
+using Settings.Interfaces;
 using Sky.Interfaces;
 using UnityEngine;
 
@@ -17,10 +18,6 @@ namespace Audio
 	// (pickups, learning, building, jumping, flying) into sounds so the systems themselves stay quiet.
 	public class AudioDirector : MonoBehaviour, IAudioService
 	{
-		private const string MusicKey = "WitchCraft.Music";
-
-		private const string SoundKey = "WitchCraft.Sound";
-
 		[SerializeField] private float musicVolume = 0.3f;
 
 		[SerializeField] private float soundVolume = 0.8f;
@@ -53,35 +50,15 @@ namespace Audio
 
 		private float nextChirp;
 
-		private bool musicEnabled;
+		private IGameSettings settings;
 
-		private bool soundEnabled;
-
-		public bool MusicEnabled
-		{
-			get => musicEnabled;
-			set
-			{
-				musicEnabled = value;
-				PlayerPrefs.SetInt(MusicKey, value ? 1 : 0);
-				musicSource.volume = value ? musicVolume : 0f;
-			}
-		}
-
-		public bool SoundEnabled
-		{
-			get => soundEnabled;
-			set
-			{
-				soundEnabled = value;
-				PlayerPrefs.SetInt(SoundKey, value ? 1 : 0);
-			}
-		}
+		public float SoundLevel => settings.SoundVolume;
 
 		private void Awake()
 		{
 			eventBus = ServiceLocator.Get<IEventBus>();
 			inputModeService = ServiceLocator.Get<IInputModeService>();
+			settings = ServiceLocator.Get<IGameSettings>();
 
 			if (eventBus == null)
 				Debug.LogError($"{nameof(eventBus)} is null");
@@ -99,11 +76,8 @@ namespace Audio
 			for (var i = 0; i < worldVoices; i++)
 				worldSources.Add(CreateSource($"World{i}", false, 1f));
 
-			musicEnabled = PlayerPrefs.GetInt(MusicKey, 1) == 1;
-			soundEnabled = PlayerPrefs.GetInt(SoundKey, 1) == 1;
-
 			musicSource.clip = clips[Sound.Music];
-			musicSource.volume = musicEnabled ? musicVolume : 0f;
+			musicSource.volume = musicVolume * settings.MusicVolume;
 			musicSource.Play();
 
 			windSource.clip = clips[Sound.BroomWind];
@@ -142,24 +116,18 @@ namespace Audio
 
 		public void Play(Sound sound, float volume = 1f, float pitchJitter = 0.05f)
 		{
-			if (!soundEnabled)
-				return;
-
 			interfaceSource.pitch = 1f + Random.Range(-pitchJitter, pitchJitter);
-			interfaceSource.PlayOneShot(clips[sound], volume * soundVolume);
+			interfaceSource.PlayOneShot(clips[sound], volume * soundVolume * SoundLevel);
 		}
 
 		public void PlayAt(Sound sound, Vector3 position, float volume = 1f)
 		{
-			if (!soundEnabled)
-				return;
-
 			var source = worldSources[nextWorldSource];
 			nextWorldSource = (nextWorldSource + 1) % worldSources.Count;
 
 			source.transform.position = position;
 			source.pitch = 1f + Random.Range(-0.05f, 0.05f);
-			source.PlayOneShot(clips[sound], volume * soundVolume);
+			source.PlayOneShot(clips[sound], volume * soundVolume * SoundLevel);
 		}
 
 		#region Events
@@ -246,15 +214,15 @@ namespace Audio
 		// A little hush at night, and under the rain
 		private void UpdateMusic()
 		{
-			if (!musicEnabled)
-				return;
-
 			var darkness = ServiceLocator.Get<IDayCycle>()?.Darkness ?? 0f;
 			var raining = ServiceLocator.Get<IWeather>()?.IsRaining ?? false;
 
-			var target = musicVolume * Mathf.Lerp(1f, 0.65f, darkness) * (raining ? 0.75f : 1f);
+			var target = musicVolume * settings.MusicVolume * Mathf.Lerp(1f, 0.65f, darkness) * (raining ? 0.75f : 1f);
 
-			musicSource.volume = Mathf.MoveTowards(musicSource.volume, target, Time.deltaTime * 0.1f);
+			// Follow the settings slider promptly, the time of day gently
+			var rate = Mathf.Abs(musicSource.volume - target) > 0.15f ? 1f : 0.1f;
+
+			musicSource.volume = Mathf.MoveTowards(musicSource.volume, target, Time.deltaTime * rate);
 		}
 
 		private void UpdateFootsteps()
@@ -284,13 +252,10 @@ namespace Audio
 		// Footsteps sit well under everything else, and never repeat the same variant twice running
 		private void PlayStep()
 		{
-			if (!soundEnabled)
-				return;
-
 			lastStep = (lastStep + Random.Range(1, stepClips.Count)) % stepClips.Count;
 
 			interfaceSource.pitch = 1f + Random.Range(-0.08f, 0.08f);
-			interfaceSource.PlayOneShot(stepClips[lastStep], 0.09f * soundVolume);
+			interfaceSource.PlayOneShot(stepClips[lastStep], 0.09f * soundVolume * SoundLevel);
 		}
 
 		private void UpdateWind()
@@ -299,7 +264,7 @@ namespace Audio
 
 			var speed = witch.Movement.Velocity.magnitude;
 
-			var target = flying && soundEnabled ? Mathf.Clamp01(0.15f + speed / 18f) * 0.45f : 0f;
+			var target = flying ? Mathf.Clamp01(0.15f + speed / 18f) * 0.45f * SoundLevel : 0f;
 
 			windSource.volume = Mathf.MoveTowards(windSource.volume, target, Time.deltaTime * 1.5f);
 			windSource.pitch = Mathf.Lerp(0.8f, 1.3f, speed / 18f);

@@ -2,9 +2,12 @@ using Alchemy;
 using Character.Input.Interfaces;
 using Data.Enums;
 using DependencyInjection;
+using GameState;
+using Persistence.Interfaces;
 using Events.Interfaces;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 using UserInterface.Views;
@@ -31,6 +34,10 @@ namespace UserInterface
 
 		private PauseView pause;
 
+		private SettingsView settings;
+
+		private TitleView title;
+
 		private View current;
 
 		private void Awake()
@@ -56,6 +63,11 @@ namespace UserInterface
 			alchemy = AddView<AlchemyView>(canvas, "Alchemy");
 			dialogue = AddView<DialogueView>(canvas, "Dialogue");
 			pause = AddView<PauseView>(canvas, "Pause");
+			settings = AddView<SettingsView>(canvas, "Settings");
+			title = AddView<TitleView>(canvas, "Title");
+
+			pause.OpenSettings = () => ShowSettings(pause);
+			title.OpenSettings = () => ShowSettings(title);
 
 			eventBus.AlchemyOpened += OpenAlchemy;
 			eventBus.DialogueRequested += OpenDialogue;
@@ -71,6 +83,12 @@ namespace UserInterface
 		{
 			// Lock the cursor for play once everything exists
 			ServiceLocator.Get<GameState.Interfaces.IInputModeService>().Reset();
+
+			// Straight into play after picking a slot, otherwise the title screen
+			if (GameFlow.ConsumeSkipTitle())
+				ServiceLocator.Get<ISaveService>().SavingEnabled = true;
+			else
+				Show(title);
 		}
 
 		private static void EnsureEventSystem()
@@ -119,7 +137,10 @@ namespace UserInterface
 
 			var actions = menuInput.ConsumeMenuInput();
 
-			if (actions.HasFlag(MenuAction.Cancel))
+			// B backs out of menus on a gamepad; in play it is the broom's dive button, so only while a menu is up
+			var gamepadBack = current != null && Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame;
+
+			if (actions.HasFlag(MenuAction.Cancel) || gamepadBack)
 			{
 				if (current != null)
 					current.Cancel();
@@ -135,6 +156,18 @@ namespace UserInterface
 
 			if (actions.HasFlag(MenuAction.Pump) && current == alchemy)
 				alchemy.Pump();
+		}
+
+		// Settings return to whichever screen opened them
+		private void ShowSettings(View from)
+		{
+			Show(settings);
+
+			settings.Back = () =>
+			{
+				current = null;
+				Show(from);
+			};
 		}
 
 		private void Toggle(View view)

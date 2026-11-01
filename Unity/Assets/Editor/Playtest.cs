@@ -21,6 +21,10 @@ namespace WitchCraftEditor
 			if (File.Exists(save))
 				File.Delete(save);
 
+			// Always test slot one, starting fresh
+			PlayerPrefs.SetInt("WitchCraft.Slot", 0);
+			PlayerPrefs.Save();
+
 			EditorSceneManager.OpenScene(WorldSceneBuilder.ScenePath, OpenSceneMode.Single);
 
 			// Batch mode can crash reloading the domain for play mode, so skip the reload for this run only.

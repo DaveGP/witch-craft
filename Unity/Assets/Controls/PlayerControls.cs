@@ -28,6 +28,7 @@ namespace Controls
 		{
 			public InputAction Move { get; }
 			public InputAction Look { get; }
+			public InputAction LookStick { get; }
 			public InputAction Rotate { get; }
 			public InputAction Scroll { get; }
 			public InputAction Jump { get; }
@@ -66,7 +67,10 @@ namespace Controls
 
 				Look = map.AddAction("Look", InputActionType.Value, expectedControlLayout: "Vector2");
 				Look.AddBinding("<Mouse>/delta");
-				Look.AddBinding("<Gamepad>/rightStick").WithProcessor("scaleVector2(x=12,y=12)");
+
+				// Sticks are a rate, not a distance, so they are read separately and scaled by frame time
+				LookStick = map.AddAction("LookStick", InputActionType.Value, expectedControlLayout: "Vector2");
+				LookStick.AddBinding("<Gamepad>/rightStick");
 
 				Rotate = map.AddAction("Rotate", InputActionType.Value, expectedControlLayout: "Axis");
 				Rotate.AddCompositeBinding("1DAxis")
@@ -94,7 +98,7 @@ namespace Controls
 				Spell3 = Button("Spell3", "<Keyboard>/3");
 				Spell4 = Button("Spell4", "<Keyboard>/4");
 				Satchel = Button("Satchel", "<Keyboard>/tab", "<Gamepad>/select");
-				Spellbook = Button("Spellbook", "<Keyboard>/b");
+				Spellbook = Button("Spellbook", "<Keyboard>/b", "<Gamepad>/rightStickPress");
 				Cancel = Button("Cancel", "<Keyboard>/escape", "<Gamepad>/start");
 			}
 

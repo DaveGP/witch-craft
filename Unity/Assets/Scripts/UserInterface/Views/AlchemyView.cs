@@ -56,8 +56,30 @@ namespace UserInterface.Views
 			BuildShelf();
 			BuildBench();
 
-			eventBus.InventoryChanged += () => { if (IsOpen) RefreshShelf(); };
-			eventBus.RecipeLearned += _ => { if (IsOpen) RefreshRecipes(); };
+			eventBus.InventoryChanged += InventoryChanged;
+			eventBus.RecipeLearned += RecipeLearned;
+		}
+
+		// The event bus outlives the scene, so let go of it when the scene reloads
+		private void OnDestroy()
+		{
+			if (eventBus == null)
+				return;
+
+			eventBus.InventoryChanged -= InventoryChanged;
+			eventBus.RecipeLearned -= RecipeLearned;
+		}
+
+		private void InventoryChanged()
+		{
+			if (IsOpen)
+				RefreshShelf();
+		}
+
+		private void RecipeLearned(RecipeDefinition recipe)
+		{
+			if (IsOpen)
+				RefreshRecipes();
 		}
 
 		private void BuildRecipeBook()

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Controls;
@@ -10,8 +11,15 @@ namespace Character.Input
 	using Interfaces;
 
 
-	public class UnityInputReader : IInputReader
+	public class UnityInputReader : IInputReader, IControlScheme
 	{
+		// Right stick turn rate, in the same units as mouse movement per second
+		private const float StickLookSpeed = 900f;
+
+		public bool UsingGamepad { get; private set; }
+
+		public event Action Changed;
+
 		private readonly PlayerControls playerControls;
 
 		// Presses are recorded the moment the Input System sees them, rather than polled with
@@ -44,25 +52,55 @@ namespace Character.Input
 
 		private void OnPress(InputAction action, CharacterAction characterAction, MenuAction menuAction = MenuAction.None)
 		{
-			action.started += _ =>
+			action.started += context =>
 			{
 				pressedActions |= characterAction;
 				pressedMenuActions |= menuAction;
+
+				SetUsingGamepad(context.control.device is Gamepad);
 			};
 		}
 
 		public InputData GetInputData()
-			=> new InputData(
+		{
+			UpdateDevice();
+
+			return new InputData(
 				Movement,
 				Look,
 				Rotate,
 				Scroll,
 				GetActions(),
 				GetMenuActions());
+		}
+
+		// Sticks and the mouse don't press buttons, so watch them for which device is in use
+		private void UpdateDevice()
+		{
+			var gamepad = Gamepad.current;
+
+			if (gamepad != null && (gamepad.leftStick.ReadValue().sqrMagnitude > 0.1f || gamepad.rightStick.ReadValue().sqrMagnitude > 0.1f))
+				SetUsingGamepad(true);
+			else if (Mouse.current != null && Mouse.current.delta.ReadValue().sqrMagnitude > 4f)
+				SetUsingGamepad(false);
+			else if (Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame)
+				SetUsingGamepad(false);
+		}
+
+		private void SetUsingGamepad(bool usingGamepad)
+		{
+			if (UsingGamepad == usingGamepad)
+				return;
+
+			UsingGamepad = usingGamepad;
+
+			Changed?.Invoke();
+		}
 
 		private Vector2 Movement => Vector2.ClampMagnitude(playerControls.Player.Move.ReadValue<Vector2>(), 1f);
 
-		private Vector2 Look => playerControls.Player.Look.ReadValue<Vector2>();
+		private Vector2 Look => playerControls.Player.Look.ReadValue<Vector2>()
+		                        + playerControls.Player.LookStick.ReadValue<Vector2>() * (StickLookSpeed * Time.unscaledDeltaTime);
 
 		private float Rotate => playerControls.Player.Rotate.ReadValue<float>();
 

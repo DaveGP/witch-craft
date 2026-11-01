@@ -21,6 +21,8 @@ using Persistence;
 using Persistence.Interfaces;
 using Potions;
 using Potions.Interfaces;
+using Settings;
+using Settings.Interfaces;
 using Spells;
 using Spells.Interfaces;
 using SystemManagement;
@@ -62,13 +64,19 @@ namespace DependencyInjection
 
 		private static void InitialiseInput()
 		{
+			ServiceLocator.Register<IGameSettings>(new GameSettings());
+
 			IInputModeService inputModeService = new InputModeService();
 
 			ServiceLocator.Register(inputModeService);
 
 			PlayerControls playerControls = new();
 
-			IInputReader inputReader = new UnityInputReader(playerControls);
+			var unityInputReader = new UnityInputReader(playerControls);
+
+			IInputReader inputReader = unityInputReader;
+
+			ServiceLocator.Register<IControlScheme>(unityInputReader);
 
 			InputProvider inputProvider = new(inputReader, inputModeService);
 

@@ -5,6 +5,7 @@ using Character.Interfaces;
 using DependencyInjection;
 using Events.Interfaces;
 using LocalPlayer.Interfaces;
+using Settings.Interfaces;
 
 
 namespace Camera
@@ -23,8 +24,8 @@ namespace Camera
 
 		public float Sensitivity
 		{
-			get => sensitivity;
-			set => sensitivity = value;
+			get => settings.LookSensitivity;
+			set => settings.LookSensitivity = value;
 		}
 
 		public float Distance
@@ -39,11 +40,11 @@ namespace Camera
 
 		private IPlayerContext playerContext;
 
+		private IGameSettings settings;
+
 		private ICameraTarget cameraTarget;
 
 		private IObserverTarget observed;
-
-		[SerializeField] private float sensitivity = 0.12f;
 
 		[SerializeField] private Transform pitchPivot;
 
@@ -95,6 +96,8 @@ namespace Camera
 			eventBus = ServiceLocator.Get<IEventBus>();
 
 			playerContext = ServiceLocator.Get<IPlayerContext>();
+
+			settings = ServiceLocator.Get<IGameSettings>();
 
 			if (inputSource == null)
 				Debug.LogError($"{nameof(inputSource)} is null");
@@ -185,9 +188,11 @@ namespace Camera
 		{
 			var cameraInput = inputSource.GetCameraInput();
 
+			var sensitivity = settings.LookSensitivity;
+
 			yaw += cameraInput.Look.x * sensitivity;
 
-			pitch -= cameraInput.Look.y * sensitivity;
+			pitch -= cameraInput.Look.y * sensitivity * (settings.InvertY ? -1f : 1f);
 
 			pitch = Mathf.Clamp(pitch, -35f, 75f);
 

@@ -1,23 +1,15 @@
-using Audio.Interfaces;
+using System;
 using DependencyInjection;
+using GameState;
 using Persistence.Interfaces;
-using Potions.Interfaces;
 using Tutorial.Interfaces;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace UserInterface.Views
 {
 	public class PauseView : View
 	{
-		private Text newGameLabel;
-
-		private bool confirmingNewGame;
-
-		private Text musicLabel;
-
-		private Text soundLabel;
+		public Action OpenSettings { get; set; }
 
 		private GameObject skipTutorial;
 
@@ -27,22 +19,18 @@ namespace UserInterface.Views
 			UIFactory.Fill(shade.rectTransform);
 
 			var panel = UIFactory.Image(Root, UIFactory.Panel, "Pause");
-			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-230, -300), new Vector2(230, 300));
+			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-230, -290), new Vector2(230, 290));
 			UIFactory.Vertical(panel.gameObject, 14f, 30);
 
 			UIFactory.Label(panel.transform, "Witch Craft", 44, UIFactory.Accent, TextAnchor.MiddleCenter, FontStyle.Bold);
 
 			UIFactory.Button(panel.transform, "Resume", Close, 24, null, 54);
-
-			var toggles = UIFactory.Row(panel.transform, 10f, 46f);
-			musicLabel = UIFactory.Button(toggles, "", ToggleMusic, 20, new Color(0.3f, 0.25f, 0.4f), 46).GetComponentInChildren<Text>();
-			soundLabel = UIFactory.Button(toggles, "", ToggleSound, 20, new Color(0.3f, 0.25f, 0.4f), 46).GetComponentInChildren<Text>();
-
-			skipTutorial = UIFactory.Button(panel.transform, "Skip tutorial", SkipTutorial, 20, new Color(0.3f, 0.25f, 0.4f), 46).gameObject;
+			UIFactory.Button(panel.transform, "Settings", () => OpenSettings?.Invoke(), 24, null, 54);
 			UIFactory.Button(panel.transform, "Save game", Save, 24, null, 54);
 
-			var newGame = UIFactory.Button(panel.transform, "New game", NewGame, 24, null, 54);
-			newGameLabel = newGame.GetComponentInChildren<Text>();
+			skipTutorial = UIFactory.Button(panel.transform, "Skip tutorial", SkipTutorial, 20, new Color(0.3f, 0.25f, 0.4f), 46).gameObject;
+
+			UIFactory.Button(panel.transform, "Save and return to title", ReturnToTitle, 22, new Color(0.3f, 0.25f, 0.4f), 50);
 
 			// A browser tab can't quit itself
 			if (Application.platform != RuntimePlatform.WebGLPlayer)
@@ -51,40 +39,7 @@ namespace UserInterface.Views
 
 		protected override void OnOpen()
 		{
-			confirmingNewGame = false;
-			newGameLabel.text = "New game";
-
-			RefreshToggles();
-
 			skipTutorial.SetActive(ServiceLocator.Get<ITutorialGuide>()?.IsActive == true);
-		}
-
-		private void ToggleMusic()
-		{
-			var audio = ServiceLocator.Get<IAudioService>();
-
-			if (audio != null)
-				audio.MusicEnabled = !audio.MusicEnabled;
-
-			RefreshToggles();
-		}
-
-		private void ToggleSound()
-		{
-			var audio = ServiceLocator.Get<IAudioService>();
-
-			if (audio != null)
-				audio.SoundEnabled = !audio.SoundEnabled;
-
-			RefreshToggles();
-		}
-
-		private void RefreshToggles()
-		{
-			var audio = ServiceLocator.Get<IAudioService>();
-
-			musicLabel.text = $"Music: {(audio?.MusicEnabled == true ? "on" : "off")}";
-			soundLabel.text = $"Sound: {(audio?.SoundEnabled == true ? "on" : "off")}";
 		}
 
 		private void SkipTutorial()
@@ -99,21 +54,16 @@ namespace UserInterface.Views
 			Close();
 		}
 
-		private void NewGame()
+		private void ReturnToTitle()
 		{
-			if (!confirmingNewGame)
-			{
-				confirmingNewGame = true;
-				newGameLabel.text = "Really start over?";
-				return;
-			}
+			var saveService = ServiceLocator.Get<ISaveService>();
+
+			saveService.Save();
+			saveService.SavingEnabled = false;
 
 			Close();
 
-			ServiceLocator.Get<IPotionEffects>().Clear();
-			ServiceLocator.Get<ISaveService>().NewGame();
-
-			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+			GameFlow.Reload(true);
 		}
 
 		private static void Quit()

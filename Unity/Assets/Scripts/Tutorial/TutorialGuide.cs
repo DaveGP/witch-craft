@@ -10,6 +10,7 @@ using Data.Save;
 using Data.ScriptableObjects;
 using DependencyInjection;
 using Events.Interfaces;
+using GameState.Interfaces;
 using Home.Interfaces;
 using Items.Interfaces;
 using Persistence.Interfaces;
@@ -166,7 +167,8 @@ namespace Tutorial
 				eventBus.SetObjective("");
 			}
 
-			if (!IsActive || Time.time < nextCheck)
+			// Sable waits until the witch is actually playing (not on the title screen or in a menu)
+			if (!IsActive || Time.time < nextCheck || ServiceLocator.Get<IInputModeService>()?.Mode != InputMode.Gameplay)
 				return;
 
 			nextCheck = Time.time + CheckInterval;

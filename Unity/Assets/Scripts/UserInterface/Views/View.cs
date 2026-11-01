@@ -1,7 +1,11 @@
+using System.Collections;
+using Character.Input.Interfaces;
 using Data.Enums;
 using DependencyInjection;
 using GameState.Interfaces;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace UserInterface.Views
 {
@@ -46,6 +50,26 @@ namespace UserInterface.Views
 				inputModeService.Push(InputMode.Menu);
 
 			OnOpen();
+
+			StartCoroutine(FocusFirst());
+		}
+
+		/// <summary>
+		/// Gamepads need something selected to navigate from. Waits a frame for rebuilt content to settle.
+		/// </summary>
+		protected IEnumerator FocusFirst()
+		{
+			yield return null;
+
+			var controlScheme = ServiceLocator.Get<IControlScheme>();
+
+			if (controlScheme == null || !controlScheme.UsingGamepad || EventSystem.current == null || !IsOpen)
+				yield break;
+
+			var first = Root.GetComponentInChildren<Selectable>();
+
+			if (first != null)
+				EventSystem.current.SetSelectedGameObject(first.gameObject);
 		}
 
 		public void Close()

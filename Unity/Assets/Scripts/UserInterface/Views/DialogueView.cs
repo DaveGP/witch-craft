@@ -53,6 +53,9 @@ namespace UserInterface.Views
 				UIFactory.Button(options, choice.Label, () => Choose(choice), 21);
 			}
 
+			if (IsOpen)
+				StartCoroutine(FocusFirst());
+
 			Open();
 		}
 

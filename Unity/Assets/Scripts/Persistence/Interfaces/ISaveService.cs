@@ -2,6 +2,15 @@ namespace Persistence.Interfaces
 {
 	public interface ISaveService
 	{
+		int SlotCount { get; }
+
+		int CurrentSlot { get; }
+
+		/// <summary>
+		/// Off while the title screen is up, so browsing slots never overwrites one.
+		/// </summary>
+		bool SavingEnabled { get; set; }
+
 		/// <summary>
 		/// Registers a participant and immediately reads the current save into it.
 		/// </summary>
@@ -12,8 +21,42 @@ namespace Persistence.Interfaces
 		void Save();
 
 		/// <summary>
-		/// Wipes the save and resets every participant to new game state.
+		/// Wipes the current slot and resets every participant to new game state.
 		/// </summary>
 		void NewGame();
+
+		/// <summary>
+		/// Makes a slot current and reads its save (or a fresh game) into every participant.
+		/// </summary>
+		void SelectSlot(int slot);
+
+		void Erase(int slot);
+
+		SlotSummary Describe(int slot);
+	}
+
+	public readonly struct SlotSummary
+	{
+		public readonly bool Exists;
+
+		public readonly int Day;
+
+		public readonly int HomeLevel;
+
+		public readonly int Companions;
+
+		public readonly int Spells;
+
+		public readonly System.DateTime LastPlayed;
+
+		public SlotSummary(bool exists, int day, int homeLevel, int companions, int spells, System.DateTime lastPlayed)
+		{
+			Exists = exists;
+			Day = day;
+			HomeLevel = homeLevel;
+			Companions = companions;
+			Spells = spells;
+			LastPlayed = lastPlayed;
+		}
 	}
 }

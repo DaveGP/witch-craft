@@ -42,11 +42,20 @@ namespace UserInterface.Views
 			content = UIFactory.ScrollList(listArea, out var scroll, 8f);
 			UIFactory.Fill((RectTransform)scroll.transform);
 
-			eventBus.InventoryChanged += () =>
-			{
-				if (IsOpen)
-					Refresh();
-			};
+			eventBus.InventoryChanged += InventoryChanged;
+		}
+
+		// The event bus outlives the scene, so let go of it when the scene reloads
+		private void OnDestroy()
+		{
+			if (eventBus != null)
+				eventBus.InventoryChanged -= InventoryChanged;
+		}
+
+		private void InventoryChanged()
+		{
+			if (IsOpen)
+				Refresh();
 		}
 
 		protected override void OnOpen() => Refresh();

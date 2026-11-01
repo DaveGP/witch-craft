@@ -42,8 +42,26 @@ namespace UserInterface.Views
 			BuildGlyphPage(left);
 			BuildSpellPage(right);
 
-			eventBus.GlyphLearned += _ => { if (IsOpen) Refresh(); };
-			eventBus.SpellSlotsChanged += () => { if (IsOpen) Refresh(); };
+			eventBus.GlyphLearned += GlyphLearned;
+			eventBus.SpellSlotsChanged += SlotsChanged;
+		}
+
+		// The event bus outlives the scene, so let go of it when the scene reloads
+		private void OnDestroy()
+		{
+			if (eventBus == null)
+				return;
+
+			eventBus.GlyphLearned -= GlyphLearned;
+			eventBus.SpellSlotsChanged -= SlotsChanged;
+		}
+
+		private void GlyphLearned(GlyphDefinition glyph) => SlotsChanged();
+
+		private void SlotsChanged()
+		{
+			if (IsOpen)
+				Refresh();
 		}
 
 		private static RectTransform Page(Transform parent, Vector2 min, Vector2 max, Vector2 offsetMin, Vector2 offsetMax)

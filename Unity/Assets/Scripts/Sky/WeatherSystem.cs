@@ -139,7 +139,7 @@ namespace Sky
 			}
 
 			if (rainSound != null)
-				rainSound.volume = audioService.SoundEnabled ? amount * 0.4f : 0f;
+				rainSound.volume = amount * 0.4f * audioService.SoundLevel;
 		}
 
 		private ParticleSystem CreateRain()

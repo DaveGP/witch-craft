@@ -105,6 +105,50 @@ namespace UserInterface
 			return button;
 		}
 
+		/// <summary>
+		/// A horizontal slider with a filled track and a round handle.
+		/// </summary>
+		public static Slider Slider(Transform parent, float min, float max, float value, Action<float> onChanged, float height = 30f)
+		{
+			var root = Rect("Slider", parent);
+			Layout(root.gameObject, minHeight: height, preferredHeight: height, flexibleWidth: 1);
+
+			var track = Image(root, new Color(0f, 0f, 0f, 0.45f), "Track");
+			Place(track.rectTransform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0f, -5f), new Vector2(0f, 5f));
+
+			var fillArea = Rect("FillArea", root);
+			Place(fillArea, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0f, -5f), new Vector2(0f, 5f));
+
+			var fill = Image(fillArea, Accent, "Fill");
+			Place(fill.rectTransform, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, Vector2.zero);
+
+			var handleArea = Rect("HandleArea", root);
+			Place(handleArea, Vector2.zero, Vector2.one, new Vector2(10f, 0f), new Vector2(-10f, 0f));
+
+			var handle = Image(handleArea, Text, "Handle");
+			handle.rectTransform.sizeDelta = new Vector2(22f, 0f);
+			handle.rectTransform.anchorMin = new Vector2(0f, 0f);
+			handle.rectTransform.anchorMax = new Vector2(0f, 1f);
+
+			var slider = root.gameObject.AddComponent<Slider>();
+			slider.fillRect = fill.rectTransform;
+			slider.handleRect = handle.rectTransform;
+			slider.targetGraphic = handle;
+			slider.direction = UnityEngine.UI.Slider.Direction.LeftToRight;
+			slider.minValue = min;
+			slider.maxValue = max;
+			slider.SetValueWithoutNotify(value);
+
+			var colours = slider.colors;
+			colours.highlightedColor = Accent;
+			colours.selectedColor = Accent;
+			slider.colors = colours;
+
+			slider.onValueChanged.AddListener(changed => onChanged(changed));
+
+			return slider;
+		}
+
 		public static VerticalLayoutGroup Vertical(GameObject target, float spacing = 6f, int padding = 0, bool expandWidth = true)
 		{
 			var group = target.AddComponent<VerticalLayoutGroup>();

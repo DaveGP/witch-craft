@@ -4,9 +4,10 @@ namespace Audio.Interfaces
 {
 	public interface IAudioService
 	{
-		bool MusicEnabled { get; set; }
-
-		bool SoundEnabled { get; set; }
+		/// <summary>
+		/// The player's sound effects volume, 0-1, for things that run their own looping sources.
+		/// </summary>
+		float SoundLevel { get; }
 
 		/// <summary>
 		/// Plays a sound with no position, for the witch and the interface.

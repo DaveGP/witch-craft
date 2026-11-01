@@ -54,6 +54,10 @@ UnityInputReader ──> InputProvider ──(FixedUpdate)──> PlayerCharacte
 * **Home**: `HomePlot` snaps pieces to the grid (floors and roofs to cells, walls to edges, furniture free). `HomeService` places, removes, moves and saves pieces, seeds the starter hut and handles expansion. `PlacedPiece` ties a scene object to its save record; `Movable` lets Levitate lift it.
 * **Companions**: `CompanionRoster` holds friendship and grants rewards. `CompanionSpawner` creates residents at home.
 * **World**: `MovingPlatform`, `BouncePad`, `Updraft`, `HiddenPath`, `BloomSpot`, `Campfire`, `Bobbing`.
+* **Settings**: `GameSettings` (`IGameSettings`) keeps look sensitivity, invert Y and volumes in PlayerPrefs, per machine rather than per slot.
+* **Saves and flow**: `SaveService` has three slots (slot one keeps the original file name). Saving is off while the title screen is up. `GameFlow` reloads the scene to switch slot or return to the title.
+* **Input devices**: `UnityInputReader` also implements `IControlScheme`, tracking whether the last input was a gamepad; views focus their first button for gamepad navigation and the HUD swaps its prompts.
+* **Web**: `Assets/WebGLTemplates/WitchCraft` is the page around the web build: a themed loading screen, full-window canvas and `autoSyncPersistentDataPath` so browser saves persist.
 * **Sky**: `DayCycle` (`IDayCycle`) moves the sun and moon and drives ambient light, fog, sky exposure, reflections and fireflies; time is saved. `WeatherSystem` (`IWeather`) rolls weather and drives rain particles and sound.
 * **Audio**: `AudioDirector` (`IAudioService`) generates clips with `SoundSynth`, plays music, ambience and broom wind, and turns events into sounds.
 * **Tutorial**: `TutorialGuide` (`ITutorialGuide`) runs Sable's guided steps, sets the HUD objective and places a beacon. Progress is saved.

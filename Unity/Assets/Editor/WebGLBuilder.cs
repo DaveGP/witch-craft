@@ -42,7 +42,7 @@ namespace WitchCraftEditor
 
 			// Pages lets browsers cache files for ten minutes; hashed names stop a new deploy mixing with old files
 			PlayerSettings.WebGL.nameFilesAsHashes = true;
-			PlayerSettings.WebGL.template = "APPLICATION:Default";
+			PlayerSettings.WebGL.template = "PROJECT:WitchCraft";
 			PlayerSettings.runInBackground = true;
 			PlayerSettings.defaultWebScreenWidth = 1280;
 			PlayerSettings.defaultWebScreenHeight = 720;

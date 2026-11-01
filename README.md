@@ -21,7 +21,10 @@ Run, jump and fly around a little island gathering herbs for potions, glyphs for
 * A guided first five minutes: Sable suggests what to try next, with a beacon showing where
 * Sound effects, ambience and a music loop, all generated in code
 * Day and night with moonlit nights and fireflies, night-only flowers, companions who sleep, beds to sleep or nap in, and passing rain showers that make herbs regrow faster
-* Autosave, and save by resting at the hearth
+* A title screen with three save slots, autosave, and saving by resting at the hearth or in bed
+* Settings for look sensitivity, invert Y, music and sound volume, with a controls reference
+* Gamepad support: stick look, menus navigable with the D-pad, prompts that follow the device in use
+* A Witch Craft loading screen for the web build, with saves kept between visits
 
 ## Development
 
@@ -109,6 +112,8 @@ The playtest deletes your local save before it runs.
 | Bellows at the bench | Space           |
 | Grind at the bench  | G                |
 | Feel tuning panel (dev) | ` (backquote) |
+
+Gamepad: left stick move, right stick look, A jump, X interact, Y broom, RT cast, LT spell alternate, LB/RB rotate, D-pad left/right ready spell 1/2, D-pad up/down next piece, View satchel, right stick click spellbook, Start menu, B back.
 
 ## Documentation
 

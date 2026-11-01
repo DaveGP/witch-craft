@@ -12,11 +12,19 @@ namespace Persistence
 {
 	using Interfaces;
 
+	// Three save slots as JSON files in persistentDataPath (browser storage on the web). Slot one keeps the
+	// original single-save file name, so saves from before slots existed carry straight over.
 	public class SaveService : ISaveService, IUpdateSystem
 	{
 		private const float AutosaveInterval = 120f;
 
-		private static string SavePath => Path.Combine(Application.persistentDataPath, "witchcraft_save.json");
+		private const string SlotKey = "WitchCraft.Slot";
+
+		public int SlotCount => 3;
+
+		public int CurrentSlot { get; private set; }
+
+		public bool SavingEnabled { get; set; }
 
 		private readonly GameDatabase database;
 
@@ -30,10 +38,15 @@ namespace Persistence
 		{
 			this.database = database;
 
-			data = Load() ?? CreateNew();
+			CurrentSlot = Mathf.Clamp(PlayerPrefs.GetInt(SlotKey, 0), 0, SlotCount - 1);
+
+			data = Load(CurrentSlot) ?? CreateNew();
 
 			nextAutosave = Time.realtimeSinceStartup + AutosaveInterval;
 		}
+
+		private static string PathFor(int slot)
+			=> Path.Combine(Application.persistentDataPath, slot == 0 ? "witchcraft_save.json" : $"witchcraft_save_{slot + 1}.json");
 
 		public void Register(ISaveParticipant participant)
 		{
@@ -53,12 +66,15 @@ namespace Persistence
 
 		public void Save()
 		{
+			if (!SavingEnabled)
+				return;
+
 			foreach (var participant in participants)
 				participant.Write(data);
 
 			try
 			{
-				File.WriteAllText(SavePath, JsonUtility.ToJson(data, true));
+				File.WriteAllText(PathFor(CurrentSlot), JsonUtility.ToJson(data, true));
 			}
 			catch (Exception exception)
 			{
@@ -68,13 +84,43 @@ namespace Persistence
 
 		public void NewGame()
 		{
-			if (File.Exists(SavePath))
-				File.Delete(SavePath);
+			Erase(CurrentSlot);
 
 			data = CreateNew();
 
-			foreach (var participant in participants.ToList())
-				participant.Read(data);
+			ReadAll();
+		}
+
+		public void SelectSlot(int slot)
+		{
+			CurrentSlot = Mathf.Clamp(slot, 0, SlotCount - 1);
+
+			PlayerPrefs.SetInt(SlotKey, CurrentSlot);
+			PlayerPrefs.Save();
+
+			data = Load(CurrentSlot) ?? CreateNew();
+
+			ReadAll();
+		}
+
+		public void Erase(int slot)
+		{
+			var path = PathFor(slot);
+
+			if (File.Exists(path))
+				File.Delete(path);
+		}
+
+		public SlotSummary Describe(int slot)
+		{
+			var path = PathFor(slot);
+
+			var saved = Load(slot);
+
+			if (saved == null)
+				return default;
+
+			return new SlotSummary(true, saved.Day, saved.Home.Level, saved.Companions.Count, saved.Spells.Count, File.GetLastWriteTime(path));
 		}
 
 		public void RunUpdate()
@@ -87,18 +133,26 @@ namespace Persistence
 			Save();
 		}
 
-		private static SaveData Load()
+		private void ReadAll()
 		{
-			if (!File.Exists(SavePath))
+			foreach (var participant in participants.ToList())
+				participant.Read(data);
+		}
+
+		private static SaveData Load(int slot)
+		{
+			var path = PathFor(slot);
+
+			if (!File.Exists(path))
 				return null;
 
 			try
 			{
-				return JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));
+				return JsonUtility.FromJson<SaveData>(File.ReadAllText(path));
 			}
 			catch (Exception exception)
 			{
-				Debug.LogWarning($"SaveService: Could not read save, starting fresh. {exception.Message}");
+				Debug.LogWarning($"SaveService: Could not read slot {slot + 1}, treating it as empty. {exception.Message}");
 				return null;
 			}
 		}

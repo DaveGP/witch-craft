@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Character.Interfaces;
+using Character.Input.Interfaces;
 using Companions.Interfaces;
 using Data.Enums;
 using Data.ScriptableObjects;
@@ -36,6 +37,12 @@ namespace UserInterface.Views
 		private IInventory inventory;
 
 		private ICompanionRoster roster;
+
+		private IControlScheme controlScheme;
+
+		private Text help;
+
+		private IInteractable focus;
 
 		private IObserverTarget target;
 
@@ -73,6 +80,7 @@ namespace UserInterface.Views
 			potionEffects = ServiceLocator.Get<IPotionEffects>();
 			inventory = ServiceLocator.Get<IInventory>();
 			roster = ServiceLocator.Get<ICompanionRoster>();
+			controlScheme = ServiceLocator.Get<IControlScheme>();
 
 			root = parent;
 
@@ -82,17 +90,43 @@ namespace UserInterface.Views
 			BuildBroom();
 			BuildCorners();
 
-			eventBus.ActiveTargetChanged += value => target = value;
+			eventBus.ActiveTargetChanged += SetTarget;
 			eventBus.InteractionFocusChanged += SetFocus;
 			eventBus.Notified += Toast;
 			eventBus.ItemCollected += Collected;
 			eventBus.SpellSlotsChanged += RefreshSlots;
-			eventBus.SpellLearned += _ => RefreshSlots();
+			eventBus.SpellLearned += SpellLearned;
 			eventBus.ObjectiveChanged += SetObjective;
+
+			if (controlScheme != null)
+				controlScheme.Changed += RefreshPrompts;
 
 			SetFocus(null);
 			RefreshSlots();
+			RefreshPrompts();
 		}
+
+		// The event bus and control scheme outlive the scene, so let go of them when the scene reloads
+		private void OnDestroy()
+		{
+			if (eventBus != null)
+			{
+				eventBus.ActiveTargetChanged -= SetTarget;
+				eventBus.InteractionFocusChanged -= SetFocus;
+				eventBus.Notified -= Toast;
+				eventBus.ItemCollected -= Collected;
+				eventBus.SpellSlotsChanged -= RefreshSlots;
+				eventBus.SpellLearned -= SpellLearned;
+				eventBus.ObjectiveChanged -= SetObjective;
+			}
+
+			if (controlScheme != null)
+				controlScheme.Changed -= RefreshPrompts;
+		}
+
+		private void SetTarget(IObserverTarget value) => target = value;
+
+		private void SpellLearned(SpellDefinition spell) => RefreshSlots();
 
 		private void BuildPrompt()
 		{
@@ -174,9 +208,7 @@ namespace UserInterface.Views
 			objectivePanel = panel.gameObject;
 			objectivePanel.SetActive(false);
 
-			var help = UIFactory.Label(root,
-				"WASD move · Space jump · Shift sprint · E interact · F broom\n1-4 ready spell · Click cast · Tab satchel · B spellbook · Esc menu",
-				16, UIFactory.TextMuted, TextAnchor.LowerRight);
+			help = UIFactory.Label(root, "", 16, UIFactory.TextMuted, TextAnchor.LowerRight);
 			UIFactory.Place(help.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-640, 24), new Vector2(-30, 80));
 			help.gameObject.AddComponent<Shadow>();
 		}
@@ -218,7 +250,22 @@ namespace UserInterface.Views
 
 		private void SetFocus(IInteractable interactable)
 		{
-			prompt.text = interactable != null ? $"<color=#{UIFactory.Hex(UIFactory.Accent)}>[E]</color> {interactable.Prompt}" : "";
+			focus = interactable;
+
+			var button = Gamepad ? "(X)" : "[E]";
+
+			prompt.text = interactable != null ? $"<color=#{UIFactory.Hex(UIFactory.Accent)}>{button}</color> {interactable.Prompt}" : "";
+		}
+
+		private bool Gamepad => controlScheme != null && controlScheme.UsingGamepad;
+
+		private void RefreshPrompts()
+		{
+			help.text = Gamepad
+				? "Left stick move · A jump · X interact · Y broom · D-pad ready spell 1/2 · RT cast\nView satchel · Right stick click spellbook · Start menu"
+				: "WASD move · Space jump · Shift sprint · E interact · F broom\n1-4 ready spell · Click cast · Tab satchel · B spellbook · Esc menu";
+
+			SetFocus(focus);
 		}
 
 		private void Collected(ItemDefinition item, int amount)
