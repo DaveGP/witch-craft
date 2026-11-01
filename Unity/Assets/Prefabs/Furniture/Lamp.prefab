@@ -423,7 +423,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4757167573239577413}
   - component: {fileID: 1498605635738027257}
-  - component: {fileID: 3811424753302613621}
+  - component: {fileID: 8632243794520253323}
   m_Layer: 6
   m_Name: Lamp
   m_TagString: Untagged
@@ -464,7 +464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
   surfaces:
   - {fileID: 6324403366910891939}
---- !u!114 &3811424753302613621
+--- !u!114 &8632243794520253323
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

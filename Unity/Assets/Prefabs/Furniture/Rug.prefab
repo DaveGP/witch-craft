@@ -303,7 +303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5009524297840833639}
   - component: {fileID: 9094568614029851617}
-  - component: {fileID: 7222122931926373096}
+  - component: {fileID: 724774913854578669}
   m_Layer: 6
   m_Name: Rug
   m_TagString: Untagged
@@ -344,7 +344,7 @@ MonoBehaviour:
   surfaces:
   - {fileID: 1587104286478842046}
   - {fileID: 5499252422015246178}
---- !u!114 &7222122931926373096
+--- !u!114 &724774913854578669
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

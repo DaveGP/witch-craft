@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3916137369364968534}
   - component: {fileID: 435995500083611252}
-  - component: {fileID: 6234891692098425529}
+  - component: {fileID: 9111666351035085208}
   m_Layer: 6
   m_Name: CatBed
   m_TagString: Untagged
@@ -50,7 +50,7 @@ MonoBehaviour:
   surfaces:
   - {fileID: 4442005565565700033}
   - {fileID: 8029804355032551324}
---- !u!114 &6234891692098425529
+--- !u!114 &9111666351035085208
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

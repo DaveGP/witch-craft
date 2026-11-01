@@ -414,7 +414,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6376372759159174178}
   - component: {fileID: 2530845156180550864}
-  - component: {fileID: 8564800585437192807}
+  - component: {fileID: 9164570667181184050}
   m_Layer: 6
   m_Name: Doorway
   m_TagString: Untagged
@@ -460,7 +460,7 @@ MonoBehaviour:
   - {fileID: 8395921051405685375}
   - {fileID: 5450372815666396419}
   - {fileID: 4438564425206272694}
---- !u!114 &8564800585437192807
+--- !u!114 &9164570667181184050
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

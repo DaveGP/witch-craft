@@ -16,6 +16,7 @@ MonoBehaviour:
   - Key: broom
     Note: The broom (shown while flying)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -23,6 +24,7 @@ MonoBehaviour:
   - Key: cat
     Note: Sable the cat (a rig with a CatRigProfile is crossfaded by state name)
     Prefab: {fileID: 6447957861038779880, guid: 4a9eee877281e492c81f7fb650fe2d2b, type: 3}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1.6759396
@@ -30,6 +32,7 @@ MonoBehaviour:
   - Key: companion:bramble
     Note: Bramble the Hedgehog
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -37,6 +40,7 @@ MonoBehaviour:
   - Key: companion:ember
     Note: Ember the Fox Spirit
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -44,6 +48,7 @@ MonoBehaviour:
   - Key: companion:hoot
     Note: Hoot the Owl
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -51,6 +56,7 @@ MonoBehaviour:
   - Key: companion:nova
     Note: Nova the Star Sprite
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -58,6 +64,7 @@ MonoBehaviour:
   - Key: companion:pip
     Note: Pip the Frog
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -65,62 +72,71 @@ MonoBehaviour:
   - Key: companion:tilly
     Note: Tilly the Turtle
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: gather:BerryBush
     Note: BerryBush (Wild Berry)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 1565778678575522943, guid: a1e481055723b654e84a3224f7fac584, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.01280275, y: -0.016829241, z: -0.012840405}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.7003195
     KeepPlaceholder: 0
   - Key: gather:Boulder
     Note: Boulder (Stone)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 6160872667377487651, guid: d7a0f2135a302d54baf7c358958ffd9b, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.0069340137, y: 0.026515335, z: -0.008542683}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.10396793
     KeepPlaceholder: 0
   - Key: gather:ClayBank
     Note: ClayBank (Clay)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: gather:CrystalShard
     Note: CrystalShard (Crystal)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 2759944855572949898, guid: a6d67825b8514764c9cf61240714cb51, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.0052874456, y: 0.23201656, z: -0.0000067055225}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.5284611
     KeepPlaceholder: 0
   - Key: gather:Driftwood
     Note: Driftwood (Timber)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Prefab: {fileID: 3059600125008029049, guid: 6382ecb43018daf48bc6671d9ac92dc0, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.12878038, y: 0.5037575, z: -0.056707237}
+    Rotation: {x: 0, y: 90, z: 0}
+    Scale: 0.7190861
     KeepPlaceholder: 0
   - Key: gather:EmberMoss
     Note: EmberMoss (Ember Moss)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: gather:FallenLog
     Note: FallenLog (Timber)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Prefab: {fileID: 3059600125008029049, guid: 6382ecb43018daf48bc6671d9ac92dc0, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.12878239, y: 0.5037576, z: -0.05670204}
+    Rotation: {x: 0, y: 90, z: 0}
+    Scale: 0.71908635
     KeepPlaceholder: 0
   - Key: gather:FeatherDown
     Note: FeatherDown (Feather Down)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -128,48 +144,55 @@ MonoBehaviour:
   - Key: gather:GiantClam
     Note: GiantClam (Pearl)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: gather:Glowcap
     Note: Glowcap (Glowcap)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 2849061416920487940, guid: d44c641be17634c448d89554b0cb06eb, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.021831382, y: 0.036417942, z: 0.018640041}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.4740956
     KeepPlaceholder: 0
   - Key: gather:Kelp
     Note: Kelp (Kelp)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: gather:Lavender
     Note: Lavender (Lavender)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 8169411432692894806, guid: cf232f4fb60298347bcf72005ed50ea5, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.0724452, y: 0.27288875, z: -0.0053254776}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.72436756
     KeepPlaceholder: 0
   - Key: gather:Moonpetal
     Note: Moonpetal (Moonpetal)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 7802434088045954328, guid: cb01945b9e6e3a9498f53617afd23f5c, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.072382495, y: 0.21865766, z: -0.020963443}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.58041435
     KeepPlaceholder: 0
   - Key: gather:Nettle
     Note: Nettle (Nettle)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 3115978119441115665, guid: 23aa1864274bd094db6af197b53b38c9, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.090559065, y: 0.13526969, z: -0.1191525}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.4663432
     KeepPlaceholder: 0
   - Key: gather:Reeds
     Note: Reeds (Reed)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -177,20 +200,23 @@ MonoBehaviour:
   - Key: gather:Seashell
     Note: Seashell (Seashell)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: gather:Silverbells
     Note: Silverbells (Moon Dew)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 3197831798957952739, guid: c89317cdae6b12b41aeeb4c05e586ed6, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.027217845, y: 0.06032046, z: 0.013381978}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.58344805
     KeepPlaceholder: 0
   - Key: gather:Spring
     Note: Spring (Spring Water)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -198,244 +224,362 @@ MonoBehaviour:
   - Key: gather:Stardust
     Note: Stardust (Stardust)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: piece:armchair
     Note: Armchair
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 201771673305992610, guid: a3ad741d5c9d09740af88bcf0b528b50, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.000000044947274, y: 0.13543352, z: 0.008683375}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.75409013
     KeepPlaceholder: 0
   - Key: piece:bed
     Note: Cosy Bed
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 2949794128976883027, guid: a7a1eb0fe01d677498cfc69d2c9e2c20, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0.0013660275, z: -0.0037763491}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.47817847
     KeepPlaceholder: 0
   - Key: piece:bookshelf
     Note: Bookshelf
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 3273213540592798559, guid: cddf2a22b0db37d44898ea275e5955c1, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0.007102233, z: 0.000000007692793}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.5162546
     KeepPlaceholder: 0
   - Key: piece:cat_bed
     Note: Cat Bed
     Prefab: {fileID: 2384124346560999288, guid: 43529af9402506f4583fcc1e501029c3, type: 3}
+    Material: {fileID: 0}
     Offset: {x: -0.0000023551497, y: 0.14032832, z: -0.0000022218394}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1.9880682
     KeepPlaceholder: 0
   - Key: piece:chair
     Note: Chair
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 9089839967311462835, guid: bb961919cf1df7d4d9bcc155209c6f58, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0.00002612152, z: -0.0008850124}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.67526406
     KeepPlaceholder: 0
   - Key: piece:fence
     Note: Garden Fence
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 7355185214274487627, guid: 81295b359d78b1648a2f182fe856369b, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.9142543, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.7657043
     KeepPlaceholder: 0
   - Key: piece:floor_stone
     Note: Flagstone Floor
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 2589819526562762622, guid: 1bb99aa0239021849bbe78fab78686c4, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.99999666, y: 0.000000027019317, z: -1}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.8000001
     KeepPlaceholder: 0
   - Key: piece:floor_timber
     Note: Timber Floor
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 8913305760099988204, guid: e2afc5ffe7f070147b9b6df8af3a1a72, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.99999475, y: 0.06815055, z: -1}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.8000001
     KeepPlaceholder: 0
   - Key: piece:glowcap_lamp
     Note: Glowcap Lamp
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 6583488328902351373, guid: e66d4b8a39a4c82418faf8e5b4f48a8d, type: 3}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 1.0858359
     KeepPlaceholder: 0
   - Key: piece:lamp
     Note: Crystal Lamp
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 3216026672026726607, guid: 120d411ec03e8604f9e8cb499c5f8696, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.000000014901161, y: -0.00057471887, z: -0.000000044703484}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 2.0231185
     KeepPlaceholder: 0
   - Key: piece:planter
     Note: Herb Planter
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 3629233181794207007, guid: 51345c9ab62afd04d86a951a665d6274, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: -0.000000008622718}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.5786608
     KeepPlaceholder: 0
   - Key: piece:potion_shelf
     Note: Potion Shelf
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 7484314899487892716, guid: f5f0ed88a469b054eab277a527999999, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: -0.00040077697, z: -0.018985946}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.3543382
     KeepPlaceholder: 0
   - Key: piece:roof_slate
     Note: Slate Roof
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Prefab: {fileID: 4317394661140597982, guid: 34536c2d731e3d743a9ea17032f91e69, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -1.1499956, y: 0.071434475, z: -0.5981072}
+    Rotation: {x: 0, y: 180, z: 0}
+    Scale: 0.9200018
     KeepPlaceholder: 0
   - Key: piece:roof_thatch
     Note: Thatch Roof
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Prefab: {fileID: 1041112394945595134, guid: 09c270c8b16d6ae42b49538b78a6c0fa, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.9834509, y: 0.06108883, z: -1.0614817}
+    Rotation: {x: 0, y: 180, z: 0}
+    Scale: 0.7867606
     KeepPlaceholder: 0
   - Key: piece:rug
     Note: Woven Rug
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Prefab: {fileID: 1076944604416800044, guid: 0aa83905805312f4a8235adcfcbad87b, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.00000017702831, y: 0, z: 0.000001743661}
+    Rotation: {x: 0, y: 90, z: 0}
+    Scale: 0.48501912
     KeepPlaceholder: 0
   - Key: piece:shell_lamp
     Note: Shell Lamp
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 9210734520401212666, guid: 870704362dcf6224ba95b23f0ad2b2f7, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.000000029802322, y: 0.6127357, z: -0.35454553}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 1.137989
     KeepPlaceholder: 0
   - Key: piece:stairs
     Note: Stairs
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 2151791534368582319, guid: d715304ee7af61d41b0fc4ed6fbc87f0, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.6, y: 0.15678169, z: 0.59999704}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.47999763
     KeepPlaceholder: 0
   - Key: piece:table
     Note: Table
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 1355660894510187482, guid: d18ff4cf32e85bf40be83e92ba5c71a3, type: 3}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.82197905
     KeepPlaceholder: 0
   - Key: piece:telescope
     Note: Telescope
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 7491063278750142229, guid: 0073678459f7fee43be6bce953a978f6, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.030202124, y: -0.0035722256, z: 0.19301608}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.42536458
     KeepPlaceholder: 0
   - Key: piece:wall_door
     Note: Doorway
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 7671409453624924124, guid: 9cfb995cae349564f91987043f45373d, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 1.02, y: 0.0000005836504, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.81600237
     KeepPlaceholder: 0
   - Key: piece:wall_stone
     Note: Stone Wall
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 5933450897914129814, guid: 697b3d67c1ed82347a8a4b5d077c8a10, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 1.02, y: 2.4479954, z: 0.0007171817}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.815999
     KeepPlaceholder: 0
   - Key: piece:wall_timber
     Note: Timber Wall
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 8636350562668844047, guid: 9b0b78b3824691a49bf72e6714dde5c2, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 1.02, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.8160028
     KeepPlaceholder: 0
   - Key: piece:wall_window
     Note: Window Wall
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 8306710681608066118, guid: 405cb648e2d272142942f9e1ee72af60, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 1.02, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 0.81600237
+    KeepPlaceholder: 0
+  - Key: prop:alchemy-bench
+    Note: 'Alchemy bench dressing: table, shelf and awning (cauldron, fire, mortar
+      and pestle always show)'
+    Prefab: {fileID: 617793299597270362, guid: 20f5d5f5cc57e4c30b1ab17228f7816d, type: 3}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: prop:bounce-mushroom
     Note: Bounce mushroom
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 2598674306917742617, guid: 087a5dffa15194dd8add46300b464f7c, type: 3}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: prop:crate
     Note: Crate (levitate practice by home)
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 3985678178457037174, guid: ae1226567b31fab468d404c74fe3e4bd, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.000000059604645, y: -0.41499484, z: -0.000000059604645}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1.0044885
+    KeepPlaceholder: 0
+  - Key: prop:hearth
+    Note: 'Hearth dressing: ring of stones and seats (fire and hearthstone always
+      show)'
+    Prefab: {fileID: 5836436677618314954, guid: e6c2a19329de14f6092086825d82885f, type: 3}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: prop:shrine
     Note: Glyph shrine (rune and carving always show)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 4075969389012737743, guid: 3cbb9bebc30caad40858c49a8101756c, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.0000024854119, y: 2.4961956, z: 0.0000005317142}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.92068344
     KeepPlaceholder: 0
   - Key: prop:signpost
     Note: Signpost
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 1425551324243555196, guid: 092a85557a30d5e47bfc513c7ded7a72, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: -0.00000032210167, y: 2.056953, z: 0.03266288}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 1.0293275
     KeepPlaceholder: 0
   - Key: prop:storybook
     Note: Storybook lectern (the floating book always shows)
-    Prefab: {fileID: 0}
+    Prefab: {fileID: 6466284189436583544, guid: 834aee8817d5dc44b8b68bbd3550105f, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.0778289, y: -0.0000007748604, z: -0.0011658565}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 6.914945
+    KeepPlaceholder: 0
+  - Key: rock:boulder
+    Note: Boulder (art stretches with the placeholder's shape)
+    Prefab: {fileID: 1459820112213681578, guid: 51a5800a2dca8894cbaef0289d2c482a, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.022273667, y: -0.30838427, z: -0.10612077}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 0.17377226
+    KeepPlaceholder: 0
+  - Key: scatter:crystals
+    Note: Crystal cluster (art only)
+    Prefab: {fileID: 5913416172725986685, guid: b04192852ee17404db3893eb58190792, type: 3}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
-  - Key: rock:boulder
-    Note: Boulder (art stretches with the placeholder's shape)
+  - Key: scatter:glowflora
+    Note: Glowing flora (art only)
+    Prefab: {fileID: 1926837304738968094, guid: 8c7cde7ee61aa4e5990564cb4fc80491, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scatter:lantern
+    Note: Lantern beside a path (art only)
+    Prefab: {fileID: 5586120436292834778, guid: 65f1bee48e2ee43b184ed77c3f38e50f, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:grass
+    Note: Meadow grass on the island and hills (a world-space triplanar material
+      suits the shapes)
     Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: 0b486de2a7bd84743a89fa4c77ced8c4, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:grass-dark
+    Note: Darker grass on some hills
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: bc3a1e5391b2fa24fb3fdb8dd46b20b6, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:path
+    Note: Path stones
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: 83ff978e947723d47bf03fcab0c822a6, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:rock
+    Note: Rocks, cliffs and stones
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: 7125ef9d4564f0a419f1dc62ed5f3b2a, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:sand
+    Note: Beaches
+    Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: tree:autumn
     Note: Tree (autumn)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 2846688376568843797, guid: 54174b38e2f4ade4cb930958ddf2e0a8, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.4413867, y: 0.97901434, z: 0.0878271}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.5017934
     KeepPlaceholder: 0
   - Key: tree:broadleaf
     Note: Tree (broadleaf)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 3058862158363452679, guid: 51669040c59b56247a5ae47d3b4332e3, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.07663694, y: 0.42955673, z: -0.07661392}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.77802044
     KeepPlaceholder: 0
   - Key: tree:palm
     Note: Palm tree (Tidewater)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
   - Key: tree:pine
     Note: Tree (pine)
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 8411235168277119344, guid: 73ed0e95eb63dcf498661bd643ad606e, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0.08799918, y: 0.2689517, z: 0.05658307}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 0.55815524
     KeepPlaceholder: 0
   - Key: witch
     Note: The witch (an Animator using Crewfall's locomotion parameters is driven)
     Prefab: {fileID: 0}
+    Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
