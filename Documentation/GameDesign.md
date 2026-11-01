@@ -92,7 +92,7 @@ Glyphs come from shrines out in the world. In the spellbook (B) you place up to 
 | ----- | ------ | --- |
 | Conjure | Terra + Forma | Build floors, walls, doorways, windows, fences, roofs, stairs and furniture on the home plot, snapped to a grid |
 | Levitate | Aer + Forma | Pick up furniture and crates, steer them, rotate with Q/R, push and pull with the wheel, set them down |
-| Unmake | Nihil + Forma | Remove something you built and get the materials back |
+| Unmake | Nihil + Forma | Remove something you built and get the materials back (half for the starter hut, which was a gift) |
 | Gust | Aer + Motus | A wind dash: long leap on the ground, one air dash per jump, a burst on the broom |
 | Bloom | Vita + Terra | Grow enchanted soil, such as the herb planters at home |
 | Wisp | Lux + Vita | A light that follows you and reveals hidden paths |
@@ -113,7 +113,7 @@ The plot starts 8 cells (16m) across with a starter hut. Walls snap to cell edge
 | Level | Plot | Needs |
 | ----- | ---- | ----- |
 | 1 | 8 × 8 cells | - |
-| 2 | 12 × 12 | 12 timber, 10 stone, 2 crystal, 1 companion. Unlocks stone walls, slate roofs, stairs, bookshelf, potion shelf, armchair |
+| 2 | 12 × 12 | 12 timber, 10 stone, 2 crystal, 1 companion. Unlocks stone walls, slate roofs, stairs, potion shelf, armchair |
 | 3 | 16 × 16 | 20 timber, 16 stone, 6 crystal, 6 clay, 3 companions. Unlocks the glowcap lamp |
 
 ## Companions
@@ -135,7 +135,7 @@ Ember needs a potion only Pip can teach you, and Hoot needs you to brew, so the 
 
 ## Storybooks
 
-Six short stories sit open on lecterns around the world, one in each area, so exploring pays off with something to read as well as something to gather. Picking one up opens it straight away (two pages at a time; the buttons, arrow keys or A and D turn the pages) and sends it home. Any bookshelf at home is your bookcase: it lists every book found, ready to read again, and gives a hint for each one still missing. Every home has a bookshelf, and older saves are given one in the hut.
+Six short stories sit open on lecterns around the world, one in each area, so exploring pays off with something to read as well as something to gather. Picking one up opens it straight away (two pages at a time; the buttons, arrow keys or A and D turn the pages) and sends it home. Any bookshelf at home is your bookcase: it lists every book found, ready to read again, and gives a hint for each one still missing. Every home has a bookshelf, and older saves are given one in the hut. The bookshelf can be built from level 1, so an unmade one can go straight back up.
 
 | Book | Author | Found |
 | ---- | ------ | ----- |

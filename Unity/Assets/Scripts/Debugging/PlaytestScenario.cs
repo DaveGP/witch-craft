@@ -680,6 +680,18 @@ namespace Debugging
 			var bookcases = FindObjectsByType<Bookcase>(FindObjectsSortMode.None);
 			Check($"The home has a bookcase ({bookcases.Length})", bookcases.Length >= 1);
 
+			var database = ServiceLocator.Get<GameDatabase>();
+			Check("The bookshelf can be built from home level 1", database.FindBuildPiece("bookshelf").RequiredHomeLevel == 1);
+
+			// The starter hut is flagged, and unmaking it gives back half its cost
+			var home = ServiceLocator.Get<IHomeService>();
+			var placed = FindObjectsByType<PlacedPiece>(FindObjectsSortMode.None);
+			var starterWall = placed.FirstOrDefault(piece => piece.Record.Starter && piece.Definition.Cost.Any(stack => stack.Amount >= 2));
+			var starterCost = starterWall != null ? starterWall.Definition.Cost.Sum(stack => stack.Amount) : 0;
+			var starterRefund = starterWall != null ? home.Refund(starterWall).Sum(stack => stack.Amount) : 0;
+			Check($"Starter pieces are flagged ({placed.Count(piece => piece.Record.Starter)} of {placed.Length}) and Unmake returns half ({starterRefund} of {starterCost})",
+				starterWall != null && bookcases.All(bookcase => bookcase.GetComponent<PlacedPiece>().Record.Starter) && starterRefund == starterWall.Definition.Cost.Sum(stack => stack.Amount / 2));
+
 			var bubbleWitch = pickups.First(pickup => pickup.name.EndsWith("bubble_witch"));
 			movement.Teleport(bubbleWitch.transform.position + Vector3.up * 0.2f);
 			yield return View("17_storybook", bubbleWitch.transform.position + bubbleWitch.transform.forward * 3f + Vector3.up * 1.6f, bubbleWitch.transform.position + Vector3.up * 1f);

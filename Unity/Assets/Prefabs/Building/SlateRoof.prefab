@@ -123,7 +123,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1833750379861314542}
   - component: {fileID: 7262051702649822165}
-  - component: {fileID: 3866962458734211756}
+  - component: {fileID: 6170614157571915313}
   m_Layer: 6
   m_Name: SlateRoof
   m_TagString: Untagged
@@ -161,7 +161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
   surfaces:
   - {fileID: 5288544044921062931}
---- !u!114 &3866962458734211756
+--- !u!114 &6170614157571915313
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

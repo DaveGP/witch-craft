@@ -46,6 +46,11 @@ namespace Home.Interfaces
 		void Remove(PlacedPiece piece, bool refund);
 
 		/// <summary>
+		/// What unmaking this piece gives back: all of its cost, or half for a piece of the starter hut.
+		/// </summary>
+		IReadOnlyList<ItemStack> Refund(PlacedPiece piece);
+
+		/// <summary>
 		/// Records a new resting place for a piece moved with Levitate.
 		/// </summary>
 		void NotifyMoved(PlacedPiece piece);

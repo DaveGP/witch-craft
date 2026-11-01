@@ -39,3 +39,7 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 ## Art swaps over placeholders
 
 01/11/2026 - Rather than building the world from asset packs, every placeholder gets an art slot in `Assets/Resources/ArtSet.asset`. A slot's prefab replaces only the placeholder's looks at runtime; collision and behaviour stay on the placeholder. Because the packs are local only, a clone without them must still build and play: a missing prefab simply leaves the placeholder showing. It also keeps gameplay tuning independent of how big or oddly shaped a pack's models are.
+
+## Starter hut refunds half
+
+01/11/2026 - Unmake gave back the full cost of anything, including the starter hut the witch is given for free, so pulling the hut down was a pile of free materials and a shortcut past gathering for the first expansion. Starter pieces are flagged on their `PieceRecord` and return half their cost, rounded down; the Unmake prompt says why. Players can still clear the hut to redesign it, but never come out ahead. The bookshelf moved to level 1 so the storybook bookcase can always be rebuilt.

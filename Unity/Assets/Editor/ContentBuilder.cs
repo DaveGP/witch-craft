@@ -327,7 +327,7 @@ namespace WitchCraftEditor
 			Furniture("cat_bed", "Cat Bed", 1, CatBed(), ("timber", 1), ("reed", 1));
 			Furniture("planter", "Herb Planter", 1, Planter(), ("clay", 2));
 			Furniture("lamp", "Crystal Lamp", 1, Lamp(), ("crystal", 1), ("stone", 1));
-			Furniture("bookshelf", "Bookshelf", 2, Bookshelf(), ("timber", 3));
+			Furniture("bookshelf", "Bookshelf", 1, Bookshelf(), ("timber", 3));
 			Furniture("potion_shelf", "Potion Shelf", 2, PotionShelf(), ("timber", 2), ("crystal", 1));
 			Furniture("armchair", "Armchair", 2, Armchair(), ("timber", 2), ("reed", 3));
 			Furniture("glowcap_lamp", "Glowcap Lamp", 3, GlowcapLamp(), ("crystal", 2), ("clay", 1));

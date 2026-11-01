@@ -190,7 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7722640544202292127}
   - component: {fileID: 8596995237484393347}
-  - component: {fileID: 6630055922025189281}
+  - component: {fileID: 4219821202302268167}
   m_Layer: 6
   m_Name: Armchair
   m_TagString: Untagged
@@ -235,7 +235,7 @@ MonoBehaviour:
   - {fileID: 5513741142676318272}
   - {fileID: 4436294079091712834}
   - {fileID: 3830011671170661308}
---- !u!114 &6630055922025189281
+--- !u!114 &4219821202302268167
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

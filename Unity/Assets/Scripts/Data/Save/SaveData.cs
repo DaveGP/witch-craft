@@ -62,6 +62,11 @@ namespace Data.Save
 		/// </summary>
 		public bool BookcaseGiven;
 
+		/// <summary>
+		/// Saves from before starter pieces were flagged get their starter hut pieces flagged once.
+		/// </summary>
+		public bool StartersMarked;
+
 		public List<PieceRecord> Pieces = new();
 	}
 
@@ -78,5 +83,10 @@ namespace Data.Save
 		/// Index into HomePalette. 0 is the material's natural colour.
 		/// </summary>
 		public int Colour;
+
+		/// <summary>
+		/// Part of the hut the witch was given rather than built, so Unmake returns only half its materials.
+		/// </summary>
+		public bool Starter;
 	}
 }

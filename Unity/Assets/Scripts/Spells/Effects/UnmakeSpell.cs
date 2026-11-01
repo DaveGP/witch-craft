@@ -1,3 +1,4 @@
+using System.Linq;
 using Data.Enums;
 using DependencyInjection;
 using Home;
@@ -12,9 +13,23 @@ namespace Spells.Effects
 	{
 		public override SpellEffectType Type => SpellEffectType.Unmake;
 
-		public override string Status => hovered != null
-			? $"Unmake {hovered.Definition.DisplayName}: click to unravel it (returns {hovered.Definition.CostSummary})"
-			: "Unmake: aim at something you built";
+		public override string Status
+		{
+			get
+			{
+				if (hovered == null)
+					return "Unmake: aim at something you built";
+
+				if (!hovered.Record.Starter)
+					return $"Unmake {hovered.Definition.DisplayName}: click to unravel it (returns {hovered.Definition.CostSummary})";
+
+				var refund = ServiceLocator.Get<IHomeService>()?.Refund(hovered);
+				var returns = refund == null || refund.Count == 0 ? "nothing" : string.Join(", ", refund.Select(stack => stack.ToString()));
+
+				// The starter hut was a gift: say why it returns less than its price
+				return $"Unmake {hovered.Definition.DisplayName}: click to unravel it (returns {returns}; part of the hut you were given, so only half comes back)";
+			}
+		}
 
 		private PlacedPiece hovered;
 

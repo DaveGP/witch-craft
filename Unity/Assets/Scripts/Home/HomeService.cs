@@ -166,7 +166,7 @@ namespace Home
 				return;
 
 			if (refund)
-				foreach (var stack in piece.Definition.Cost)
+				foreach (var stack in Refund(piece))
 					inventory.Add(stack.Item, stack.Amount);
 
 			record.Pieces.Remove(piece.Record);
@@ -177,6 +177,18 @@ namespace Home
 			eventBus.RemovePiece(piece.transform.position);
 
 			Destroy(piece.gameObject);
+		}
+
+		// Starter pieces were a gift, so unmaking them returns half (rounded down) rather than a free pile of materials
+		public IReadOnlyList<ItemStack> Refund(PlacedPiece piece)
+		{
+			if (!piece.Record.Starter)
+				return piece.Definition.Cost;
+
+			return piece.Definition.Cost
+				.Select(stack => new ItemStack(stack.Item, stack.Amount / 2))
+				.Where(stack => stack.Amount > 0)
+				.ToList();
 		}
 
 		public void Paint(PlacedPiece piece, int colour)
@@ -245,6 +257,8 @@ namespace Home
 
 			GiveBookcase();
 
+			MarkStarters();
+
 			foreach (var pieceRecord in record.Pieces)
 			{
 				var definition = database.FindBuildPiece(pieceRecord.Id);
@@ -272,7 +286,29 @@ namespace Home
 			if (bookshelf == null)
 				return;
 
-			record.Pieces.Add(new PieceRecord { Id = bookshelf.Id, Position = plot.transform.position + BookcaseOffset, Yaw = 90f });
+			record.Pieces.Add(new PieceRecord { Id = bookshelf.Id, Position = plot.transform.position + BookcaseOffset, Yaw = 90f, Starter = true });
+		}
+
+		// Older saves didn't flag the starter hut: flag pieces still standing exactly where the hut put them
+		private void MarkStarters()
+		{
+			if (record.StartersMarked)
+				return;
+
+			record.StartersMarked = true;
+
+			var given = starterPieces
+				.Where(starter => starter.Piece != null)
+				.Select(starter => (starter.Piece.Id, Position: plot.transform.position + starter.Offset))
+				.Append(("bookshelf", plot.transform.position + BookcaseOffset));
+
+			foreach (var (id, position) in given)
+			{
+				var match = record.Pieces.FirstOrDefault(piece => !piece.Starter && piece.Id == id && Vector3.Distance(piece.Position, position) < 0.05f);
+
+				if (match != null)
+					match.Starter = true;
+			}
 		}
 
 		// Against the hut's west wall, between the bed and the lamp
@@ -287,7 +323,8 @@ namespace Home
 				{
 					Id = starter.Piece.Id,
 					Position = plot.transform.position + starter.Offset,
-					Yaw = starter.Yaw
+					Yaw = starter.Yaw,
+					Starter = true
 				});
 		}
 
