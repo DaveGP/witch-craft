@@ -60,6 +60,7 @@ namespace WitchCraftEditor
 			BuildCompanions();
 			BuildHomeLevels();
 			BuildNewGame();
+			StoryBookContent.Build(Database);
 
 			EditorUtility.SetDirty(Database);
 			AssetDatabase.SaveAssets();
@@ -673,7 +674,18 @@ namespace WitchCraftEditor
 			body.center = new Vector3(0, 1f, 0);
 			body.size = new Vector3(1.2f, 2f, 0.4f);
 
-			return Save(root, "Furniture");
+			// Every bookshelf holds the storybooks found so far
+			root.AddComponent<Bookcase>();
+
+			var zone = Node("Interact", t, new Vector3(0, 1f, 0.3f));
+			Trigger(zone, 1f);
+
+			SetLayer(root, EnvironmentLayer);
+			zone.layer = Interactable;
+
+			AddPaintable(root);
+
+			return SavePrefab(root, $"{PrefabFolder}/Furniture/{root.name}.prefab");
 		}
 
 		private static GameObject PotionShelf()

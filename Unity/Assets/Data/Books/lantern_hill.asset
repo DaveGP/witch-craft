@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef08fe7bbe81412eaacd58c23b63316, type: 3}
+  m_Name: lantern_hill
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.StoryBookDefinition
+  Id: lantern_hill
+  Title: The Lantern Under the Hill
+  Author: Ember
+  Color: {r: 1, g: 0.7, b: 0.35, a: 1}
+  Hint: Deep in the crystal cave, beneath the southern hills
+  Pages:
+  - 'Beneath the southern hills there is a cave where the crystals hum. Long ago
+    a fox spirit lived there, all alone.
+
+
+    She was made of warm light, the way
+    other foxes are made of fur, and her tail flickered like a candle. She had come
+    to the cave in a snowstorm, many lifetimes before, and stayed.'
+  - 'On the night of that storm a traveller had been lost in the hills. The fox spirit
+    had seen his little shape wandering in circles in the snow, and she had called
+    and called, but she was too far away and too faint to be seen.
+
+
+    In the morning
+    he found his own way home, cold but safe. Still, she never forgot watching him
+    wander, and being no help at all.'
+  - 'So she made a lantern. She chose the clearest crystal in the cave, hollowed
+    it out with her teeth, and breathed a little of her own flame inside.
+
+
+    She
+    hung it at the mouth of the cave, where it could be seen from every path in the
+    hills.
+
+
+    "There," she said. "Nobody will ever be lost in the dark again.
+    Not while I''m here."'
+  - 'For a while, travellers came. A shepherd in the fog. A pedlar with a broken
+    cartwheel. Two sisters who had been arguing about the way and were both wrong.
+
+
+    They
+    followed the lantern, sheltered in the cave until morning, and went on their
+    way with a thank you. The fox spirit was glad of them, though none of them ever
+    stayed long.'
+  - 'Then the village built a new road, wide and paved, that went around the hills
+    instead of over them.
+
+
+    Years passed, and nobody came.
+
+
+    The fox spirit
+    kept the lantern burning anyway. But a lantern lit with your own flame takes
+    a little of you every night, and nobody was giving any back. Her flame grew smaller,
+    and so did she.'
+  - 'In the end she was hardly more than a flicker, curled up beside the lantern,
+    barely able to lift her head.
+
+
+    Then one evening she heard a clatter of hooves,
+    a bleat, and a very determined voice shouting, "Biscuit! Biscuit, you come back
+    here this minute!"
+
+
+    A goat trotted into the cave. Close behind it came a
+    small girl with a muddy hem.'
+  - 'The girl caught Biscuit by the collar. Then she saw the lantern, and forgot
+    all about the goat.
+
+
+    "Oh," she said. "Oh, it''s beautiful. Is it yours?"
+
+
+    "It
+    is," whispered the fox spirit. "Are you lost?"
+
+
+    The girl looked puzzled.
+    "No. I live just over the hill. I can see the light from my window. I''ve always
+    wanted to know what it was."'
+  - 'Her name was Rosa, and she stayed until the stars came out, asking questions.
+    Did the crystals really hum? (They did.) Did spirits eat supper? (Not usually,
+    but she would try anything once.)
+
+
+    The next day Rosa came back with bread
+    and honey. The day after, she brought her brother. By the end of the summer,
+    half the village children knew the way to the cave.'
+  - 'With every visitor the fox spirit''s flame grew a little brighter, until she
+    glowed so warmly that the whole cave shone gold.
+
+
+    She had learned something,
+    those long summer evenings. A light isn''t only for the lost. It is for whoever
+    is drawn to it.
+
+
+    And somebody always is, in the end.'
+  - 'I should tell you: that fox spirit was me.
+
+
+    Rosa grew up, and grew old,
+    and her grandchildren still bring me bread and honey on midsummer''s eve. My
+    lantern still hangs at the mouth of the cave.
+
+
+    And if you are reading this,
+    then you have found me too, which means you followed the light. Come and sit
+    by it a while.'

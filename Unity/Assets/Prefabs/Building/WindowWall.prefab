@@ -212,7 +212,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2849639145092564313}
   - component: {fileID: 9070152216782449315}
-  - component: {fileID: 6803572726073685610}
+  - component: {fileID: 2765707991710724803}
   m_Layer: 6
   m_Name: WindowWall
   m_TagString: Untagged
@@ -263,7 +263,7 @@ MonoBehaviour:
   - {fileID: 9161020078803831437}
   - {fileID: 8958182316196394243}
   - {fileID: 425133942745456190}
---- !u!114 &6803572726073685610
+--- !u!114 &2765707991710724803
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

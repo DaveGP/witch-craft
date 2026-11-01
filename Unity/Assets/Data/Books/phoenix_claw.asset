@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef08fe7bbe81412eaacd58c23b63316, type: 3}
+  m_Name: phoenix_claw
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.StoryBookDefinition
+  Id: phoenix_claw
+  Title: The Claw of the Phoenix
+  Author: Anonymous
+  Color: {r: 0.95, g: 0.55, b: 0.25, a: 1}
+  Hint: High above the spire, on the sky island
+  Pages:
+  - 'High above the clouds, on an island that floats where the spire points, there
+    lived a phoenix who had grown tired of burning.
+
+
+    Every hundred years she
+    flared into flame, crumbled into ash, and hatched again, small and new and remembering
+    nothing at all.
+
+
+    "It''s the forgetting I mind," she told the clouds. "I
+    never get to finish anything."'
+  - 'Visitors climbed the spire now and then. They came with nets and spears and
+    polite smiles, and they all wanted the same thing: a claw of the phoenix, which
+    every old book says will brew a potion to make you live forever.
+
+
+    The phoenix
+    sent them back down rather faster than they had come up, and generally a little
+    singed.'
+  - 'Then one spring a witch climbed up who was not like the others.
+
+
+    She was
+    old and round and out of breath. On her back she carried a cauldron, a kettle,
+    a picnic blanket and a bag so full of books that the strap had been mended four
+    times.
+
+
+    She sat down heavily on a rock and said, "Good afternoon. I''ve
+    come for a claw of the phoenix."'
+  - 'The phoenix ruffled up, ready to scorch. "For your potion of living forever,
+    I suppose."
+
+
+    "Good heavens, no," said the witch. "Forever sounds exhausting.
+    I want it for a bookmark. I''m a slow reader, and I keep losing my place."
+
+
+    The
+    phoenix laughed so hard she very nearly caught fire eighty years early.'
+  - 'Claws are not for giving away, even to bookish witches. So instead the phoenix
+    plucked a single golden feather from her breast, curved and pointed exactly like
+    a claw, and dropped it into the witch''s lap.
+
+
+    "Thank you," said the witch,
+    whose name was Agnes. "Now. Would you like to hear what happens in chapter one?"'
+  - 'Agnes put the kettle on, opened the first book, and began to read.
+
+
+    She
+    came back the next evening, and the next. She read adventures with pirates in
+    them, and love stories where everyone was far too proud to say anything, and
+    one truly terrible cookbook that made them both cry with laughter.
+
+
+    And
+    always, when the light went, she marked their place with the golden feather.'
+  - 'Years went by like this, one chapter at a time.
+
+
+    Agnes climbed the spire
+    a little more slowly every spring. Then one autumn she didn''t climb it at all.
+    A letter came up instead, carried by a very puzzled pigeon.
+
+
+    Inside was
+    the golden feather, tucked into the book they had been reading, about halfway
+    through.'
+  - '"My knees have finally won," Agnes had written. "You''ll have to finish this
+    one on your own. I''ve marked our place. Don''t you dare skip ahead."
+
+
+    The
+    phoenix did not know how to read. But she had a great deal of time, and she had
+    listened to Agnes for twenty years, and slowly, word by word, she worked it out.'
+  - 'When the hundredth year came, the phoenix burned. She flared up bright as morning,
+    crumbled into ash, and hatched again, small and new.
+
+
+    But this time, beside
+    her nest, there lay a book with a golden feather in it. She opened it at the
+    marked page, and she remembered. Not everything. But enough.
+
+
+    She remembered
+    Agnes.'
+  - 'Some say the phoenix still lives on the sky island, reading through the long
+    afternoons, and that she has started writing books of her own.
+
+
+    This one,
+    you may have noticed, was never signed.
+
+
+    But if you look closely at its
+    cover, there is a small scorch mark in one corner, shaped exactly like a claw.'

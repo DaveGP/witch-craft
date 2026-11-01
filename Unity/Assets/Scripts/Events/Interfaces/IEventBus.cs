@@ -48,5 +48,9 @@ namespace Events.Interfaces
 		event Action<string> ObjectiveChanged;
 
 		event Action<IBuildPalette> BuildCatalogueRequested;
+
+		event Action<StoryBookDefinition> BookOpened;
+
+		event Action BookcaseOpened;
 	}
 }

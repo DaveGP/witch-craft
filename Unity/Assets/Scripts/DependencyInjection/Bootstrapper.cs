@@ -1,6 +1,8 @@
 using UnityEngine;
 using Alchemy;
 using Alchemy.Interfaces;
+using Books;
+using Books.Interfaces;
 using Character.Input;
 using Character.Input.Interfaces;
 using Character.Interfaces;
@@ -129,6 +131,9 @@ namespace DependencyInjection
 			var roster = new CompanionRoster(database, eventBus, spellBook, recipeBook);
 			ServiceLocator.Register<ICompanionRoster>(roster);
 
+			var books = new BookCollection(database, eventBus);
+			ServiceLocator.Register<IBookCollection>(books);
+
 			var potionEffects = new PotionEffects(inventory, eventBus);
 			ServiceLocator.Register<IPotionEffects>(potionEffects);
 			systemManager.Register(potionEffects);
@@ -137,6 +142,7 @@ namespace DependencyInjection
 			saveService.Register(recipeBook);
 			saveService.Register(spellBook);
 			saveService.Register(roster);
+			saveService.Register(books);
 
 			Application.quitting += saveService.Save;
 		}

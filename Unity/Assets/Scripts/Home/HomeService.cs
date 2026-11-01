@@ -241,6 +241,8 @@ namespace Home
 			if (!record.Seeded)
 				SeedStarterHome();
 
+			GiveBookcase();
+
 			foreach (var pieceRecord in record.Pieces)
 			{
 				var definition = database.FindBuildPiece(pieceRecord.Id);
@@ -251,6 +253,28 @@ namespace Home
 
 			ApplyLevel();
 		}
+
+		// The storybooks need a bookcase to live on: new homes start with one, older saves get one added once
+		private void GiveBookcase()
+		{
+			if (record.BookcaseGiven)
+				return;
+
+			record.BookcaseGiven = true;
+
+			if (record.Pieces.Any(piece => piece.Id == "bookshelf"))
+				return;
+
+			var bookshelf = database.FindBuildPiece("bookshelf");
+
+			if (bookshelf == null)
+				return;
+
+			record.Pieces.Add(new PieceRecord { Id = bookshelf.Id, Position = plot.transform.position + BookcaseOffset, Yaw = 90f });
+		}
+
+		// Against the hut's west wall, between the bed and the lamp
+		private static readonly Vector3 BookcaseOffset = new(-1.72f, 0.2f, -0.55f);
 
 		private void SeedStarterHome()
 		{

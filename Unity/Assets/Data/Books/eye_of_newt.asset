@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef08fe7bbe81412eaacd58c23b63316, type: 3}
+  m_Name: eye_of_newt
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.StoryBookDefinition
+  Id: eye_of_newt
+  Title: Eye of Newt
+  Author: Bramble Underleaf
+  Color: {r: 0.55, g: 0.75, b: 0.4, a: 1}
+  Hint: On the pond's bank, where the frogs gossip
+  Pages:
+  - 'Every potion book in the land calls for an eye of newt, and every newt in the
+    land is very tired of hearing about it.
+
+
+    None more so than Nettlebrook,
+    a small spotted newt who lived under a flat stone at the edge of the pond. He
+    was fond of his eyes. He used them for looking at things, and there were a great
+    many things worth looking at.'
+  - 'Each spring the young witches came down to the bank with their baskets, and
+    each spring every newt in the pond hid in the mud until they had gone.
+
+
+    "It''s
+    no way to live," said Nettlebrook, the year he turned seven. "Somebody ought
+    to ask."
+
+
+    The other newts agreed that somebody ought to. Then they all looked
+    at him.'
+  - 'So Nettlebrook set off across the pond to see Granny Sedge, the oldest witch
+    on the island, who lived in a boathouse on the far bank.
+
+
+    It was a long
+    way for a newt. He crossed on the lily pads, one wobbly hop at a time, while
+    the frogs sunbathing on them made remarks.
+
+
+    "Off to volunteer, are we?"
+    croaked the biggest. "Very brave. Very crunchy."'
+  - 'Granny Sedge was shelling peas on her doorstep. Nettlebrook climbed the step,
+    drew himself up as tall as a newt can, and said, "Madam. Why newts?"
+
+
+    She
+    peered at him over her spectacles. "Why newts what, dear?"
+
+
+    "Why our eyes?
+    What have we ever done to anybody?"'
+  - 'Granny Sedge laughed so hard her hat fell off and floated away down the pond.
+
+
+    "Oh,
+    you poor dear," she wheezed. "Eye of newt is mustard seed! It''s only an old
+    name. Our grandmothers gave every herb in the garden a dreadful name, to keep
+    their recipes secret. Nobody wants your eyes. Nobody has ever wanted your eyes."'
+  - 'She fetched a dusty book and showed him the list. Eye of newt: mustard seed.
+    Wool of bat: holly leaves. Tongue of dog: houndstongue, a perfectly nice little
+    flower.
+
+
+    Nettlebrook read down the page, then read it again, then pointed
+    with one small hand.
+
+
+    "And toe of frog?"
+
+
+    "Buttercup," said Granny
+    Sedge. "Why?"
+
+
+    "No reason," said Nettlebrook.'
+  - 'He took the long way home, along the bank, so that he could pass the lily pads
+    very slowly.
+
+
+    "Lovely afternoon," he called up to the biggest frog. "I''ve
+    just been reading about potions. Fascinating stuff. Do you happen to know what
+    toe of frog is?"
+
+
+    The frog went very pale, for a frog, and did not sunbathe
+    again for a week.'
+  - 'That night the newts threw a party that lasted three days. There was dancing
+    on the stones, singing in the reeds and a great deal of pondweed cake.
+
+
+    The
+    frogs, who were not invited, sulked loudly from the lily pads the whole time.
+    On the fourth morning Nettlebrook went over and told them about the buttercups,
+    because a joke is only funny until somebody cries.'
+  - 'The frogs were so relieved that they threw a party of their own, and this time
+    everybody came.
+
+
+    To this day the newts keep a jar of mustard seed by the
+    water''s edge, labelled in very careful handwriting: EYE OF NEWT (NOT REALLY).
+    HELP YOURSELF.
+
+
+    The frogs keep a jar of buttercups beside it. Theirs says:
+    TOE OF FROG. ALSO NOT REALLY. PLEASE.'

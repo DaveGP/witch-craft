@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef08fe7bbe81412eaacd58c23b63316, type: 3}
+  m_Name: silver_spellbook
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.StoryBookDefinition
+  Id: silver_spellbook
+  Title: The Silver Spellbook
+  Author: Hazel Thistlewick
+  Color: {r: 0.78, g: 0.82, b: 0.9, a: 1}
+  Hint: Somewhere in the forest clearing, among the stumps
+  Pages:
+  - 'In the village of Thimble Cross there lived a witch named Marigold who could
+    not remember a single spell.
+
+
+    She wrote them on the backs of her hands,
+    on the cuffs of her sleeves, and once, in a moment of real desperation, on Pudding,
+    her very patient cat. Pudding walked about for a week with a cure for hiccups
+    across his tummy, and never quite forgave her.'
+  - 'One winter morning Marigold went into the forest for kindling and found a ring
+    of old stumps, white with snow. In the middle of the ring lay a book with a silver
+    cover.
+
+
+    Its pages were empty. But when she held it to her ear, it hummed,
+    the way a kettle hums just before it sings.
+
+
+    She tucked it under her shawl
+    and carried it home.'
+  - 'That night, as Marigold fumbled for the words to light a candle, something glimmered
+    on the empty page. Letters were appearing, one at a time, written in moonlight.
+
+
+    The
+    book was remembering the spell for her.
+
+
+    It waited patiently while she sounded
+    the words out. The candle lit. Pudding, who had been bracing himself to be written
+    on, let out a long breath.'
+  - 'After that, Marigold became rather good at magic.
+
+
+    She mended Mrs Hobb''s
+    teacups, coaxed the sulkiest kettle in the village to boil, and charmed the baker''s
+    oven so the bread came out golden every time. People began to knock on her door.
+
+
+    They
+    knocked when something was broken, and they thanked her very kindly, and then
+    they went home.'
+  - 'And every evening Marigold sat at her table with one bowl, one spoon and one
+    cat, and the cottage felt very large.
+
+
+    So one night she opened the silver
+    book and asked it for a spell to make friends.
+
+
+    The page stayed empty.
+
+
+    She
+    asked the next night, and the night after that. Nothing. Not one silvery letter.'
+  - '"Useless thing," she said at last, though she didn''t really mean it, and she
+    shut the book away in the dresser drawer.
+
+
+    That was the night the great
+    storm came. Snow piled against the doors, the wind howled down the chimneys,
+    and a little before midnight the mill-keeper''s roof gave way under the weight
+    of it all.'
+  - 'Marigold heard the shouting and ran out into the snow. She was halfway down
+    the lane before she realised the silver book was still in the drawer at home.
+
+
+    She
+    tried to remember a warming spell. A mending spell. Any spell at all. Her head
+    was as empty as the book''s pages had been.
+
+
+    So she did the only thing she
+    could think of. She shouted, "Everyone to mine!"'
+  - 'She lit her fire with ordinary matches. She made soup in her biggest pot, and
+    when that ran out, in her second biggest. She found blankets for the mill-keeper''s
+    children and a cushion for old Mr Penny''s knees.
+
+
+    There was singing. There
+    was a game of cards that got very serious. Pudding was passed from lap to lap
+    and pretended to hate every minute of it.'
+  - 'In the grey morning, with everyone asleep in heaps around the hearth, Marigold
+    crept to the dresser and opened the drawer.
+
+
+    The silver book had written
+    a single line, in letters that glowed like embers:
+
+
+    "There. You knew that
+    one all along."'
+  - 'Then, one by one, its pages filled with names. Mrs Hobb. The mill-keeper and
+    his four children. Old Mr Penny. The baker, and the baker''s terrible dog.
+
+
+    Marigold
+    never did learn to remember a spell without help.
+
+
+    But she never once forgot
+    a birthday.'

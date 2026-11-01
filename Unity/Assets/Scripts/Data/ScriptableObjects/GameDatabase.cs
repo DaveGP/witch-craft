@@ -24,6 +24,8 @@ namespace Data.ScriptableObjects
 
 		public List<HomeLevel> HomeLevels = new();
 
+		public List<StoryBookDefinition> Books = new();
+
 		[Header("New game")]
 		public List<ItemStack> StartingItems = new();
 
@@ -49,6 +51,8 @@ namespace Data.ScriptableObjects
 		public RecipeDefinition FindRecipe(string id) => Recipes.FirstOrDefault(recipe => recipe.Id == id);
 
 		public BuildPieceDefinition FindBuildPiece(string id) => BuildPieces.FirstOrDefault(piece => piece.Id == id);
+
+		public StoryBookDefinition FindBook(string id) => Books.FirstOrDefault(book => book.Id == id);
 
 		public CompanionDefinition FindCompanion(string id) => Companions.FirstOrDefault(companion => companion.Id == id);
 	}

@@ -636,7 +636,89 @@ namespace Debugging
 
 			weather.SetWeather(WeatherKind.Clear);
 
+			yield return Storybooks(inputMode, player, movement);
+
 			report.AppendLine($"Inventory: {string.Join(", ", inventory.Items.Select(stack => stack.ToString()))}");
+		}
+
+		// Find a storybook, read it, then read it again from the bookcase at home
+		private IEnumerator Storybooks(GameState.Interfaces.IInputModeService inputMode, PlayerCharacter player, IMovementController movement)
+		{
+			var books = ServiceLocator.Get<Books.Interfaces.IBookCollection>();
+			var pickups = FindObjectsByType<StoryBookPickup>(FindObjectsSortMode.None);
+
+			var floating = pickups.Where(pickup => !Physics.Raycast(pickup.transform.position + Vector3.up * 0.5f, Vector3.down, 1.5f, ~0, QueryTriggerInteraction.Ignore)).Select(pickup => pickup.name).ToList();
+			Check($"Six storybooks stand on solid ground around the world ({pickups.Length}; floating: {string.Join(", ", floating)})", pickups.Length == 6 && books.AllBooks.Count == 6 && floating.Count == 0);
+
+			var bookcases = FindObjectsByType<Bookcase>(FindObjectsSortMode.None);
+			Check($"The home has a bookcase ({bookcases.Length})", bookcases.Length >= 1);
+
+			var bubbleWitch = pickups.First(pickup => pickup.name.EndsWith("bubble_witch"));
+			movement.Teleport(bubbleWitch.transform.position + Vector3.up * 0.2f);
+			yield return View("17_storybook", bubbleWitch.transform.position + bubbleWitch.transform.forward * 3f + Vector3.up * 1.6f, bubbleWitch.transform.position + Vector3.up * 1f);
+
+			bubbleWitch.Interact(player.gameObject);
+			yield return new WaitForSeconds(0.3f);
+
+			var reader = FindAnyObjectByType<UserInterface.Views.BookView>();
+			Check("Picking up a storybook opens it to read", reader.IsOpen && reader.Book != null && reader.Book.Id == "bubble_witch" && books.Count == 1);
+			Check("The book leaves its lectern", !bubbleWitch.CanInteract && bubbleWitch.transform.Find("Book") is { gameObject: { activeSelf: false } });
+
+			Tap(Key.D);
+			yield return new WaitForSeconds(0.3f);
+			Check("D turns the page", reader.Spread == 1);
+			Shot("18_book_pages");
+
+			// Every page of every book fits on the page
+			var overflowing = new List<string>();
+
+			foreach (var storyBook in books.AllBooks)
+			{
+				reader.Show(storyBook);
+
+				for (var spread = 0; spread < reader.SpreadCount; spread++)
+				{
+					Canvas.ForceUpdateCanvases();
+
+					if (reader.Overflowing)
+						overflowing.Add($"{storyBook.Id} spread {spread + 1}");
+
+					reader.Turn(1);
+				}
+			}
+
+			Check($"Every storybook page fits ({books.AllBooks.Sum(storyBook => storyBook.Pages.Count)} pages; too long: {string.Join(", ", overflowing)})", overflowing.Count == 0);
+
+			reader.Show(books.AllBooks.First(storyBook => storyBook.Id == "phoenix_claw"));
+			yield return new WaitForSeconds(0.3f);
+			Shot("18b_book_title");
+
+			Tap(Key.Escape);
+			yield return new WaitForSeconds(0.3f);
+			Check("Escape closes the book", !reader.IsOpen && inputMode.Mode == InputMode.Gameplay);
+
+			bookcases[0].Interact(player.gameObject);
+			yield return new WaitForSeconds(0.3f);
+
+			var shelf = FindAnyObjectByType<UserInterface.Views.BookcaseView>();
+			Check("The bookcase lists the storybooks", shelf.IsOpen);
+			Shot("19_bookcase");
+
+			var read = FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None)
+				.Where(button => button.isActiveAndEnabled && button.GetComponentInChildren<UnityEngine.UI.Text>().text == "Read").ToList();
+			Check($"Only found books can be read again ({read.Count})", read.Count == 1);
+
+			read.FirstOrDefault()?.onClick.Invoke();
+			yield return new WaitForSeconds(0.3f);
+			Check("Read opens the book from the bookcase, at the start", reader.IsOpen && reader.Spread == 0 && !shelf.IsOpen);
+
+			Tap(Key.Escape);
+			yield return new WaitForSeconds(0.3f);
+			Check("Closing it goes back to the bookcase", shelf.IsOpen && !reader.IsOpen);
+
+			Tap(Key.Escape);
+			yield return new WaitForSeconds(0.3f);
+			Check("Escape again returns to play", inputMode.Mode == InputMode.Gameplay);
 		}
 
 		private IEnumerator BoilTurn(AlchemyStation station)

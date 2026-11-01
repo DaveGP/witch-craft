@@ -1,0 +1,114 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef08fe7bbe81412eaacd58c23b63316, type: 3}
+  m_Name: bubble_witch
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.StoryBookDefinition
+  Id: bubble_witch
+  Title: Bubble Witch
+  Author: Tilly
+  Color: {r: 0.6, g: 0.85, b: 0.95, a: 1}
+  Hint: Out on Tidewater's reef, past the stepping rocks
+  Pages:
+  - 'I was a much younger turtle when I knew Pearl, so you will have to trust my
+    memory. Turtles have very good memories. It is one of the few advantages of being
+    slow.
+
+
+    Pearl lived on the Tidewater shore with her grandmother, in a cottage
+    made from an upturned boat. She was the smallest witch anyone could remember.'
+  - 'On their ninth birthdays the young witches of Tidewater were given their first
+    brooms. Pearl was given hers, and climbed on, and the broom tipped her gently
+    off into a rock pool.
+
+
+    She tried again the next day, and the day after.
+    The broom was very sorry about it, but she was simply too small to steer. The
+    crabs began saving her a spot.'
+  - 'So Pearl stopped trying to fly, and started blowing bubbles instead.
+
+
+    She
+    made her soap from seafoam and kelp and one secret ingredient she never told
+    anyone, not even me. Her bubbles didn''t pop when you poked them. They wobbled.
+    They held things.
+
+
+    First a feather, then a shell, then a very surprised
+    crab, and then, one breezy afternoon, Pearl herself.'
+  - 'The other young witches laughed at her, though not unkindly. A girl drifting
+    along the beach in a bubble is a funny thing to see.
+
+
+    Pearl laughed too.
+    She was having a lovely time. She floated wherever the wind went, and I swam
+    along underneath, and we talked about everything, the way you only can with a
+    friend who is going the same way as you.'
+  - 'Then came the autumn of the great storm.
+
+
+    It blew in at dusk, black and
+    roaring, and it blew out the lamp on the old lighthouse rock. Out past the reef
+    a fishing boat was coming home. Without the light it was lost among the sea stacks,
+    turning this way and that while the waves grew taller.'
+  - 'The grown witches ran down to the beach with their brooms, but the wind tore
+    at them and threw them back onto the sand. Nobody could fly in such a gale.
+
+
+    "A
+    broom is a stick," said Pearl''s grandmother grimly. "And the wind always wins
+    against a stick."
+
+
+    Pearl was already unscrewing her soap jar.'
+  - 'She took the deepest breath of her life, and blew.
+
+
+    The bubble grew bigger
+    than a barrel, bigger than a boat, bigger than her grandmother''s cottage. She
+    put her lantern inside it and climbed in after it, and the wind snatched her
+    up and carried her out over the waves.
+
+
+    A bubble doesn''t fight the wind,
+    you see. It goes with it.'
+  - 'I swam after her as fast as a young turtle can, which was not nearly fast enough,
+    so I watched it all from the water.
+
+
+    The bubble glowed gold with lantern
+    light, and silver whenever the lightning flashed. It rolled over the reef and
+    bobbed among the sea stacks, up high where the sailors could see it.
+
+
+    And
+    the sailors saw it. And they followed.'
+  - 'The boat came safely up onto the beach just before midnight, and the whole village
+    was there to haul it in.
+
+
+    Then Pearl''s bubble drifted down over our heads
+    and popped, and it rained warm sea-spray and laughter on everyone.
+
+
+    The
+    fishermen said afterwards that it tasted faintly of kelp, and of something else
+    they could never quite name.'
+  - 'Pearl never did learn to ride a broom. She never needed to.
+
+
+    She is long
+    gone now, and I am an old turtle. But on calm nights, if you look out from Tidewater,
+    you can still see little bubbles rising over the water, each with a tiny light
+    inside.
+
+
+    The village children blow them for her, to light the way home.'

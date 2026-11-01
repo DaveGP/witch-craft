@@ -52,6 +52,10 @@ namespace Events
 
 		public event Action<IBuildPalette> BuildCatalogueRequested;
 
+		public event Action<StoryBookDefinition> BookOpened;
+
+		public event Action BookcaseOpened;
+
 
 		public void SetActiveTarget(IObserverTarget target)
 			=> ActiveTargetChanged?.Invoke(target);
@@ -109,5 +113,11 @@ namespace Events
 
 		public void OpenBuildCatalogue(IBuildPalette palette)
 			=> BuildCatalogueRequested?.Invoke(palette);
+
+		public void OpenBook(StoryBookDefinition book)
+			=> BookOpened?.Invoke(book);
+
+		public void OpenBookcase()
+			=> BookcaseOpened?.Invoke();
 	}
 }

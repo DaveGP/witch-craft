@@ -906,7 +906,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8789205915517983906}
   - component: {fileID: 4993023413031247452}
-  - component: {fileID: 8094858970234321609}
+  - component: {fileID: 4429246579576000137}
   m_Layer: 6
   m_Name: Stairs
   m_TagString: Untagged
@@ -958,7 +958,7 @@ MonoBehaviour:
   - {fileID: 1622608538496353790}
   - {fileID: 6966860785212577179}
   - {fileID: 930554111307317235}
---- !u!114 &8094858970234321609
+--- !u!114 &4429246579576000137
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

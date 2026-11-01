@@ -120,6 +120,13 @@ MonoBehaviour:
       Amount: 6
     - Item: {fileID: 11400000, guid: 788150d39cdd24b93919084cc5b8f179, type: 2}
       Amount: 6
+  Books:
+  - {fileID: 11400000, guid: 9555d602971f640e99c55fd91954c06b, type: 2}
+  - {fileID: 11400000, guid: 331ef5a1e78fe4291bf7e49deda11e6f, type: 2}
+  - {fileID: 11400000, guid: 491d2ab66b55b447580be69edf7bcb07, type: 2}
+  - {fileID: 11400000, guid: 0d887f42e71c24456893328c7500f820, type: 2}
+  - {fileID: 11400000, guid: cfffb5757ddf5410da6b2897ccbb593b, type: 2}
+  - {fileID: 11400000, guid: 35eb0d2788b23472dabc5f4b592dcfc1, type: 2}
   StartingItems:
   - Item: {fileID: 11400000, guid: e3fab1ace76e44eafaf51969cc4f70b1, type: 2}
     Amount: 8

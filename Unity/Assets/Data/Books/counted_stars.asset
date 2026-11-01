@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef08fe7bbe81412eaacd58c23b63316, type: 3}
+  m_Name: counted_stars
+  m_EditorClassIdentifier: Assembly-CSharp::Data.ScriptableObjects.StoryBookDefinition
+  Id: counted_stars
+  Title: The Owl Who Counted Stars
+  Author: Hoot
+  Color: {r: 0.45, g: 0.45, b: 0.75, a: 1}
+  Hint: Up on Starfall Ridge, where the stars hang low
+  Pages:
+  - 'My great-great-grandmother was an owl named Wren, and she was the most precise
+    owl who ever lived.
+
+
+    She counted everything. The acorns on her oak (two
+    thousand and six). The raindrops on her branch in a shower (too many, but she
+    tried). The number of times her husband said "Hm" in an evening (forty, on average;
+    more in winter).'
+  - 'One clear autumn night, Wren looked up and realised that nobody, in the whole
+    history of owls, had ever counted the stars.
+
+
+    "Well," she said. "That won''t
+    do."
+
+
+    She packed a satchel of biscuits, flew to Starfall Ridge, where the
+    stars hang low enough to touch, settled on the highest rock, and began.'
+  - 'One. Two. Three. She went from left to right, the way you read, and from top
+    to bottom, the way you fall asleep.
+
+
+    By midnight she had reached four thousand
+    and twelve, and she was feeling very pleased with herself.
+
+
+    Then a star
+    sprite drifted right past her beak, giggling, and Wren lost her place entirely.'
+  - '"Do you mind?" said Wren. "I''m counting."
+
+
+    "Counting what?" asked the
+    sprite, whose name was Lumen.
+
+
+    "Stars. You''ve made me lose my place."
+
+
+    Lumen
+    looked up at the sky, then back at Wren, and twinkled thoughtfully. "Did I count
+    as one?"
+
+
+    Wren had to admit she wasn''t sure. She sighed, and started again
+    from one.'
+  - 'Night after night the sprites danced by, and night after night Wren lost count.
+
+
+    She
+    tried counting faster. She tried counting with her eyes half shut. She scratched
+    tallies on the rocks with her talons, but the sprites thought the scratches were
+    a game and rearranged them into pictures of owls.
+
+
+    Wren was, for the first
+    time in her life, thoroughly cross.'
+  - 'Then came a night when the clouds rolled in, thick and grey, and there were
+    no stars to count at all.
+
+
+    Wren sat on her rock in the dark and felt oddly
+    empty. She waited for the sky to clear. It didn''t.
+
+
+    After a while a small
+    light bobbed up and settled on the rock beside her. "No counting tonight?" said
+    Lumen.'
+  - '"No counting tonight," said Wren.
+
+
+    So they talked instead. Lumen told her
+    which stars were the oldest, which ones liked to show off, and which had fallen
+    in love with comets and never been the same since. Wren told Lumen about acorns
+    and raindrops, and her husband''s hms.
+
+
+    It was, she realised as dawn came
+    up, the best night she''d had in years.'
+  - 'When the clouds cleared, Wren went back to the ridge. But she didn''t count.
+
+
+    Instead,
+    she asked Lumen the names of things. She learned the stars by heart, the way
+    you learn your friends: not how many, but who.
+
+
+    The counting had never really
+    been the point, she decided. The sky was. And the company.'
+  - 'Wren lived to be very old and very content. When she was gone, the family found
+    a notebook among her things, labelled in her neat, careful hand: THE STARS. A
+    COMPLETE RECORD.
+
+
+    On the very first page, it said:
+
+
+    "Lots. All of them
+    lovely."'
+  - 'Nova says it is the most accurate star chart ever made, and Nova would know.
+
+
+    I
+    have started counting the stars too, from my perch on the sky island. Not to
+    finish. Just to keep my great-great-grandmother company.
+
+
+    I am on eleven.
+    I keep getting distracted. They are very lovely.'

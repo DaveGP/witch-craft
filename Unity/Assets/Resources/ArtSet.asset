@@ -21,11 +21,11 @@ MonoBehaviour:
     Scale: 1
     KeepPlaceholder: 0
   - Key: cat
-    Note: Sable the cat (an Animator gets Speed and IsSitting)
-    Prefab: {fileID: 0}
+    Note: Sable the cat (a rig with a CatRigProfile is crossfaded by state name)
+    Prefab: {fileID: 6447957861038779880, guid: 4a9eee877281e492c81f7fb650fe2d2b, type: 3}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 1.6759396
     KeepPlaceholder: 0
   - Key: companion:bramble
     Note: Bramble the Hedgehog
@@ -225,10 +225,10 @@ MonoBehaviour:
     KeepPlaceholder: 0
   - Key: piece:cat_bed
     Note: Cat Bed
-    Prefab: {fileID: 0}
-    Offset: {x: 0, y: 0, z: 0}
+    Prefab: {fileID: 2384124346560999288, guid: 43529af9402506f4583fcc1e501029c3, type: 3}
+    Offset: {x: -0.0000023551497, y: 0.14032832, z: -0.0000022218394}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 1.9880682
     KeepPlaceholder: 0
   - Key: piece:chair
     Note: Chair
@@ -386,6 +386,13 @@ MonoBehaviour:
     KeepPlaceholder: 0
   - Key: prop:signpost
     Note: Signpost
+    Prefab: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: prop:storybook
+    Note: Storybook lectern (the floating book always shows)
     Prefab: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}

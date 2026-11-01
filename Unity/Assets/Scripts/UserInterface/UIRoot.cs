@@ -40,6 +40,10 @@ namespace UserInterface
 
 		private CatalogueView catalogue;
 
+		private BookView bookView;
+
+		private BookcaseView bookcase;
+
 		private View current;
 
 		private void Awake()
@@ -68,6 +72,10 @@ namespace UserInterface
 			settings = AddView<SettingsView>(canvas, "Settings");
 			title = AddView<TitleView>(canvas, "Title");
 			catalogue = AddView<CatalogueView>(canvas, "Catalogue");
+			bookView = AddView<BookView>(canvas, "Book");
+			bookcase = AddView<BookcaseView>(canvas, "Bookcase");
+
+			bookcase.Read = ReadFromBookcase;
 
 			pause.OpenSettings = () => ShowSettings(pause);
 			title.OpenSettings = () => ShowSettings(title);
@@ -75,6 +83,8 @@ namespace UserInterface
 			eventBus.AlchemyOpened += OpenAlchemy;
 			eventBus.DialogueRequested += OpenDialogue;
 			eventBus.BuildCatalogueRequested += OpenCatalogue;
+			eventBus.BookOpened += OpenBook;
+			eventBus.BookcaseOpened += OpenBookcase;
 		}
 
 		private void OnDestroy()
@@ -82,6 +92,8 @@ namespace UserInterface
 			eventBus.AlchemyOpened -= OpenAlchemy;
 			eventBus.DialogueRequested -= OpenDialogue;
 			eventBus.BuildCatalogueRequested -= OpenCatalogue;
+			eventBus.BookOpened -= OpenBook;
+			eventBus.BookcaseOpened -= OpenBookcase;
 		}
 
 		private void Start()
@@ -208,6 +220,33 @@ namespace UserInterface
 			current = alchemy;
 
 			alchemy.Show(station);
+		}
+
+		private void OpenBook(Data.ScriptableObjects.StoryBookDefinition book)
+		{
+			if (current != null && current != bookView)
+				current.Close();
+
+			current = bookView;
+
+			bookView.Show(book);
+		}
+
+		private void OpenBookcase()
+		{
+			Show(bookcase);
+		}
+
+		// Closing a book read from the bookcase goes back to the bookcase
+		private void ReadFromBookcase(Data.ScriptableObjects.StoryBookDefinition book)
+		{
+			OpenBook(book);
+
+			bookView.Back = () =>
+			{
+				current = null;
+				Show(bookcase);
+			};
 		}
 
 		private void OpenCatalogue(Spells.Interfaces.IBuildPalette palette)

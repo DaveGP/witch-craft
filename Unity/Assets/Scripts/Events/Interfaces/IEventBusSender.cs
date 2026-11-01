@@ -50,5 +50,9 @@ namespace Events.Interfaces
 		public void SetObjective(string objective);
 
 		public void OpenBuildCatalogue(IBuildPalette palette);
+
+		public void OpenBook(StoryBookDefinition book);
+
+		public void OpenBookcase();
 	}
 }

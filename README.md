@@ -20,6 +20,7 @@ Run, jump and fly around a little island gathering herbs for potions, glyphs for
 * Home comfort: furniture makes companions fonder each morning, especially their favourite piece
 * Companions to recruit with gifts, who live at home and reward friendship with recipes
 * A home plot that expands as you gather materials and friends
+* Six storybooks hidden around the world, each a short tale to read; found books go on your bookcase at home to read again
 * A guided first five minutes: Sable suggests what to try next, with a beacon showing where
 * Sound effects, ambience and a music loop, all generated in code, with separate music, sound and ambience volumes
 * A second island across the sea and floating isles above it, with new glyphs, spells (Bubble, Rain Call, Blink), a water-walking potion and two more companions
@@ -51,7 +52,7 @@ witch-craft/
 ├────── Scripts/               # Runtime code (see Documentation/TechnicalDesign.md)
 ├────── Editor/                # Content, world and playtest builders
 ├────── Controls/              # Input action map
-├────── Data/                  # Generated items, glyphs, spells, recipes, build pieces, companions
+├────── Data/                  # Generated items, glyphs, spells, recipes, build pieces, companions, storybooks
 ├────── Prefabs/               # Generated building, furniture and companion prefabs
 ├────── Resources/             # GameDatabase
 ├────── Scenes/                # Generated WitchCraft scene

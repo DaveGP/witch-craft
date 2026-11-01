@@ -25,6 +25,8 @@ namespace Data.Save
 
 		public int TutorialStep;
 
+		public List<string> Books = new();
+
 		public float Hour = 8f;
 
 		public int Day = 1;
@@ -54,6 +56,11 @@ namespace Data.Save
 		public int Level = 1;
 
 		public bool Seeded;
+
+		/// <summary>
+		/// Saves from before storybooks existed get a bookcase added to the hut once.
+		/// </summary>
+		public bool BookcaseGiven;
 
 		public List<PieceRecord> Pieces = new();
 	}

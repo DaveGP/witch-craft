@@ -48,11 +48,12 @@ UnityInputReader ──> InputProvider ──(FixedUpdate)──> PlayerCharacte
 
 ## Systems
 
-* **Interaction**: `IInteractable` with `Gatherable` (respawning or infinite, interact or touch), `GlyphShrine`, `RecipeScroll`, `AlchemyStation`, `Hearth`, `CompanionRecruit`, `CompanionResident` and `CatCompanion`.
+* **Interaction**: `IInteractable` with `Gatherable` (respawning or infinite, interact or touch), `GlyphShrine`, `RecipeScroll`, `AlchemyStation`, `Hearth`, `CompanionRecruit`, `CompanionResident`, `CatCompanion`, `StoryBookPickup` and `Bookcase`.
 * **Alchemy**: `AlchemySession` holds the brewing rules with no Unity dependencies. `AlchemyStation` connects it to the satchel and drives the cauldron, fire and mortar visuals. `AlchemyView` is the bench UI.
 * **Spells**: `SpellBook` stores glyphs, spells and slots and resolves inscriptions. `SpellCaster` readies the slotted spell's `ISpellEffect` component. Effects derive from `SpellEffect` (aiming, services) and live on the player: `ConjureSpell`, `LevitateSpell`, `UnmakeSpell`, `GustSpell`, `BloomSpell`, `WispSpell`.
 * **Home building tools**: `ConjureSpell` implements `IBuildPalette` (selected piece, colour, paintbrush, undo history) for `CatalogueView`. `Paintable` tints a piece's main surfaces with property blocks from `HomePalette`; the colour is saved on the `PieceRecord`. `HomeService.Comfort` sums `BuildPieceDefinition.Comfort`; `CompanionSpawner` gives the morning bonus on `IDayCycle.NewDay`.
 * **Home**: `HomePlot` snaps pieces to the grid (floors and roofs to cells, walls to edges, furniture free). `HomeService` places, removes, moves and saves pieces, seeds the starter hut and handles expansion. `PlacedPiece` ties a scene object to its save record; `Movable` lets Levitate lift it.
+* **Storybooks**: `StoryBookDefinition` holds a book's title, author, colour, hint and pages; `StoryBookContent` (editor) writes the six stories. `BookCollection` (`IBookCollection`) records which are found and saves their ids. `StoryBookPickup` collects a book and raises `BookOpened`; `Bookcase` sits on the bookshelf prefab and raises `BookcaseOpened`. `BookView` reads a book two pages at a time; `BookcaseView` lists them, and a book opened from it returns to it on close. `HomeService` gives existing saves a bookshelf once (`HomeRecord.BookcaseGiven`).
 * **Companions**: `CompanionRoster` holds friendship and grants rewards. `CompanionSpawner` creates residents at home.
 * **World**: `MovingPlatform`, `BouncePad`, `Updraft`, `HiddenPath`, `BloomSpot`, `Campfire`, `Bobbing`.
 * **Settings**: `GameSettings` (`IGameSettings`) keeps look sensitivity, invert Y and volumes in PlayerPrefs, per machine rather than per slot.
@@ -64,7 +65,7 @@ UnityInputReader ──> InputProvider ──(FixedUpdate)──> PlayerCharacte
 * **Audio**: `AudioDirector` (`IAudioService`) generates clips with `SoundSynth`, plays music, ambience and broom wind, and turns events into sounds.
 * **Tutorial**: `TutorialGuide` (`ITutorialGuide`) runs Sable's guided steps, sets the HUD objective and places a beacon. Progress is saved.
 * **Debugging**: `FeelTuner` is a backquote-toggled panel of live sliders for movement, broom and camera values. `PlaytestScenario` is the automated playtest.
-* **UI**: `UIRoot` builds a uGUI canvas in code via `UIFactory` and routes menu keys. Views: `HudView`, `SatchelView`, `SpellbookView`, `AlchemyView`, `DialogueView`, `PauseView`.
+* **UI**: `UIRoot` builds a uGUI canvas in code via `UIFactory` and routes menu keys. Views: `HudView`, `SatchelView`, `SpellbookView`, `AlchemyView`, `DialogueView`, `PauseView`, `BookView`, `BookcaseView`.
 
 ## Layers
 

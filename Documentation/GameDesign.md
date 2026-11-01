@@ -133,6 +133,19 @@ Others are met out in the world and ask for something before they move in. At ho
 
 Ember needs a potion only Pip can teach you, and Hoot needs you to brew, so the companions pull you through the other systems.
 
+## Storybooks
+
+Six short stories sit open on lecterns around the world, one in each area, so exploring pays off with something to read as well as something to gather. Picking one up opens it straight away (two pages at a time; the buttons, arrow keys or A and D turn the pages) and sends it home. Any bookshelf at home is your bookcase: it lists every book found, ready to read again, and gives a hint for each one still missing. Every home has a bookshelf, and older saves are given one in the hut.
+
+| Book | Author | Found |
+| ---- | ------ | ----- |
+| The Silver Spellbook | Hazel Thistlewick | The forest clearing, in the ring of stumps |
+| Eye of Newt | Bramble Underleaf | The pond's north bank |
+| Bubble Witch | Tilly | The reef islet off Tidewater Isle |
+| The Claw of the Phoenix | Anonymous | The sky island |
+| The Owl Who Counted Stars | Hoot | Starfall Ridge |
+| The Lantern Under the Hill | Ember | The crystal cave |
+
 ## Ideas for later
 
 * Day and night, with Moon Dew and moonpetals only at night

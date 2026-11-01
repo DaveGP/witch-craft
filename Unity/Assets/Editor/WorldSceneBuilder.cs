@@ -142,6 +142,7 @@ namespace WitchCraftEditor
 			BuildSeaCrossing();
 			BuildTidewater();
 			BuildStarfall();
+			BuildStorybooks();
 			BuildPaths();
 			BuildScatter();
 
@@ -522,6 +523,54 @@ namespace WitchCraftEditor
 			PointLight(visual.transform, Vector3.zero, new Color(1f, 0.9f, 0.6f), 3f, 1f);
 
 			Set(root.AddComponent<RecipeScroll>(), "recipe", ContentBuilder.Recipe(recipeId));
+		}
+
+		// One storybook in every corner of the world, each on its own little lectern
+		private static void BuildStorybooks()
+		{
+			var books = Node("Storybooks", world).transform;
+
+			Storybook(books, OnGround(ForestCentre.x - 2f, ForestCentre.z - 3f), "silver_spellbook", 30f);
+			Storybook(books, OnGround(PondCentre.x - 8f, PondCentre.z + 14f), "eye_of_newt", 150f);
+			Storybook(books, TidewaterCentre + new Vector3(50f, 2.8f, 3.6f), "bubble_witch", -60f);
+			Storybook(books, SkyIsleCentre + new Vector3(3f, 0f, -2.5f), "phoenix_claw", 210f);
+			Storybook(books, StarfallCentre + new Vector3(-4f, 0f, -2.5f), "counted_stars", 160f);
+
+			// The cave roof is ground too, so the cave floor height is given rather than found
+			Storybook(books, CaveCentre + new Vector3(3.5f, 0.06f, -2.4f), "lantern_hill", 20f);
+		}
+
+		private static void Storybook(Transform parent, Vector3 position, string bookId, float yaw)
+		{
+			var book = database.FindBook(bookId);
+
+			var root = Node($"Storybook_{bookId}", parent, position);
+			root.transform.rotation = Quaternion.Euler(0, yaw, 0);
+			root.layer = Interactable;
+			Trigger(root, 1.2f, new Vector3(0, 0.9f, 0));
+
+			var lectern = Node("Lectern", root.transform, Vector3.zero);
+			Prim(PrimitiveType.Cylinder, "Foot", lectern.transform, new Vector3(0, 0.05f, 0), new Vector3(0.5f, 0.05f, 0.5f), Wood, false);
+			Prim(PrimitiveType.Cube, "Post", lectern.transform, new Vector3(0, 0.45f, 0), new Vector3(0.12f, 0.8f, 0.12f), Wood);
+			Prim(PrimitiveType.Cube, "Rest", lectern.transform, new Vector3(0, 0.88f, 0), new Vector3(0.55f, 0.05f, 0.42f), Wood, false, new Vector3(-20, 0, 0));
+
+			// Open and floating just above the rest, in the book's own colour
+			var visual = Node("Book", root.transform, new Vector3(0, 1.08f, 0));
+			var cover = Lit($"BookCover_{bookId}", book.Color, 0.2f, book.Color * 0.6f);
+			var pages = Lit("BookPages", new Color(0.97f, 0.93f, 0.82f), 0.1f, new Color(1f, 0.95f, 0.8f) * 0.3f);
+			Prim(PrimitiveType.Cube, "CoverL", visual.transform, new Vector3(-0.15f, 0, 0), new Vector3(0.3f, 0.03f, 0.4f), cover, false, new Vector3(0, 0, 10));
+			Prim(PrimitiveType.Cube, "CoverR", visual.transform, new Vector3(0.15f, 0, 0), new Vector3(0.3f, 0.03f, 0.4f), cover, false, new Vector3(0, 0, -10));
+			Prim(PrimitiveType.Cube, "PagesL", visual.transform, new Vector3(-0.14f, 0.025f, 0), new Vector3(0.27f, 0.03f, 0.37f), pages, false, new Vector3(0, 0, 10));
+			Prim(PrimitiveType.Cube, "PagesR", visual.transform, new Vector3(0.14f, 0.025f, 0), new Vector3(0.27f, 0.03f, 0.37f), pages, false, new Vector3(0, 0, -10));
+			visual.AddComponent<Bobbing>();
+			PointLight(visual.transform, new Vector3(0, 0.3f, 0), Color.Lerp(book.Color, Color.white, 0.5f), 3f, 1.2f);
+
+			// The floating book always shows, so it can still be found under a lectern from an art pack
+			ArtSlot(root, "prop:storybook", "Storybook lectern (the floating book always shows)", visual.transform);
+
+			var pickup = root.AddComponent<StoryBookPickup>();
+			Set(pickup, "book", book);
+			Set(pickup, "visual", visual);
 		}
 
 		private static void Recruit(Transform parent, Vector3 position, string companionId, float yaw)
