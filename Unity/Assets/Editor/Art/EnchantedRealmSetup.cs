@@ -146,6 +146,7 @@ namespace WitchCraftEditor
 			EnsureFolder(KitFolder);
 
 			var converted = UrpMaterialConverter.ConvertFolder(Synty);
+			var lowered = LowerShaderTargets(Synty);
 
 			var set = LoadOrCreate<ArtSet>(ArtSetPath);
 			var placeholders = FindPlaceholders();
@@ -194,9 +195,35 @@ namespace WitchCraftEditor
 			EditorUtility.SetDirty(set);
 			AssetDatabase.SaveAssets();
 
-			Debug.Log($"{nameof(EnchantedRealmSetup)}: filled {filled} slots, converted {converted} materials.");
+			Debug.Log($"{nameof(EnchantedRealmSetup)}: filled {filled} slots, converted {converted} materials, lowered {lowered} shaders to target 3.5.");
 
 			return true;
+		}
+
+		// Synty's URP shaders ask for shader model 4.5, which WebGL 2 can't give, so the web build drops their only
+		// subshader and draws them magenta. They use nothing beyond 3.5, so asking for 3.5 lets them run everywhere
+		private static int LowerShaderTargets(string folder)
+		{
+			var lowered = 0;
+
+			foreach (var guid in AssetDatabase.FindAssets("t:Shader", new[] { folder }))
+			{
+				var path = AssetDatabase.GUIDToAssetPath(guid);
+
+				if (!path.EndsWith(".shader"))
+					continue;
+
+				var source = System.IO.File.ReadAllText(path);
+
+				if (!source.Contains("#pragma target 4.5"))
+					continue;
+
+				System.IO.File.WriteAllText(path, source.Replace("#pragma target 4.5", "#pragma target 3.5"));
+				AssetDatabase.ImportAsset(path);
+				lowered++;
+			}
+
+			return lowered;
 		}
 
 		#region Fitting
