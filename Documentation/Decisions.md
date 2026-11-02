@@ -54,5 +54,5 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 
 ## Scenery that can't be picked
 
-02/11/2026 - Scenic dressing never uses a model that a gatherable uses (mushrooms, logs, the berry bush, the gather flowers, nettle-like ferns, the boulder rock), so players don't try to pick things they can't.
+02/11/2026 - Scenic dressing never looks like something gatherable: no glowing mushrooms (scenic ones wear a muted, glow-free copy of the forest atlas), logs, the berry bush, the gather flowers, nettle-like ferns, the boulder rock), so players don't try to pick things they can't.
 

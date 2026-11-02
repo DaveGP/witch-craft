@@ -468,15 +468,117 @@ namespace WitchCraftEditor
 
 		private static GameObject GlowFloraKit()
 		{
-			return Kit("GlowFlora",
-				// Ferns and moss rather than mushrooms, which would look like Glowcaps that can't be picked
-				($"{Forest}/Prefabs/SM_Env_Fern_Koru_01.prefab", Vector3.zero, 0f, Uniform(0.9f)),
+			const string mushrooms = "SM_Env_Mushroom_Small_Group_02";
+
+			var kit = Kit("GlowFlora",
+				($"{Forest}/Prefabs/{mushrooms}.prefab", Vector3.zero, 0f, Uniform(0.7f)),
 				($"{Forest}/Prefabs/SM_Env_Moss_Lumps_02.prefab", new Vector3(0.3f, 0f, -0.9f), 200f, Uniform(0.6f)),
 				($"{Elven}/Environment/Flowers/SM_Env_Flowers_01.prefab", new Vector3(0.9f, 0f, 0.4f), 40f, Uniform(0.8f)),
 				($"{Forest}/Prefabs/SM_Env_Undergrowth_Fern_01.prefab", new Vector3(-0.6f, 0f, -0.5f), 120f, Uniform(1.6f)));
+
+			// Only Glowcaps (which can be picked) glow: these mushrooms are just scenery, so they wear a muted brown
+			// copy of the forest atlas with no glow
+			if (kit != null)
+				Remap(kit, mushrooms, MutedMushrooms());
+
+			return kit;
 		}
 
-		// Scenery: nothing here may look like something the witch gathers, so no mushrooms, logs, the berry bush
+		private const string ForestAtlasMaterial = Forest + "/Materials/PolygonNatureBiomes_EnchantedForest_Mat_01_A.mat";
+
+		// The forest atlas with its blue and cyan (the glowing mushroom caps) turned to a woodland brown, on a material
+		// with emission off. Made from the pack's own texture, saved next to the kits
+		private static Material MutedMushrooms()
+		{
+			var source = AssetDatabase.LoadAssetAtPath<Material>(ForestAtlasMaterial);
+			var atlas = source != null ? source.GetTexture("_BaseMap") as Texture2D : null;
+
+			if (atlas == null)
+				return null;
+
+			var texturePath = $"{KitFolder}/ForestAtlas_Muted.png";
+
+			// Read the pixels through a render texture, as the pack's texture isn't marked readable
+			var target = RenderTexture.GetTemporary(atlas.width, atlas.height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+			Graphics.Blit(atlas, target);
+
+			var previous = RenderTexture.active;
+			RenderTexture.active = target;
+
+			var pixels = new Texture2D(atlas.width, atlas.height, TextureFormat.RGBA32, false);
+			pixels.ReadPixels(new Rect(0, 0, atlas.width, atlas.height), 0, 0);
+
+			RenderTexture.active = previous;
+			RenderTexture.ReleaseTemporary(target);
+
+			var colours = pixels.GetPixels();
+
+			for (var i = 0; i < colours.Length; i++)
+			{
+				Color.RGBToHSV(colours[i], out var hue, out var saturation, out var value);
+
+				if (hue < 0.42f || hue > 0.72f || saturation < 0.2f)
+					continue;
+
+				var alpha = colours[i].a;
+				colours[i] = Color.HSVToRGB(0.07f, saturation * 0.6f, value * 0.75f);
+				colours[i].a = alpha;
+			}
+
+			pixels.SetPixels(colours);
+			System.IO.File.WriteAllBytes(texturePath, pixels.EncodeToPNG());
+			Object.DestroyImmediate(pixels);
+
+			AssetDatabase.ImportAsset(texturePath);
+			var muted = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
+
+			var materialPath = $"{KitFolder}/Mushroom_Muted.mat";
+			var material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+
+			if (material == null)
+			{
+				material = new Material(source);
+				AssetDatabase.CreateAsset(material, materialPath);
+			}
+
+			material.CopyPropertiesFromMaterial(source);
+			material.SetTexture("_BaseMap", muted);
+			material.SetTexture("_MainTex", muted);
+			material.DisableKeyword("_EMISSION");
+			material.SetTexture("_EmissionMap", null);
+			material.SetColor("_EmissionColor", Color.black);
+			material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.EmissiveIsBlack;
+
+			EditorUtility.SetDirty(material);
+			AssetDatabase.SaveAssets();
+
+			return material;
+		}
+
+		// Swaps the material on one part of a saved kit
+		private static void Remap(GameObject kit, string partName, Material material)
+		{
+			if (material == null)
+				return;
+
+			var path = AssetDatabase.GetAssetPath(kit);
+			var contents = PrefabUtility.LoadPrefabContents(path);
+
+			try
+			{
+				foreach (var part in contents.GetComponentsInChildren<Transform>(true).Where(child => child.name.StartsWith(partName)))
+				foreach (var renderer in part.GetComponentsInChildren<Renderer>(true))
+					renderer.sharedMaterials = renderer.sharedMaterials.Select(_ => material).ToArray();
+
+				PrefabUtility.SaveAsPrefabAsset(contents, path);
+			}
+			finally
+			{
+				PrefabUtility.UnloadPrefabContents(contents);
+			}
+		}
+
+		// Scenery: nothing here may look like something the witch gathers, so no glowing mushrooms, logs, the berry bush
 		// (Bush_02), the gather flowers (Flowers_02 to _04), ferns like the nettle, or the boulder rock
 		private static IEnumerable<(string key, GameObject kit)> SceneryKits()
 		{

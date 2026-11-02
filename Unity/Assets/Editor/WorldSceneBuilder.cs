@@ -1350,8 +1350,8 @@ namespace WitchCraftEditor
 					Prim(PrimitiveType.Sphere, "Rock", visual, new Vector3(0, 0.3f, 0), new Vector3(0.8f, 0.6f, 0.7f), Rock, false), false, "Chip");
 		}
 
-		// No mushrooms here: the only glowing mushrooms in the world should be Glowcaps the witch can pick
-		private const string FloraNote = "Forest flora: ferns, flowers, moss, never mushrooms (art only)";
+		// Mushrooms here never glow: the only glowing mushrooms in the world are Glowcaps the witch can pick
+		private const string FloraNote = "Forest flora: muted (never glowing) mushrooms, ferns, flowers, moss (art only)";
 
 		// Spots for the Art Set's scatter slots: elven lanterns along the paths, flora in the forest and by
 		// the pond, crystals by the cave. They are empty without art and collide with nothing. Their own dice keep
