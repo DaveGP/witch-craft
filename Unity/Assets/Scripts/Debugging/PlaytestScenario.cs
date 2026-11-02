@@ -383,6 +383,50 @@ namespace Debugging
 			var levelDrift = player.transform.position.y - levelStart;
 			Check($"Flying level holds its height ({levelDrift:+0.00;-0.00}m over 1.5 s)", Mathf.Abs(levelDrift) < 0.4f);
 
+			// Climbing eases into the hover ceiling instead of stopping dead, with a hint the first time
+			var notes = new List<string>();
+			void Noted(string message) => notes.Add(message);
+			var bus = ServiceLocator.Get<IEventBus>();
+			bus.Notified += Noted;
+
+			// From low down, with the broom topped up so the rest of the flying checks have charge
+			player.GetComponent<Character.Movement.BroomController>().Recharge(100f);
+			movement.Teleport(new Vector3(-3f, 2f, -15f));
+			yield return new WaitForSeconds(0.3f);
+
+			var groundBelow = Physics.Raycast(player.transform.position, Vector3.down, out var groundHit, 50f, LayerMask.GetMask("Ground", "Environment"), QueryTriggerInteraction.Ignore) ? groundHit.point.y : 0f;
+			var climbSpeedLow = 0f;
+			var climbSpeedNear = float.MaxValue;
+			var climbPeak = 0f;
+			var lastY = player.transform.position.y;
+
+			Hold(Key.Space);
+
+			for (var t = 0f; t < 3f; t += Time.deltaTime)
+			{
+				yield return null;
+
+				var y = player.transform.position.y;
+				var rise = (y - lastY) / Mathf.Max(Time.deltaTime, 0.0001f);
+				var altitude = y - groundBelow;
+				lastY = y;
+				climbPeak = Mathf.Max(climbPeak, altitude);
+
+				if (altitude < 4f)
+					climbSpeedLow = Mathf.Max(climbSpeedLow, rise);
+				else if (altitude > 6.4f && altitude < 6.9f && rise > 0f)
+					climbSpeedNear = Mathf.Min(climbSpeedNear, rise);
+			}
+
+			Release();
+			bus.Notified -= Noted;
+			player.GetComponent<Character.Movement.BroomController>().Recharge(100f);
+
+			Check($"Climbing slows into the ceiling and stops there ({climbSpeedLow:0.0} m/s low down, {(climbSpeedNear == float.MaxValue ? 0f : climbSpeedNear):0.0} m/s near it, peak {climbPeak:0.00}m)",
+				climbSpeedLow > 4f && climbSpeedNear < climbSpeedLow * 0.5f && climbPeak > 6.3f && climbPeak < 7.3f);
+			Check($"Reaching it shows a hint, once a session (shown: {Character.Movement.BroomController.CeilingHinted}, again here: {notes.Count(note => note.Contains("thins"))})",
+				Character.Movement.BroomController.CeilingHinted && notes.Count(note => note.Contains("thins")) <= 1);
+
 			// Out over the sea she cruises above the waves instead of sinking towards them
 			movement.Teleport(new Vector3(25f, 4f, 88f));
 			yield return new WaitForSeconds(0.3f);

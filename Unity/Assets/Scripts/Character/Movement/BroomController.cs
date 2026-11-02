@@ -5,6 +5,7 @@ using DependencyInjection;
 using Events.Interfaces;
 using Potions.Interfaces;
 using UnityEngine;
+using Utilities;
 
 
 namespace Character.Movement
@@ -153,7 +154,7 @@ namespace Character.Movement
 			if (target.sqrMagnitude < 0.01f)
 				target.y = Mathf.Sin(Time.time * 2f) * 0.3f;
 
-			target.y = ApplyCeiling(target.y);
+			target.y = ApplyCeiling(target.y, vertical > 0f);
 
 			rigidbody.linearVelocity = Vector3.MoveTowards(rigidbody.linearVelocity, target, stats.Acceleration * Time.fixedDeltaTime);
 
@@ -166,10 +167,10 @@ namespace Character.Movement
 				Dismount();
 		}
 
-		// A broom skims the land and the sea: it holds its height anywhere under its ceiling, and above it eases back
-		// down, gently and more slowly the closer it is, so it settles at the ceiling instead of bobbing. Updrafts
-		// carry it past
-		private float ApplyCeiling(float verticalVelocity)
+		// A broom skims the land and the sea: it holds its height anywhere under its ceiling. Climbing slows as it
+		// nears the ceiling and comes to a gentle stop there (with a shimmer, and a hint the first time), and above it
+		// the broom eases back down, so it settles rather than bobbing. Updrafts carry it past
+		private float ApplyCeiling(float verticalVelocity, bool climbing)
 		{
 			var ground = GroundBelow();
 
@@ -187,10 +188,56 @@ namespace Character.Movement
 
 			var excess = transform.position.y - ceilingGround - hoverCeiling;
 
+			// Below the ceiling: full speed until the last few metres, then easing to a stop at it
 			if (excess <= 0f)
-				return verticalVelocity;
+			{
+				if (verticalVelocity <= 0f)
+					return verticalVelocity;
+
+				var room = Mathf.Clamp01(-excess / CeilingEaseBand);
+
+				if (climbing && room < 0.1f)
+					PushedAgainstCeiling();
+
+				return verticalVelocity * Mathf.SmoothStep(0f, 1f, room);
+			}
+
+			if (climbing)
+				PushedAgainstCeiling();
 
 			return Mathf.Min(verticalVelocity, -Mathf.Min(excess * 1.5f, stats.GlideSpeed));
+		}
+
+		// How far below the ceiling the climb starts to slow
+		private const float CeilingEaseBand = 2.5f;
+
+		// Shown once a session, the first time the witch climbs into the ceiling
+		private static bool ceilingHinted;
+
+		private float nextShimmer;
+
+		/// <summary>
+		/// The witch has climbed into the broom's ceiling at least once this session (for the playtest).
+		/// </summary>
+		public static bool CeilingHinted => ceilingHinted;
+
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+		private static void ResetSession() => ceilingHinted = false;
+
+		// Pushing up against the ceiling: the broom's magic visibly thins, and the first time, a hint says why
+		private void PushedAgainstCeiling()
+		{
+			if (Time.time >= nextShimmer)
+			{
+				nextShimmer = Time.time + 0.35f;
+				FxUtility.Burst(transform.position + Vector3.up * 0.4f, new Color(0.75f, 0.7f, 1f), 8, 0.8f, 0.12f);
+			}
+
+			if (ceilingHinted)
+				return;
+
+			ceilingHinted = true;
+			eventBus.Notify("The broom's magic thins this high. Updrafts can carry you further.");
 		}
 
 		private float? GroundBelow() =>

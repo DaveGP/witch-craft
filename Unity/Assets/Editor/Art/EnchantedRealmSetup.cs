@@ -599,9 +599,10 @@ namespace WitchCraftEditor
 			yield return ("scenery:tuft-3", Kit("Tuft3", ($"{flowers}/SM_Env_Grass_02.prefab", Vector3.zero, 0f, Uniform(1f))));
 
 			yield return ("scenery:leaves-1", Kit("Leaves1", ($"{environment}/SM_Env_Leaves_Clump_01.prefab", Vector3.zero, 0f, Uniform(1f))));
+			// No koru ferns: their tall curled stalks read as odd sticks standing about
 			yield return ("scenery:leaves-2", Kit("Leaves2",
 				($"{environment}/SM_Env_Leaves_Clump_03.prefab", Vector3.zero, 0f, Uniform(1f)),
-				($"{Forest}/Prefabs/SM_Env_Fern_Koru_02.prefab", new Vector3(0.6f, 0f, 0.2f), 90f, Uniform(0.8f))));
+				($"{environment}/SM_Env_Leaves_Clump_04.prefab", new Vector3(0.7f, 0f, 0.3f), 90f, Uniform(0.8f))));
 			yield return ("scenery:leaves-3", Kit("Leaves3", ($"{environment}/SM_Env_Leaves_Clump_05.prefab", Vector3.zero, 0f, Uniform(1f))));
 
 			yield return ("scenery:pebbles-1", Kit("Pebbles1", ($"{flowers}/SM_Env_Pebbles_01.prefab", Vector3.zero, 0f, Uniform(1f))));
