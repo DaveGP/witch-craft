@@ -22,11 +22,11 @@ Arriving in one of these places names it briefly in the bottom-left corner.
 | Forest | North east | Lavender, nettle, wild berries, fallen timber, glowcaps, bounce mushrooms, Bramble the hedgehog |
 | Pond | West | Spring water, reeds, clay, glowcaps, lily pads, a stump climb to the **Vita** shrine, Pip the frog |
 | Hills | South | Stone, Moon Dew silverbells, moonpetals on the tallest hill, the start of a hidden path |
-| Crystal cave | South east | Crystal, ember moss, the **Nihil** shrine, Ember the fox spirit |
+| Crystal cave | South east | A rocky mound with a jagged tunnel of stalactites. Crystal, ember moss, the **Nihil** shrine, Ember the fox spirit |
 | Sky spire | East | A spiral climb of platforms, a moving platform and a bounce mushroom up to the **Motus** shrine and the Featherfall recipe |
 | Sky island | Above the spire | Reached by riding the updraft beside the spire summit. **Lux** shrine, feather down, moonpetals, Hoot the owl |
 | Sea stacks | North of the main island | Rocky stacks for a broom to hop and recharge on, with a signpost on the north beach |
-| Tidewater Isle | Across the northern sea | Kelp, seashells, giant clams with pearls, driftwood, palms, **Tilly the Turtle**; stepping rocks out to the **Aqua** shrine on the eastern reef; a geyser updraft rising to Starfall Ridge |
+| Tidewater Isle | Across the northern sea | A sandy beach island with a grassy rise and dunes. Kelp, seashells, giant clams with pearls, driftwood, palms, **Tilly the Turtle**; stepping rocks out to the **Aqua** shrine on the eastern reef; a geyser updraft rising to Starfall Ridge |
 | Starfall Ridge | High above Tidewater | Night-only stardust, **Nova the Star Sprite**; the **Astra** shrine on an isle too high for the broom (Bubble up to it); the Comet Nook, only reachable with Blink |
 | Secret isle | South, high up | Reached by a hidden path that only appears near a Wisp or while Glimmering. Moonpetals and crystal |
 
