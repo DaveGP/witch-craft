@@ -1924,6 +1924,7 @@ namespace WitchCraftEditor
 			var animator = visual.AddComponent<CharacterAnimator>();
 			Set(animator, "body", figure.transform);
 			Set(animator, "hat", hat);
+			Set(animator, "broom", broom.transform);
 
 			return player;
 		}

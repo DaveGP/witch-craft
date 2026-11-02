@@ -845,6 +845,12 @@ namespace Debugging
 			var hairRest = hairBone != null ? hairBone.localRotation : Quaternion.identity;
 			var hairSwing = 0f;
 
+			// Footsteps come from her feet landing, not a timer
+			var animator = player.GetComponentInChildren<CharacterAnimator>();
+			var steps = new List<float>();
+			void Stepped() => steps.Add(Time.time);
+			animator.FootPlanted += Stepped;
+
 			Hold(Key.W);
 
 			for (var t = 0f; t < 1.2f; t += Time.deltaTime)
@@ -854,6 +860,14 @@ namespace Debugging
 
 				yield return null;
 			}
+
+			yield return new WaitForSeconds(0.8f);
+			animator.FootPlanted -= Stepped;
+
+			// Running at 5.5 m/s is about three steps a second; ignore the first half second of setting off
+			var cadence = steps.Count(time => time > steps.FirstOrDefault() + 0.5f) / Mathf.Max(0.01f, (steps.LastOrDefault() - steps.FirstOrDefault() - 0.5f));
+			Check($"Her footsteps fall as her feet land ({steps.Count} steps, {cadence:0.0} a second; timed steps off: {ServiceLocator.Get<IAudioService>().FootstepsFromAnimation})",
+				steps.Count >= 4 && cadence > 1.5f && cadence < 6f && ServiceLocator.Get<IAudioService>().FootstepsFromAnimation);
 
 			if (springBones.Count > 0)
 				Check($"Her hair sways as she runs ({springBones.Count} spring bones; {hairBone.name} swung {hairSwing:0.0}°)", hairSwing > 2f);
@@ -869,6 +883,24 @@ namespace Debugging
 
 			movement.Teleport(new Vector3(-3f, 0.2f, -15f));
 			yield return new WaitForSeconds(0.5f);
+
+			// On the broom she sits on the stick, whatever pose the clip has
+			var broom = player.GetComponentsInChildren<Transform>(true).First(part => part.name == "Broom");
+			var hips = rig.GetBoneTransform(HumanBodyBones.Hips);
+
+			Tap(Key.F);
+			yield return Until(() => player.GetComponent<IBroomController>().IsMounted);
+			yield return new WaitForSeconds(1.5f);
+
+			var seat = hips.position.y - broom.position.y;
+			Check($"On the broom her hips sit on the stick ({seat:0.00}m above it; riding {rig.GetCurrentAnimatorClipInfo(0).FirstOrDefault().clip?.name})", Mathf.Abs(seat - 0.1f) < 0.15f);
+			yield return FrameWitch(player, 3f);
+			Shot("30_witch_broom");
+			EndFrame();
+
+			Tap(Key.F);
+			yield return Until(() => !player.GetComponent<IBroomController>().IsMounted);
+			yield return new WaitForSeconds(1f);
 		}
 
 		private IEnumerator FrameWitch(PlayerCharacter player, float distance)

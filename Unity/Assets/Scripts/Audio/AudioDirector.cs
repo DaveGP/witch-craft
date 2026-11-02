@@ -227,8 +227,16 @@ namespace Audio
 			musicSource.volume = Mathf.MoveTowards(musicSource.volume, target, Time.deltaTime * rate);
 		}
 
+		public bool FootstepsFromAnimation { get; set; }
+
+		public void Footstep() => PlayStep();
+
+		// The placeholder witch has no feet to watch, so her steps keep time with her speed
 		private void UpdateFootsteps()
 		{
+			if (FootstepsFromAnimation)
+				return;
+
 			var movement = witch.Movement;
 
 			var velocity = movement.Velocity;

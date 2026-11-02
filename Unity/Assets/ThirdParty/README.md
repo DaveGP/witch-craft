@@ -6,6 +6,7 @@ Asset packs that aren't ours to redistribute live here and stay out of git. Only
 | --- | --- |
 | `Synty/` | Synty packs (POLYGON and others) |
 | `AssetStore/` | Anything else from the Unity Asset Store |
+| `Mixamo/` | Animations downloaded from Mixamo (FBX for Unity). The witch setup makes them Humanoid and looping, and uses a "Sitting Idle" clip for riding the broom |
 
 Asset Store packages import into their own folder under `Assets/`. After importing, drag that folder in here **inside the Unity Editor** (not in Finder), so Unity keeps every reference to it.
 

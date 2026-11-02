@@ -1,4 +1,6 @@
 using Art;
+using Audio.Interfaces;
+using DependencyInjection;
 using Character.Movement.Interfaces;
 using Data.Enums;
 using Data.ScriptableObjects;
@@ -19,9 +21,32 @@ namespace Character.Animation
 
 		[SerializeField] private Transform hat;
 
+		[SerializeField] private Transform broom;
+
 		private ICharacterMovementState movementState;
 
 		private ISpellCasterState spells;
+
+		private IAudioService audioService;
+
+		/// <summary>
+		/// A rigged witch's foot came down, for footstep sounds (and the playtest).
+		/// </summary>
+		public event System.Action FootPlanted;
+
+		private Foot leftFoot;
+
+		private Foot rightFoot;
+
+		private Transform hips;
+
+		private Transform art;
+
+		private Vector3 artRestPosition;
+
+		private float seatOffset;
+
+		private float lastStep;
 
 		private Vector3 restScale;
 
@@ -75,6 +100,9 @@ namespace Character.Animation
 		{
 			if (spells != null)
 				spells.SpellCast -= Cast;
+
+			if (audioService != null)
+				audioService.FootstepsFromAnimation = false;
 		}
 
 		private void Cast(SpellDefinition spell)
@@ -111,10 +139,13 @@ namespace Character.Animation
 			var animator = artSwap != null ? artSwap.ArtAnimator : null;
 
 			if (animator != rig)
-			{
-				rig = animator;
-				rigParameters = rig != null ? new AnimatorParameters(rig) : null;
-			}
+				BindRig(animator);
+
+			// The audio service starts after the witch does, so it's found when first needed
+			audioService ??= ServiceLocator.Get<IAudioService>();
+
+			if (audioService != null)
+				audioService.FootstepsFromAnimation = rigParameters != null && leftFoot != null;
 
 			if (rigParameters == null)
 				return;
@@ -134,6 +165,106 @@ namespace Character.Animation
 			rigParameters.SetInteger(CharacterAnimationParameters.MovementDirection, (int)MovementDirectionUtility.FromLocalVelocity(local));
 
 			rigParameters.SetBool(CharacterAnimationParameters.SpellReady, spells?.ActiveSpell != null && !flying);
+
+			UpdateFootsteps(flying, new Vector2(local.x, local.z).magnitude);
+			UpdateSeat(flying);
+		}
+
+		private void BindRig(Animator animator)
+		{
+			if (art != null)
+				art.localPosition = artRestPosition;
+
+			rig = animator;
+			rigParameters = rig != null ? new AnimatorParameters(rig) : null;
+
+			var human = rig != null && rig.isHuman;
+
+			leftFoot = human ? new Foot(rig.GetBoneTransform(HumanBodyBones.LeftFoot)) : null;
+			rightFoot = human ? new Foot(rig.GetBoneTransform(HumanBodyBones.RightFoot)) : null;
+			hips = human ? rig.GetBoneTransform(HumanBodyBones.Hips) : null;
+
+			art = artSwap != null && artSwap.Art != null ? artSwap.Art.transform : null;
+			artRestPosition = art != null ? art.localPosition : Vector3.zero;
+			seatOffset = 0f;
+		}
+
+		// A step sounds as each foot comes down: lifted clear of where it rests, then back down to it
+		private void UpdateFootsteps(bool flying, float speed)
+		{
+			if (leftFoot == null || rightFoot == null)
+				return;
+
+			var walking = movementState.IsGrounded && !flying && speed > 0.5f;
+			var ground = transform.position.y;
+
+			if (leftFoot.Planted(ground, walking) | rightFoot.Planted(ground, walking) && Time.time - lastStep > 0.12f)
+			{
+				lastStep = Time.time;
+				audioService?.Footstep();
+				FootPlanted?.Invoke();
+			}
+		}
+
+		// On the broom she sits on the stick: her hips are brought down (or up) to it, whatever pose the clip has
+		private void UpdateSeat(bool flying)
+		{
+			if (art == null || hips == null || broom == null)
+				return;
+
+			var target = flying ? broom.position.y + 0.1f - hips.position.y : -seatOffset;
+
+			seatOffset += target * (1f - Mathf.Exp(-12f * Time.deltaTime));
+
+			if (!flying && Mathf.Abs(seatOffset) < 0.001f)
+				seatOffset = 0f;
+
+			art.localPosition = artRestPosition + Vector3.up * seatOffset;
+		}
+
+		// One foot's rise and fall, measured from the lowest it has been lately
+		private class Foot
+		{
+			private const float Lift = 0.06f;
+
+			private const float Down = 0.02f;
+
+			private readonly Transform bone;
+
+			private float rest = float.MaxValue;
+
+			private bool lifted;
+
+			public Foot(Transform bone)
+			{
+				this.bone = bone;
+			}
+
+			public bool Planted(float ground, bool walking)
+			{
+				if (bone == null)
+					return false;
+
+				var height = bone.position.y - ground;
+
+				// The resting height creeps up slowly and snaps down, so it follows slopes and steps
+				rest = Mathf.Min(rest + 0.1f * Time.deltaTime, height);
+
+				if (!walking)
+				{
+					lifted = false;
+					return false;
+				}
+
+				if (height > rest + Lift)
+					lifted = true;
+
+				if (!lifted || height > rest + Down)
+					return false;
+
+				lifted = false;
+				return true;
+			}
 		}
 
 		private void UpdateSquash()

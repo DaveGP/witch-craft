@@ -24,6 +24,16 @@ namespace Audio.Interfaces
 		/// </summary>
 		void PlayAt(Sound sound, Vector3 position, float volume = 1f);
 
+		/// <summary>
+		/// A footstep, played when a rigged witch's foot comes down.
+		/// </summary>
+		void Footstep();
+
+		/// <summary>
+		/// True while the witch's animation reports her footsteps; the placeholder's timed steps stop.
+		/// </summary>
+		bool FootstepsFromAnimation { get; set; }
+
 		AudioClip Clip(Sound sound);
 	}
 }

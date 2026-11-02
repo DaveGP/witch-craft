@@ -159,7 +159,9 @@ namespace WitchCraftEditor
 			var jump = State(machine, "Jump", clip("InAir/A_Jump_Running_Femn"), new Vector3(300, 120));
 			var fall = State(machine, "Fall", clip("InAir/A_InAir_FallShort_Femn"), new Vector3(560, 120));
 			var land = State(machine, "Land", clip("InAir/A_Land_IdleSoft_Femn"), new Vector3(560, 0));
-			var broom = State(machine, "Broom", clip("Idle/A_Idle_Crouching_Femn"), new Vector3(300, -120));
+			// Riding the broom: a sitting clip from Mixamo when there is one, else a crouch. Either way CharacterAnimator
+			// lowers her hips onto the stick
+			var broom = State(machine, "Broom", MixamoClip("Sitting Idle", "Sit") ?? clip("Idle/A_Idle_Crouching_Femn"), new Vector3(300, -120));
 
 			// The jump is the game's, so skip the clip's crouch and start at the push off
 			var takeoff = Transition(locomotion, jump, 0.08f);
@@ -228,6 +230,55 @@ namespace WitchCraftEditor
 				Transition(cast, ready, 0.2f, 0.8f).AddCondition(AnimatorConditionMode.If, 0, "SpellReady");
 				Transition(cast, empty, 0.25f, 0.8f).AddCondition(AnimatorConditionMode.IfNot, 0, "SpellReady");
 			}
+		}
+
+		private const string MixamoFolder = "Assets/ThirdParty/Mixamo";
+
+		// A clip downloaded from Mixamo into ThirdParty/Mixamo: the best name match, made Humanoid (so it retargets onto
+		// her) and set to loop in place. Mixamo files arrive as Generic rigs, and their clips don't loop
+		private static AnimationClip MixamoClip(params string[] names)
+		{
+			if (!AssetDatabase.IsValidFolder(MixamoFolder))
+				return null;
+
+			var files = AssetDatabase.FindAssets("t:Model", new[] { MixamoFolder }).Select(AssetDatabase.GUIDToAssetPath).ToList();
+
+			var path = names
+				.Select(name => files.FirstOrDefault(file => System.IO.Path.GetFileNameWithoutExtension(file).IndexOf(name, System.StringComparison.OrdinalIgnoreCase) >= 0))
+				.FirstOrDefault(file => file != null);
+
+			if (path == null)
+				return null;
+
+			var importer = (ModelImporter)AssetImporter.GetAtPath(path);
+
+			if (importer.animationType != ModelImporterAnimationType.Human)
+			{
+				importer.animationType = ModelImporterAnimationType.Human;
+				importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+				importer.SaveAndReimport();
+			}
+
+			var clips = importer.clipAnimations.Length > 0 ? importer.clipAnimations : importer.defaultClipAnimations;
+
+			if (clips.Any(clip => !clip.loopTime || !clip.lockRootRotation || !clip.lockRootHeightY || !clip.lockRootPositionXZ))
+			{
+				foreach (var clip in clips)
+				{
+					clip.loopTime = true;
+					clip.lockRootRotation = true;
+					clip.lockRootHeightY = true;
+					clip.lockRootPositionXZ = true;
+					clip.keepOriginalOrientation = true;
+					clip.keepOriginalPositionY = true;
+					clip.keepOriginalPositionXZ = true;
+				}
+
+				importer.clipAnimations = clips;
+				importer.SaveAndReimport();
+			}
+
+			return Clip(path);
 		}
 
 		private static AnimatorState State(AnimatorStateMachine machine, string name, Motion motion, Vector3 position)
