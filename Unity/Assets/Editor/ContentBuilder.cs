@@ -480,6 +480,9 @@ namespace WitchCraftEditor
 			// Gable ends and ceiling, kept under roof art, which only replaces the slope. Timber, like the beams
 			MeshObject(RoofShell, root.transform, WedgeShell(), Vector3.zero, Vector3.one, Wood);
 
+			// Verges and a ridge cap on the art, where the neighbours leave the roof open
+			root.AddComponent<RoofTrim>();
+
 			return Save(root, "Building");
 		}
 

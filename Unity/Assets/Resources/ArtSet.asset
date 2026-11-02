@@ -113,9 +113,9 @@ MonoBehaviour:
     Note: Driftwood (Timber)
     Prefab: {fileID: 3059600125008029049, guid: 6382ecb43018daf48bc6671d9ac92dc0, type: 3}
     Material: {fileID: 0}
-    Offset: {x: -0.12878038, y: 0.5037575, z: -0.056707237}
+    Offset: {x: -0.12878236, y: 0.50375843, z: -0.05670633}
     Rotation: {x: 0, y: 90, z: 0}
-    Scale: 0.7190861
+    Scale: 0.7190875
     KeepPlaceholder: 0
   - Key: gather:EmberMoss
     Note: EmberMoss (Ember Moss)
@@ -127,11 +127,11 @@ MonoBehaviour:
     KeepPlaceholder: 0
   - Key: gather:FallenLog
     Note: FallenLog (Timber)
-    Prefab: {fileID: 3059600125008029049, guid: 6382ecb43018daf48bc6671d9ac92dc0, type: 3}
+    Prefab: {fileID: 3303718617547997636, guid: 72d54fcc6c6784844974e40eb771e5ca, type: 3}
     Material: {fileID: 0}
-    Offset: {x: -0.12878239, y: 0.5037576, z: -0.05670204}
+    Offset: {x: 0.0063077463, y: 0.17932536, z: -0.010190381}
     Rotation: {x: 0, y: 90, z: 0}
-    Scale: 0.71908635
+    Scale: 0.32964867
     KeepPlaceholder: 0
   - Key: gather:FeatherDown
     Note: FeatherDown (Feather Down)
@@ -327,19 +327,19 @@ MonoBehaviour:
     KeepPlaceholder: 0
   - Key: piece:roof_slate
     Note: Slate Roof
-    Prefab: {fileID: 4317394661140597982, guid: 34536c2d731e3d743a9ea17032f91e69, type: 3}
+    Prefab: {fileID: 8150089884163373505, guid: b762df2f5ea974d178d2ed455fe93d73, type: 3}
     Material: {fileID: 0}
-    Offset: {x: -1.1499956, y: 0.071434475, z: -0.5981072}
-    Rotation: {x: 0, y: 180, z: 0}
-    Scale: 0.9200018
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
     KeepPlaceholder: 0
   - Key: piece:roof_thatch
     Note: Thatch Roof
-    Prefab: {fileID: 1041112394945595134, guid: 09c270c8b16d6ae42b49538b78a6c0fa, type: 3}
+    Prefab: {fileID: 465045458361759067, guid: 9f02e67e457ef48a496890a167a8ca9c, type: 3}
     Material: {fileID: 0}
-    Offset: {x: -0.9834509, y: 0.06108883, z: -1.0614817}
-    Rotation: {x: 0, y: 180, z: 0}
-    Scale: 0.7867606
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
     KeepPlaceholder: 0
   - Key: piece:rug
     Note: Woven Rug
@@ -747,5 +747,5 @@ MonoBehaviour:
     Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1.0408297
+    Scale: 0.8795744
     KeepPlaceholder: 0

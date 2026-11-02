@@ -52,11 +52,11 @@ namespace Camera
 
 		[SerializeField] private Transform cameraTransform;
 
-		[SerializeField] private float distance = 6f;
+		[SerializeField] private float distance = 5.1f;
 
-		[SerializeField] private float minDistance = 2.5f;
+		[SerializeField] private float minDistance = 2.1f;
 
-		[SerializeField] private float maxDistance = 12f;
+		[SerializeField] private float maxDistance = 10.5f;
 
 		[SerializeField] private float followSharpness = 14f;
 

@@ -14,6 +14,8 @@ A cosy 3D platformer. You are a young witch with a tiny hut, a cat and a head fu
 
 ## The island
 
+Arriving in one of these places names it briefly in the bottom-left corner.
+
 | Area | Where | What's there |
 | ---- | ----- | ------------ |
 | Home meadow | Centre | Starter hut, alchemy bench, hearth, crates to levitate, herb planters |

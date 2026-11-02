@@ -122,8 +122,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 225011367124767656}
+  - component: {fileID: 3262518775718341861}
   - component: {fileID: 2771306372707744129}
-  - component: {fileID: 9077748845651245339}
+  - component: {fileID: 2946423856808483176}
   m_Layer: 6
   m_Name: ThatchRoof
   m_TagString: Untagged
@@ -148,6 +149,18 @@ Transform:
   - {fileID: 3789905162263249817}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3262518775718341861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3137306506397593475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1933082ca2c6442a9a8b80ea784cf19c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Home.RoofTrim
 --- !u!114 &2771306372707744129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +176,7 @@ MonoBehaviour:
   surfaces:
   - {fileID: 1076911205498973331}
   - {fileID: 511984392420189798}
---- !u!114 &9077748845651245339
+--- !u!114 &2946423856808483176
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

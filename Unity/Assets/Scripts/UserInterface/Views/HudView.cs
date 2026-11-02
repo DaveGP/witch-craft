@@ -17,15 +17,26 @@ using Sky.Interfaces;
 using Spells.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
+using World;
 
 namespace UserInterface.Views
 {
-	// Always-on overlay: interaction prompt, toasts, spell hotbar, broom charge and active potions.
+	// Always-on overlay: interaction prompt, toasts, spell hotbar, broom charge, active potions and the name of each
+	// new place she arrives in.
 	public class HudView : MonoBehaviour
 	{
 		private const float ToastLifetime = 4.5f;
 
 		private const int MaxToasts = 5;
+
+		// How long she must be somewhere before it's announced, so skirting an edge doesn't flicker names
+		private const float LocationDwell = 0.75f;
+
+		private const float LocationFadeIn = 0.4f;
+
+		private const float LocationHold = 3f;
+
+		private const float LocationFadeOut = 1.2f;
 
 		private IEventBus eventBus;
 
@@ -73,6 +84,25 @@ namespace UserInterface.Views
 
 		private readonly List<(Text text, float born)> toasts = new();
 
+		private Text locationLabel;
+
+		private Image locationRule;
+
+		private Location location;
+
+		private Location pendingLocation;
+
+		private Location announced;
+
+		private float pendingSince;
+
+		private float announcedAt = -100f;
+
+		/// <summary>
+		/// The place name showing in the corner, or empty when none is, for the playtest.
+		/// </summary>
+		public string ShownLocation => locationLabel != null && locationLabel.color.a > 0.05f ? locationLabel.text : "";
+
 		public void Build(RectTransform parent)
 		{
 			eventBus = ServiceLocator.Get<IEventBus>();
@@ -90,6 +120,7 @@ namespace UserInterface.Views
 			BuildToasts();
 			BuildBroom();
 			BuildCorners();
+			BuildLocation();
 
 			eventBus.ActiveTargetChanged += SetTarget;
 			eventBus.InteractionFocusChanged += SetFocus;
@@ -212,6 +243,62 @@ namespace UserInterface.Views
 			help = UIFactory.Label(root, "", 16, UIFactory.TextMuted, TextAnchor.LowerRight);
 			UIFactory.Place(help.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-640, 24), new Vector2(-30, 80));
 			help.gameObject.AddComponent<Shadow>();
+		}
+
+		// Bottom left, above the broom's charge
+		private void BuildLocation()
+		{
+			locationLabel = UIFactory.Label(root, "", 34, UIFactory.Text, TextAnchor.LowerLeft, FontStyle.Bold);
+			UIFactory.Place(locationLabel.rectTransform, Vector2.zero, Vector2.zero, new Vector2(34, 118), new Vector2(760, 172));
+			locationLabel.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(2f, -2f);
+
+			locationRule = UIFactory.Image(root, UIFactory.Accent, "LocationRule");
+			locationRule.rectTransform.pivot = new Vector2(0f, 0.5f);
+			UIFactory.Place(locationRule.rectTransform, Vector2.zero, Vector2.zero, new Vector2(36, 110), new Vector2(236, 113));
+
+			SetLocationAlpha(0f);
+		}
+
+		private void UpdateLocation()
+		{
+			var position = target.Transform.position;
+			var here = Location.At(position);
+
+			// Stay put until she's clearly left, unless she's stepped into somewhere smaller within it
+			if (location != null && location.Contains(position, 1.2f) && (here == null || here.Radius >= location.Radius))
+				here = location;
+
+			if (here == location)
+				pendingLocation = null;
+			else if (here != pendingLocation)
+			{
+				pendingLocation = here;
+				pendingSince = Time.unscaledTime;
+			}
+			else if (Time.unscaledTime - pendingSince >= LocationDwell)
+			{
+				location = here;
+				pendingLocation = null;
+
+				// Wandering out into the open and back again isn't a new arrival
+				if (location != null && location != announced)
+				{
+					announced = location;
+					announcedAt = Time.unscaledTime;
+					locationLabel.text = location.DisplayName;
+				}
+			}
+
+			var age = Time.unscaledTime - announcedAt;
+			var alpha = age < LocationFadeIn ? age / LocationFadeIn : 1f - Mathf.Clamp01((age - LocationFadeIn - LocationHold) / LocationFadeOut);
+			SetLocationAlpha(Mathf.Clamp01(alpha));
+		}
+
+		private void SetLocationAlpha(float alpha)
+		{
+			locationLabel.color = new Color(UIFactory.Text.r, UIFactory.Text.g, UIFactory.Text.b, alpha);
+			locationRule.color = new Color(UIFactory.Accent.r, UIFactory.Accent.g, UIFactory.Accent.b, alpha);
+			locationRule.rectTransform.sizeDelta = new Vector2(200f * Mathf.SmoothStep(0f, 1f, Mathf.Min(1f, alpha * 1.5f)), 3f);
 		}
 
 		private static string Clock()
@@ -359,6 +446,8 @@ namespace UserInterface.Views
 				return;
 
 			status.text = target.Spells.Status;
+
+			UpdateLocation();
 
 			crosshair.enabled = target.Spells.ActiveSpell != null && target.Spells.IsAiming;
 

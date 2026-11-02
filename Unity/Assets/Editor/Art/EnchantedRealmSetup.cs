@@ -61,6 +61,12 @@ namespace WitchCraftEditor
 			}
 		}
 
+		// Art these setups once picked and have since replaced: a slot still holding one is filled afresh
+		private static readonly string[] retired =
+		{
+			$"{Forest}/Prefabs/SM_Env_Log_02.prefab",
+		};
+
 		private static readonly Pick[] picks =
 		{
 			// Trees stand a little taller than the placeholders, whose trunks are all that collide
@@ -76,7 +82,8 @@ namespace WitchCraftEditor
 			new("gather:Boulder", $"{Elven}/Environment/SM_Env_Rock_01.prefab", Fit.Box),
 			new("gather:CrystalShard", $"{Forest}/Prefabs/Props/SM_Prop_Crystal_03.prefab", Fit.Box, 1.2f),
 			new("gather:Driftwood", $"{Forest}/Prefabs/SM_Env_Log_02.prefab", Fit.Length),
-			new("gather:FallenLog", $"{Forest}/Prefabs/SM_Env_Log_02.prefab", Fit.Length),
+			// A plain fallen log: the root-ball log stood propped on its roots and looked to float
+			new("gather:FallenLog", $"{Forest}/Prefabs/SM_Env_Log_03.prefab", Fit.Length),
 			new("gather:Glowcap", $"{Forest}/Prefabs/SM_Env_Mushroom_Small_Group_01.prefab", Fit.Footprint, 1.2f),
 			new("gather:Lavender", $"{Elven}/Environment/Flowers/SM_Env_Flowers_02.prefab", Fit.Footprint, 1.2f),
 			new("gather:Moonpetal", $"{Elven}/Environment/Flowers/SM_Env_Flowers_03.prefab", Fit.Height),
@@ -102,10 +109,6 @@ namespace WitchCraftEditor
 			new("piece:wall_door", $"{Elven}/Base/SM_Bld_Base_Wall_Door_01.prefab", Fit.Length),
 			new("piece:floor_timber", $"{Elven}/Buildings/SM_Bld_Floor_01.prefab", Fit.Footprint),
 			new("piece:floor_stone", $"{Elven}/Base/SM_Bld_Base_Floor_01.prefab", Fit.Footprint),
-			// Concave roofs rise towards the cell's back edge, the placeholders towards the front. They have no gable
-			// ends, so the placeholder roof keeps its shell (gables and ceiling) under them
-			new("piece:roof_thatch", $"{Elven}/Buildings/SM_Bld_Roof_Concave_01.prefab", Fit.Footprint, 1f, 180f),
-			new("piece:roof_slate", $"{Elven}/Buildings/SM_Bld_Roof_Concave_Small_01.prefab", Fit.Footprint, 1f, 180f),
 			new("piece:stairs", $"{Elven}/Base/SM_Bld_Base_Stairs_02.prefab", Fit.Footprint),
 		};
 
@@ -157,6 +160,9 @@ namespace WitchCraftEditor
 				var entry = Entry(set, pick.Key);
 				var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(pick.Path);
 
+				if (entry.Prefab != null && retired.Contains(AssetDatabase.GetAssetPath(entry.Prefab)))
+					entry.Prefab = null;
+
 				if (entry.Prefab != null || prefab == null)
 					continue;
 
@@ -177,6 +183,11 @@ namespace WitchCraftEditor
 			filled += FillKit(set, "scatter:lantern", LanternKit());
 			filled += FillKit(set, "scatter:glowflora", GlowFloraKit());
 			filled += FillKit(set, "scatter:crystals", CrystalKit());
+
+			// Roofs are kits of our own (slope, verges, ridge cap), so they're rebuilt to the latest fit unless a
+			// hand-picked roof has replaced them
+			filled += FillRoof(set, "piece:roof_thatch", "Thatch", "SM_Bld_Roof_Concave_01", "SM_Bld_Roof_End_Concave_01");
+			filled += FillRoof(set, "piece:roof_slate", "Slate", "SM_Bld_Roof_Concave_Small_01", "SM_Bld_Roof_End_Concave_Small_01");
 
 			foreach (var (key, kit) in SceneryKits())
 				filled += FillKit(set, key, kit);
@@ -419,6 +430,88 @@ namespace WitchCraftEditor
 		}
 
 		private static Vector3 Uniform(float scale) => Vector3.one * scale;
+
+		// The placeholder roof's cell: 2 m wide, its eave 1.15 m in front of the centre and its ridge 1 m behind
+		private const float RoofEave = -1.15f;
+
+		private const float RoofRidge = 1f;
+
+		// A shade over the 2 m cell, so neighbouring slopes overlap instead of leaving a hairline between them
+		private const float RoofWidth = 2.04f;
+
+		private static int FillRoof(ArtSet set, string key, string name, string slope, string verge)
+		{
+			var entry = Entry(set, key);
+			var kitPath = $"{KitFolder}/Roof{name}.prefab";
+			var slopePath = $"{Elven}/Buildings/{slope}.prefab";
+
+			if (entry.Prefab != null && AssetDatabase.GetAssetPath(entry.Prefab) != kitPath && AssetDatabase.GetAssetPath(entry.Prefab) != slopePath)
+				return 0;
+
+			var kit = RoofKit(name, slopePath, $"{Elven}/Buildings/{verge}.prefab", $"{Elven}/Buildings/SM_Bld_Roof_Cap_Straight_01.prefab");
+
+			if (kit == null)
+				return 0;
+
+			entry.Prefab = kit;
+			entry.Scale = 1f;
+			entry.Rotation = Vector3.zero;
+			entry.Offset = Vector3.zero;
+
+			return 1;
+		}
+
+		// A roof cell's art: the pack's slope sized to the cell's width, a verge piece on each side and a ridge cap
+		// along the top. The pack's slopes rise towards their -z edge, so they're turned to rise towards the cell's
+		// back. Each verge and the ridge are named for RoofTrim, which hides a verge where another roof continues
+		// the row and shares one ridge cap between back-to-back slopes
+		private static GameObject RoofKit(string name, string slopePath, string vergePath, string ridgePath)
+		{
+			var slope = AssetDatabase.LoadAssetAtPath<GameObject>(slopePath);
+			var verge = AssetDatabase.LoadAssetAtPath<GameObject>(vergePath);
+			var ridge = AssetDatabase.LoadAssetAtPath<GameObject>(ridgePath);
+
+			if (slope == null || verge == null || ridge == null)
+			{
+				Debug.LogWarning($"{nameof(EnchantedRealmSetup)}: roof pieces for {name} are missing");
+				return null;
+			}
+
+			var art = ArtBounds(slope, 0f);
+			var scale = RoofWidth / art.size.x;
+			var turn = Quaternion.Euler(0f, 180f, 0f);
+
+			// A slope deep enough reaches the ridge, where it meets the one behind; a shallow one sits mid-cell
+			var reachesRidge = art.size.z * scale >= RoofRidge - RoofEave - 0.25f;
+			var offset = new Vector3(art.center.x * scale, -art.min.y * scale,
+				reachesRidge ? RoofRidge + 0.01f + art.min.z * scale : (RoofEave + RoofRidge) * 0.5f + art.center.z * scale);
+
+			Vector3 Place(Vector3 artPoint) => offset + turn * (artPoint * scale);
+
+			var root = new GameObject($"Roof{name}");
+
+			try
+			{
+				void Part(GameObject prefab, string part, Vector3 artPoint)
+				{
+					var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, root.transform);
+					instance.name = part;
+					instance.transform.SetLocalPositionAndRotation(Place(artPoint), turn);
+					instance.transform.localScale = Vector3.one * scale;
+				}
+
+				Part(slope, "Slope", Vector3.zero);
+				Part(verge, "VergeLeft", new Vector3(art.max.x, 0f, 0f));
+				Part(verge, "VergeRight", new Vector3(art.min.x, 0f, 0f));
+				Part(ridge, reachesRidge ? "RidgeShared" : "Ridge", new Vector3(art.max.x, art.max.y - 0.05f, art.min.z));
+
+				return PrefabUtility.SaveAsPrefabAsset(root, $"{KitFolder}/Roof{name}.prefab");
+			}
+			finally
+			{
+				Object.DestroyImmediate(root);
+			}
+		}
 
 		private static GameObject BounceMushroomKit()
 		{

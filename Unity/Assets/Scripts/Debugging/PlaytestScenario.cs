@@ -711,8 +711,17 @@ namespace Debugging
 			yield return View("08c_hearth", new Vector3(9f, 3.5f, -9f), new Vector3(5.5f, 0.5f, -5f));
 			yield return View("09_island", new Vector3(-30f, 45f, -75f), new Vector3(10f, 0f, 0f));
 			yield return View("10_spire", new Vector3(28f, 16f, -24f), new Vector3(50f, 12f, -6f));
+			yield return View("10b_spire_steps", new Vector3(40f, 13f, -20f), new Vector3(55f, 10f, -6f));
+
+			var log = GameObject.Find("FallenLog").transform;
+			yield return View("13b_fallen_log", log.position + new Vector3(2.5f, 1.2f, 2.5f), log.position);
+
+			var sign = GameObject.Find("Signpost").transform;
+			yield return View("13c_signpost", sign.position - sign.forward * 3.5f + Vector3.up * 1.7f, sign.position + Vector3.up * 1.6f);
 			yield return View("11_pond", new Vector3(-24f, 9f, -6f), new Vector3(-41f, 2f, 13f));
 			yield return View("12_cave", new Vector3(20f, 3.5f, -46f), new Vector3(38f, 1.5f, -46f));
+			yield return View("12b_cave_inside", new Vector3(28f, 2.2f, -46f), new Vector3(40f, 1.8f, -46f));
+			yield return View("12c_cave_mound", new Vector3(14f, 14f, -62f), new Vector3(36f, 2f, -46f));
 			yield return View("13_forest", new Vector3(14f, 6f, 22f), new Vector3(32f, 2f, 38f));
 			yield return View("14_sky_isle", new Vector3(30f, 40f, 0f), new Vector3(44f, 34f, 14f));
 			yield return View("14b_sky_isle_underside", new Vector3(26f, 24f, -6f), new Vector3(44f, 31f, 14f));
@@ -722,6 +731,15 @@ namespace Debugging
 			var hillParts = GameObject.Find("Hills").GetComponentsInChildren<MeshCollider>();
 			Check($"Hills are smooth ground, not hulls ({hillParts.Length} hills)",
 				hillParts.Length >= 6 && hillParts.All(hill => !hill.convex && hill.GetComponent<Renderer>().sharedMaterial.shader.name == "WitchCraft/SplatGround"));
+
+			// Arriving somewhere new names it in the corner, briefly
+			var hud = FindFirstObjectByType<UserInterface.Views.HudView>();
+			movement.Teleport(new Vector3(30f, 0.5f, 30f));
+			yield return Until(() => hud.ShownLocation == "The Forest", 3f);
+			Shot("13d_location");
+			Check($"Arriving in the forest names it (\"{hud.ShownLocation}\")", hud.ShownLocation == "The Forest");
+			yield return new WaitForSecondsRealtime(5f);
+			Check($"The name fades after a few seconds (\"{hud.ShownLocation}\")", hud.ShownLocation == "");
 
 			// Day, night and weather
 			var dayCycle = ServiceLocator.Get<IDayCycle>();
@@ -814,6 +832,13 @@ namespace Debugging
 
 			Check($"Under the hut's roof it stays dry ({sheltered} drops inside, {near} falling nearby)", roofs.Count > 0 && sheltered == 0 && near > 0);
 			yield return View("16b_roof", new Vector3(-6f, 4.5f, -6f), new Vector3(0f, 2.8f, 2f));
+
+			// The hut's four roof cells make one roof: verges only on its two gable ends, one ridge cap per pair
+			int Shown(string part) => roofs.Sum(roof => roof.GetComponentsInChildren<Transform>().Count(child => child.name == part));
+			var verges = Shown("VergeLeft") + Shown("VergeRight");
+			var ridges = Shown("RidgeShared");
+			var trimmed = roofs.Any(roof => roof.GetComponentsInChildren<Transform>(true).Any(child => child.name == "VergeLeft"));
+			Check($"The roof is trimmed where it's open ({verges} verges, {ridges} ridge caps{(trimmed ? "" : ", no roof art")})", !trimmed || (verges == 4 && ridges == 2));
 			yield return View("16_rain", new Vector3(9f, 6f, -14f), new Vector3(0f, 1.5f, 0f));
 
 			weather.SetWeather(WeatherKind.Clear);
@@ -888,7 +913,7 @@ namespace Debugging
 
 			var head = rig.GetBoneTransform(HumanBodyBones.Head);
 			var headHeight = head.position.y - player.transform.position.y;
-			Check($"She is witch-sized (head {headHeight:0.00}m up)", headHeight > 1.25f && headHeight < 1.6f);
+			Check($"She is witch-sized (head {headHeight:0.00}m up)", headHeight > 1.05f && headHeight < 1.35f);
 
 			var untextured = swap.Art.GetComponentsInChildren<Renderer>().SelectMany(renderer => renderer.sharedMaterials)
 				.Where(material => material != null && (!material.HasProperty("_BaseMap") || material.GetTexture("_BaseMap") == null))

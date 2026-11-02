@@ -30,7 +30,7 @@ namespace WitchCraftEditor
 		public const string VariantPath = OutputFolder + "/StellarWitchPlayer.prefab";
 
 		// Head bone height in game, next to a 1.6 m capsule
-		private const float TargetHeadHeight = 1.42f;
+		private const float TargetHeadHeight = 1.2f;
 
 		/// <summary>
 		/// CastStyle values the casting layer understands; CharacterAnimator picks one per spell.
@@ -464,10 +464,13 @@ namespace WitchCraftEditor
 			if (entry.Prefab == null)
 			{
 				entry.Prefab = variant;
-				entry.Scale = scale;
 				entry.Rotation = Vector3.zero;
 				entry.Offset = Vector3.zero;
 			}
+
+			// Her size follows TargetHeadHeight while she's still our variant; hand-picked art keeps its own
+			if (entry.Prefab == variant)
+				entry.Scale = scale;
 
 			set.Entries = set.Entries.OrderBy(existing => existing.Key).ToList();
 			set.NotifyChanged();

@@ -155,6 +155,7 @@ namespace WitchCraftEditor
 			BuildEnchantment();
 			PaintGround();
 			BuildScenery();
+			BuildLocations();
 
 			var player = BuildPlayer();
 			BuildCat(player);
@@ -431,6 +432,9 @@ namespace WitchCraftEditor
 			var root = Node(name, parent, position, Range(0, 360));
 			root.layer = Interactable;
 
+			if (visual == FallenLog)
+				LieOnGround(root.transform, 1.1f);
+
 			Trigger(root, touch ? 0.7f : 0.9f, new Vector3(0, 0.4f, 0));
 
 			var look = Node("Visual", root.transform);
@@ -641,6 +645,21 @@ namespace WitchCraftEditor
 			platform.layer = Ground;
 
 			return platform;
+		}
+
+		// A step that's a sky island in miniature: a disc of grass to stand on, over a clump of torn-up rock
+		private static GameObject MiniIsle(Transform parent, string name, Vector3 topCentre, float radius, Material rock, int seed)
+		{
+			var isle = Node(name, parent, topCentre, seed * 47f % 360f);
+			isle.layer = Ground;
+
+			var top = Prim(PrimitiveType.Cylinder, "Top", isle.transform, Vector3.down * 0.2f, new Vector3(radius * 2f, 0.2f, radius * 2f), Grass);
+			top.layer = Ground;
+
+			MeshObject("Roots", isle.transform, WitchCraftBuildKit.RockyUnderside(seed % 8), Vector3.down * 0.35f,
+				new Vector3(radius * 1.02f, radius * 0.9f, radius * 1.02f), rock);
+
+			return isle;
 		}
 
 		private static GameObject Pillar(Transform parent, Vector3 topCentre, float radius, Material material)
@@ -958,6 +977,22 @@ namespace WitchCraftEditor
 			}
 		}
 
+		// Tilts something long to the slope beneath both its ends and beds it in a little, so it lies on the ground
+		// rather than balancing on one point of it
+		private static void LieOnGround(Transform target, float halfLength)
+		{
+			var along = target.right * halfLength;
+			var a = target.position + along;
+			var b = target.position - along;
+			var heightA = GroundY(a.x, a.z, target.position.y + 5f);
+			var heightB = GroundY(b.x, b.z, target.position.y + 5f);
+
+			var tilt = Mathf.Atan2(heightA - heightB, halfLength * 2f) * Mathf.Rad2Deg;
+
+			target.position = new Vector3(target.position.x, (heightA + heightB) * 0.5f - 0.08f, target.position.z);
+			target.rotation = Quaternion.AngleAxis(tilt, target.forward) * target.rotation;
+		}
+
 		private static void FallenLog(Transform visual)
 		{
 			Prim(PrimitiveType.Cylinder, "Log", visual, new Vector3(0, 0.25f, 0), new Vector3(0.5f, 1f, 0.5f), Trunk, false, new Vector3(0, 0, 90));
@@ -1116,18 +1151,35 @@ namespace WitchCraftEditor
 
 			var c = CaveCentre;
 
-			// A tunnel of rock opening west towards home
-			Platform(cave, "WallSouth", c + new Vector3(0, 6f, -4.5f), new Vector3(18f, 6f, 2.4f), RockDark);
-			Platform(cave, "WallNorth", c + new Vector3(0, 6f, 4.5f), new Vector3(18f, 6f, 2.4f), RockDark);
-			Platform(cave, "WallBack", c + new Vector3(9f, 6f, 0), new Vector3(2.4f, 6f, 11.4f), RockDark);
-			Platform(cave, "Roof", c + new Vector3(0.5f, 7.5f, 0), new Vector3(19f, 1.6f, 11.4f), RockDark);
-			Platform(cave, "Floor", c + new Vector3(0.5f, 0.06f, 0), new Vector3(19f, 0.2f, 7f), Lit("CaveFloor", new Color(0.36f, 0.33f, 0.4f)));
+			// A rocky mound with a jagged arched tunnel opening west towards home
+			var shell = MeshObject("Cave", cave, WitchCraftBuildKit.CaveShell(), c + new Vector3(-8.5f, 0f, 0f), Vector3.one, RockDark);
+			shell.layer = Ground;
+			shell.AddComponent<MeshCollider>().sharedMesh = shell.GetComponent<MeshFilter>().sharedMesh;
 
-			for (var i = 0; i < 10; i++)
-				Boulder(cave, c + new Vector3(Range(-9f, 10f), Range(2f, 7f), Range(-1f, 1f) > 0 ? Range(5f, 7.5f) : Range(-7.5f, -5f)), Range(3f, 5f));
+			Platform(cave, "Floor", c + new Vector3(0.5f, 0.06f, 0), new Vector3(18f, 0.2f, 8f), Lit("CaveFloor", new Color(0.36f, 0.33f, 0.4f)));
 
-			for (var i = 0; i < 4; i++)
-				Boulder(cave, c + new Vector3(Range(-6f, 10f), 8.5f, Range(-4f, 4f)), Range(4f, 6f));
+			// Stalactites from the roof, clear of the path down the middle, and stalagmites along the walls
+			for (var i = 0; i < 9; i++)
+			{
+				var x = Range(-6f, 7.5f);
+				var z = Range(-1f, 1f) > 0 ? Range(1.6f, 3f) : Range(-3f, -1.6f);
+				var roof = 5.5f * Mathf.Sqrt(Mathf.Max(0.05f, 1f - z * z / (4.2f * 4.2f))) - 0.2f;
+				var size = Range(0.35f, 0.6f);
+				MeshObject("Stalactite", cave, Cone(), c + new Vector3(x, roof, z), new Vector3(size, Range(1.2f, 2.2f), size), RockDark, false, new Vector3(180f, Range(0, 360), 0));
+			}
+
+			for (var i = 0; i < 6; i++)
+			{
+				var size = Range(0.4f, 0.7f);
+				MeshObject("Stalagmite", cave, Cone(), c + new Vector3(Range(-7f, 7.5f), 0f, Range(-1f, 1f) > 0 ? Range(3.4f, 3.9f) : Range(-3.9f, -3.4f)), new Vector3(size, Range(0.8f, 1.6f), size), RockDark);
+			}
+
+			// Boulders tumbled round the mouth
+			foreach (var side in new[] { -1f, 1f })
+			{
+				Boulder(cave, c + new Vector3(-9.5f, 0.6f, side * 6.2f), 2.6f);
+				Boulder(cave, c + new Vector3(-7.5f, 1.2f, side * 8.3f), 3.4f);
+			}
 
 			// Crystals glittering inside
 			for (var i = 0; i < 10; i++)
@@ -1173,10 +1225,11 @@ namespace WitchCraftEditor
 
 			var c = SpireCentre;
 
-			var column = Prim(PrimitiveType.Cylinder, "Spire", spire, c + Vector3.up * (SpireTop * 0.5f), new Vector3(5f, SpireTop * 0.5f, 5f), Rock);
+			// The column stops inside the summit's slab, so their tops don't share a face and flicker
+			var columnTop = SpireTop - 0.6f;
+			var column = Prim(PrimitiveType.Cylinder, "Spire", spire, c + Vector3.up * (columnTop * 0.5f), new Vector3(5f, columnTop * 0.5f, 5f), Rock);
 			column.layer = Ground;
 
-			var stone = Lit("PlatformStone", new Color(0.7f, 0.66f, 0.72f));
 			var moss = Lit("PlatformMoss", new Color(0.5f, 0.72f, 0.42f));
 
 			const int steps = 16;
@@ -1195,11 +1248,11 @@ namespace WitchCraftEditor
 				if (i is 6 or 7)
 					continue;
 
-				var platform = Platform(spire, $"Step{i}", positions[i], new Vector3(2.8f, 0.5f, 2.8f), i % 3 == 0 ? moss : stone);
-				platform.transform.rotation = Quaternion.Euler(0, -(180f + i * 30f), 0);
+				MiniIsle(spire, $"Step{i}", positions[i], 1.5f, Rock, i);
 			}
 
-			var mover = Platform(spire, "MovingStep", positions[6], new Vector3(2.6f, 0.5f, 2.6f), Lit("MovingStone", new Color(0.8f, 0.7f, 0.9f), 0.3f, new Color(0.5f, 0.3f, 0.8f) * 0.4f));
+			// The gliding step's rock glows faintly, so it reads as the one that moves
+			var mover = MiniIsle(spire, "MovingStep", positions[6], 1.4f, Lit("MovingStone", new Color(0.8f, 0.7f, 0.9f), 0.3f, new Color(0.5f, 0.3f, 0.8f) * 0.4f), 6);
 			mover.AddComponent<Rigidbody>();
 			var moving = mover.AddComponent<MovingPlatform>();
 			SetVector(moving, "offset", positions[7] - positions[6]);
@@ -1465,15 +1518,15 @@ namespace WitchCraftEditor
 		private static readonly Vector4 ControlRect = new(-90f, -90f, 180f, 180f);
 
 		// Places the island's flat ground shouldn't be painted or dressed: the home plot, the pond's water and the
-		// cave, plus the spire's foot
+		// cave, plus the spire's foot and the steps spiralling round it
 		private static bool Clear(Vector3 point, float margin)
 		{
 			Vector3 Flat(Vector3 v) => new(v.x, 0f, v.z);
 
 			return Vector3.Distance(Flat(point), Flat(HomeCentre)) > 15f + margin
 				&& Vector3.Distance(Flat(point), Flat(PondCentre)) > 13.6f + margin
-				&& Vector3.Distance(Flat(point), Flat(SpireCentre)) > 7f + margin
-				&& !(Mathf.Abs(point.x - CaveCentre.x) < 11f + margin && Mathf.Abs(point.z - CaveCentre.z) < 7f + margin)
+				&& Vector3.Distance(Flat(point), Flat(SpireCentre)) > 9.5f + margin
+				&& !(Mathf.Abs(point.x - CaveCentre.x - 2f) < 11.5f + margin && Mathf.Abs(point.z - CaveCentre.z) < 9f + margin)
 				&& Vector3.Distance(Flat(point), Vector3.zero) < 82f - margin;
 		}
 
@@ -1666,7 +1719,36 @@ namespace WitchCraftEditor
 				Prim(PrimitiveType.Cylinder, "Moss", crossing, stack + Vector3.up * 0.02f, new Vector3(3.6f, 0.02f, 3.6f), Lit("PlatformMoss", new Color(0.5f, 0.72f, 0.42f)), false);
 			}
 
-			Signpost(crossing, OnGround(1f, 83f), "Tidewater Isle\nacross the sea stacks", 0f);
+			Signpost(crossing, OnGround(1f, 83f), "Tidewater Isle\n<size=34>across the\nsea stacks</size>", 0f);
+		}
+
+		// The named places the HUD announces on arrival. Where they overlap the smallest wins, so each sits inside
+		// the bigger places around it
+		private static void BuildLocations()
+		{
+			var parent = Node("Locations", world).transform;
+
+			void Place(string name, Vector3 centre, float radius, float floor, float ceiling)
+			{
+				var place = Node(name, parent, centre);
+				var location = place.AddComponent<Location>();
+				SetString(location, "displayName", name);
+				SetValue(location, "radius", radius);
+				SetValue(location, "floor", floor);
+				SetValue(location, "ceiling", ceiling);
+			}
+
+			Place("Home Meadow", HomeCentre, 17f, -5f, 14f);
+			Place("The Forest", ForestCentre, 27f, -5f, 22f);
+			Place("The Pond", PondCentre, 19f, -5f, 14f);
+			Place("The Southern Hills", HillsCentre + new Vector3(-6f, 0f, -4f), 30f, -5f, 16f);
+			Place("Crystal Cave", CaveCentre, 13f, -5f, 12f);
+			Place("Sky Spire", SpireCentre, 11f, -5f, SpireTop + 6f);
+			Place("Sky Island", SkyIsleCentre, 14f, -10f, 25f);
+			Place("The Hidden Isle", SecretIsleCentre, 9f, -6f, 18f);
+			Place("Sea Stacks", new Vector3(2f, 0f, 100f), 16f, -5f, 20f);
+			Place("Tidewater Isle", TidewaterCentre, 42f, -5f, 30f);
+			Place("Starfall Ridge", StarfallCentre + new Vector3(-6f, 0f, -8f), 30f, -12f, 30f);
 		}
 
 		private static void Signpost(Transform parent, Vector3 position, string text, float yaw)
@@ -1677,10 +1759,10 @@ namespace WitchCraftEditor
 			Prim(PrimitiveType.Cube, "Post", post.transform, new Vector3(0, 1f, 0), new Vector3(0.15f, 2f, 0.15f), Wood);
 			Prim(PrimitiveType.Cube, "Board", post.transform, new Vector3(0, 1.75f, 0.1f), new Vector3(1.9f, 0.7f, 0.08f), Lit("SignBoard", new Color(0.78f, 0.6f, 0.4f)), false);
 
-			// Readable from the approach (south) side
+			// Readable from the approach (south) side, in front of the board or the banner that replaces it
 			var label = new GameObject("Text");
 			label.transform.SetParent(post.transform, false);
-			label.transform.localPosition = new Vector3(0, 1.75f, 0.04f);
+			label.transform.localPosition = new Vector3(0, 1.6f, -0.07f);
 			label.transform.localRotation = Quaternion.identity;
 
 			var mesh = label.AddComponent<TextMesh>();
@@ -1690,8 +1772,13 @@ namespace WitchCraftEditor
 			mesh.characterSize = 0.035f;
 			mesh.anchor = TextAnchor.MiddleCenter;
 			mesh.alignment = TextAlignment.Center;
-			mesh.color = new Color(0.25f, 0.15f, 0.12f);
+			// Pale gold, to read on the pack's dark banner
+			mesh.color = new Color(1f, 0.88f, 0.6f);
+			mesh.richText = true;
 			label.GetComponent<MeshRenderer>().sharedMaterial = mesh.font.material;
+
+			// Narrow enough for the pack's banner
+			SetValue(label.AddComponent<FitText>(), "maxWidth", 0.8f);
 
 			// The sign keeps its words over any art
 			ArtSlot(post, "prop:signpost", "Signpost", label.transform);
@@ -1703,7 +1790,8 @@ namespace WitchCraftEditor
 
 			var t = TidewaterCentre;
 
-			var ground = Prim(PrimitiveType.Cylinder, "Island", isle, t + new Vector3(0, -2f, 0), new Vector3(64f, 2f, 64f), Grass);
+			// A beach island: sand right across, with one grassy rise and a few dunes
+			var ground = Prim(PrimitiveType.Cylinder, "Island", isle, t + new Vector3(0, -2f, 0), new Vector3(64f, 2f, 64f), Sand);
 			ground.layer = Ground;
 			ReplaceWithMeshCollider(ground);
 
@@ -1712,7 +1800,9 @@ namespace WitchCraftEditor
 			ReplaceWithMeshCollider(beach);
 
 			Hill(isle, t + new Vector3(-12f, 0, 8f), 9f, 3f, GrassDark);
-			Hill(isle, t + new Vector3(14f, 0, -8f), 7f, 2f, Grass);
+			Hill(isle, t + new Vector3(14f, 0, -8f), 7f, 2f, Sand);
+			Hill(isle, t + new Vector3(4f, 0, 20f), 6f, 1.2f, Sand);
+			Hill(isle, t + new Vector3(-20f, 0, -12f), 5f, 1f, Sand);
 
 			Physics.SyncTransforms();
 
@@ -1882,9 +1972,9 @@ namespace WitchCraftEditor
 			body.useGravity = false;
 
 			var capsule = player.AddComponent<CapsuleCollider>();
-			capsule.height = 1.6f;
-			capsule.radius = 0.35f;
-			capsule.center = new Vector3(0, 0.8f, 0);
+			capsule.height = 1.36f;
+			capsule.radius = 0.32f;
+			capsule.center = new Vector3(0, 0.68f, 0);
 			capsule.sharedMaterial = Slippery();
 
 			var bankPivot = Node("BankPivot", player.transform);
@@ -1901,7 +1991,7 @@ namespace WitchCraftEditor
 			// The seat lives outside the broom so the cat is never parented under a hidden object
 			var seat = Node("CatSeat", bankPivot.transform, new Vector3(0, 0.6f, -0.65f));
 
-			var cameraTarget = Node("CameraTarget", player.transform, new Vector3(0, 1.6f, 0));
+			var cameraTarget = Node("CameraTarget", player.transform, new Vector3(0, 1.36f, 0));
 
 			var glimmer = PointLight(player.transform, new Vector3(0, 1.2f, 0), new Color(0.5f, 1f, 0.9f), 9f, 2f);
 

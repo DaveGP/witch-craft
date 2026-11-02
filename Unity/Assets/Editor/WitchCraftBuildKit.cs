@@ -265,6 +265,8 @@ namespace WitchCraftEditor
 
 		public static Mesh RockyUnderside(int seed) => ReplaceMesh($"RockyUnderside{seed}", BuildRockyUnderside(seed));
 
+		public static Mesh CaveShell() => ReplaceMesh("CaveShell", BuildCaveShell(new System.Random(5)));
+
 		// Saves a generated mesh over the last build's, for shapes that are still being tuned
 		private static Mesh ReplaceMesh(string name, Mesh mesh)
 		{
@@ -402,6 +404,84 @@ namespace WitchCraftEditor
 			// A lid, under the isle's grass, so nothing shows through from the side
 			for (var s = 0; s < segments; s++)
 				AddTriangle(vertices, triangles, Vector3.zero, grid[0, (s + 1) % segments], grid[0, s]);
+
+			return Finish(vertices, triangles);
+		}
+
+		// A cave in a rocky mound: a jagged arched tunnel running along +x from its mouth at x 0 to a rounded back
+		// at x 17, about 8 m wide and 5.5 m high inside, under 2.5 to 4 m of rock. Faceted. The inside faces inwards
+		// and the outside outwards, so it reads from both, and both sides collide
+		private static Mesh BuildCaveShell(System.Random random)
+		{
+			float Roll(float min, float max) => min + (float)random.NextDouble() * (max - min);
+
+			const int rings = 10;
+			const int around = 12;
+			const float length = 17f;
+			const float width = 4.2f;
+			const float height = 5.5f;
+
+			var inner = new Vector3[rings + 1, around + 1];
+			var outer = new Vector3[rings + 1, around + 1];
+
+			for (var r = 0; r <= rings; r++)
+			{
+				// The tunnel narrows into a rounded back
+				var shrink = r == rings ? 0.5f : r == rings - 1 ? 0.82f : 1f;
+				var x = length * r / rings;
+
+				for (var j = 0; j <= around; j++)
+				{
+					// From just under the ground on one side, over the top, to under the ground on the other
+					var angle = -0.12f + (Mathf.PI + 0.24f) * j / around;
+					var bump = r == 0 ? Roll(-0.03f, 0.05f) : Roll(-0.1f, 0.12f);
+					var thick = Roll(2.5f, 4f);
+					var along = r == 0 || r == rings ? 0f : Roll(-0.4f, 0.4f);
+
+					inner[r, j] = new Vector3(x + along, Mathf.Sin(angle) * height * shrink * (1f + bump), Mathf.Cos(angle) * width * shrink * (1f + bump));
+					outer[r, j] = new Vector3(x + along * 1.5f, Mathf.Sin(angle) * (height * shrink + thick) + Roll(-0.4f, 0.4f), Mathf.Cos(angle) * (width * shrink + thick));
+				}
+			}
+
+			var innerTip = new Vector3(length + 1f, height * 0.3f, 0f);
+			var outerTip = new Vector3(length + 4f, height * 0.5f, 0f);
+
+			var vertices = new List<Vector3>();
+			var triangles = new List<int>();
+
+			// Faces towards (or away from) a point on the tunnel's axis
+			void Face(Vector3 a, Vector3 b, Vector3 c, Vector3 towards, bool inward)
+			{
+				var normal = Vector3.Cross(b - a, c - a);
+				var toPoint = towards - (a + b + c) / 3f;
+
+				if (Vector3.Dot(normal, toPoint) > 0f != inward)
+					(b, c) = (c, b);
+
+				AddTriangle(vertices, triangles, a, b, c);
+			}
+
+			Vector3 Axis(Vector3 point) => new(point.x, 1f, 0f);
+
+			for (var r = 0; r < rings; r++)
+			for (var j = 0; j < around; j++)
+			{
+				Face(inner[r, j], inner[r + 1, j], inner[r + 1, j + 1], Axis(inner[r, j]), true);
+				Face(inner[r, j], inner[r + 1, j + 1], inner[r, j + 1], Axis(inner[r, j]), true);
+				Face(outer[r, j], outer[r + 1, j], outer[r + 1, j + 1], Axis(outer[r, j]), false);
+				Face(outer[r, j], outer[r + 1, j + 1], outer[r, j + 1], Axis(outer[r, j]), false);
+			}
+
+			for (var j = 0; j < around; j++)
+			{
+				Face(inner[rings, j], inner[rings, j + 1], innerTip, new Vector3(length - 3f, 1f, 0f), true);
+				Face(outer[rings, j], outer[rings, j + 1], outerTip, new Vector3(length - 3f, 1f, 0f), false);
+
+				// The mouth's rim, facing out of the tunnel
+				var outside = new Vector3(-10f, 1f, 0f);
+				Face(inner[0, j], outer[0, j], outer[0, j + 1], outside, true);
+				Face(inner[0, j], outer[0, j + 1], inner[0, j + 1], outside, true);
+			}
 
 			return Finish(vertices, triangles);
 		}
