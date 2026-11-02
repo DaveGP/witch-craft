@@ -771,7 +771,7 @@ namespace Debugging
 
 			var reader = FindAnyObjectByType<UserInterface.Views.BookView>();
 			Check("Picking up a storybook opens it to read", reader.IsOpen && reader.Book != null && reader.Book.Id == "bubble_witch" && books.Count == 1);
-			Check("The book leaves its lectern", !bubbleWitch.CanInteract && bubbleWitch.transform.Find("Book") is { gameObject: { activeSelf: false } });
+			Check("The book is taken from where it floated", !bubbleWitch.CanInteract && bubbleWitch.transform.Find("Book") is { gameObject: { activeSelf: false } });
 
 			Tap(Key.D);
 			yield return new WaitForSeconds(0.3f);
@@ -865,6 +865,33 @@ namespace Debugging
 
 			// Somewhere open, away from home and the creatures
 			movement.Teleport(new Vector3(-3f, 0.2f, -15f));
+
+			// Following at the witch's pace she walks (trots), rather than gliding in a held leap
+			yield return new WaitForSeconds(3f);
+
+			var gaits = new HashSet<string>();
+
+			// At the witch's ordinary pace: no Swiftness Brew left over from the brewing checks
+			ServiceLocator.Get<IPotionEffects>()?.Clear();
+
+			Hold(Key.W);
+
+			for (var t = 0f; t < 2.5f; t += Time.deltaTime)
+			{
+				// Once she's up and alongside: catching up from further back still bounds, as it should
+				if (t > 1.2f && cat.Activity == "Walk" && cat.RigState != null && Vector3.Distance(cat.transform.position, player.transform.position) < 4.5f)
+					gaits.Add(cat.RigState);
+
+				yield return null;
+			}
+
+			Release();
+
+			// Back where the rest of the cat checks expect her
+			movement.Teleport(new Vector3(-3f, 0.2f, -15f));
+
+			if (cat.RigState != null)
+				Check($"Following at the witch's pace, Sable walks ({string.Join(", ", gaits)})", gaits.Count > 0 && gaits.All(gait => gait.Contains("Walk")));
 
 			// She may have a long way to come; give her time to arrive and settle
 			for (var t = 0f; t < 10f && (cat.Activity is not ("Sit" or "Groom" or "Scratch") || Vector3.Distance(cat.transform.position, player.transform.position) > 4f); t += Time.deltaTime)

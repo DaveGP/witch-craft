@@ -52,9 +52,13 @@ namespace Companions
 
 		[SerializeField] private Transform head;
 
-		[SerializeField] private float walkSpeed = 4f;
+		// Matches the witch's ordinary pace, so she trots alongside rather than falling behind and bounding
+		[SerializeField] private float walkSpeed = 6f;
 
 		[SerializeField] private float runSpeed = 9f;
+
+		// The fastest the walk clip plays: a quick trot. Faster than that her paws slide a little rather than blur
+		private const float MaxWalkRate = 6f;
 
 		[SerializeField] private float followDistance = 1.8f;
 
@@ -922,13 +926,14 @@ namespace Companions
 
 			if (speed > 0.1f)
 			{
-				// Walks at walking pace, matched to the ground; faster than a brisk walk she bounds
+				// Walks, matched to the ground at a stroll and sped up to a trot to keep pace with the witch. Only a
+				// sprint to catch up bounds: the leap held at a steady speed reads as a glide
 				var walk = profile.WalkSpeed * ArtScale;
 				var rate = speed / Mathf.Max(0.01f, walk);
 
-				if (rate <= 2.2f || !profile.Has(CatRigProfile.Role.Jump))
+				if (speed <= walkSpeed * 1.25f || !profile.Has(CatRigProfile.Role.Jump))
 				{
-					rigParameters.SetFloat(walkSpeedParameter, Mathf.Clamp(rate, 0.5f, 2.2f));
+					rigParameters.SetFloat(walkSpeedParameter, Mathf.Clamp(rate, 0.5f, MaxWalkRate));
 					Play(profile.Pick(CatRigProfile.Role.Walk, CatRigProfile.Side.Centre)?.Name, 0.2f);
 				}
 				else

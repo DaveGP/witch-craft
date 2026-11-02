@@ -533,7 +533,7 @@ namespace WitchCraftEditor
 			Set(root.AddComponent<RecipeScroll>(), "recipe", ContentBuilder.Recipe(recipeId));
 		}
 
-		// One storybook in every corner of the world, each on its own little lectern
+		// One storybook in every corner of the world, floating open above the ground
 		private static void BuildStorybooks()
 		{
 			var books = Node("Storybooks", world).transform;
@@ -557,13 +557,8 @@ namespace WitchCraftEditor
 			root.layer = Interactable;
 			Trigger(root, 1.2f, new Vector3(0, 0.9f, 0));
 
-			var lectern = Node("Lectern", root.transform, Vector3.zero);
-			Prim(PrimitiveType.Cylinder, "Foot", lectern.transform, new Vector3(0, 0.05f, 0), new Vector3(0.5f, 0.05f, 0.5f), Wood, false);
-			Prim(PrimitiveType.Cube, "Post", lectern.transform, new Vector3(0, 0.45f, 0), new Vector3(0.12f, 0.8f, 0.12f), Wood);
-			Prim(PrimitiveType.Cube, "Rest", lectern.transform, new Vector3(0, 0.88f, 0), new Vector3(0.55f, 0.05f, 0.42f), Wood, false, new Vector3(-20, 0, 0));
-
-			// Open and floating just above the rest, in the book's own colour
-			var visual = Node("Book", root.transform, new Vector3(0, 1.08f, 0));
+			// Open and floating at about waist height, in the book's own colour
+			var visual = Node("Book", root.transform, new Vector3(0, 1f, 0));
 			var cover = Lit($"BookCover_{bookId}", book.Color, 0.2f, book.Color * 0.6f);
 			var pages = Lit("BookPages", new Color(0.97f, 0.93f, 0.82f), 0.1f, new Color(1f, 0.95f, 0.8f) * 0.3f);
 			Prim(PrimitiveType.Cube, "CoverL", visual.transform, new Vector3(-0.15f, 0, 0), new Vector3(0.3f, 0.03f, 0.4f), cover, false, new Vector3(0, 0, 10));
@@ -572,9 +567,6 @@ namespace WitchCraftEditor
 			Prim(PrimitiveType.Cube, "PagesR", visual.transform, new Vector3(0.14f, 0.025f, 0), new Vector3(0.27f, 0.03f, 0.37f), pages, false, new Vector3(0, 0, -10));
 			visual.AddComponent<Bobbing>();
 			PointLight(visual.transform, new Vector3(0, 0.3f, 0), Color.Lerp(book.Color, Color.white, 0.5f), 3f, 1.2f);
-
-			// The floating book always shows, so it can still be found under a lectern from an art pack
-			ArtSlot(root, "prop:storybook", "Storybook lectern (the floating book always shows)", visual.transform);
 
 			var pickup = root.AddComponent<StoryBookPickup>();
 			Set(pickup, "book", book);
@@ -1355,7 +1347,10 @@ namespace WitchCraftEditor
 					Prim(PrimitiveType.Sphere, "Rock", visual, new Vector3(0, 0.3f, 0), new Vector3(0.8f, 0.6f, 0.7f), Rock, false), false, "Chip");
 		}
 
-		// Spots for the Art Set's scatter slots: elven lanterns along the paths, glowing flora in the forest and by
+		// No mushrooms here: the only glowing mushrooms in the world should be Glowcaps the witch can pick
+		private const string FloraNote = "Forest flora: ferns, flowers, moss, never mushrooms (art only)";
+
+		// Spots for the Art Set's scatter slots: elven lanterns along the paths, flora in the forest and by
 		// the pond, crystals by the cave. They are empty without art and collide with nothing. Their own dice keep
 		// everything else in the world where it was
 		private static void BuildEnchantment()
@@ -1391,14 +1386,14 @@ namespace WitchCraftEditor
 			{
 				var angle = Roll(0f, Mathf.PI * 2f);
 				var radius = Roll(5f, 26f);
-				Spot("GlowFlora", OnGround(ForestCentre.x + Mathf.Cos(angle) * radius, ForestCentre.z + Mathf.Sin(angle) * radius), "scatter:glowflora", "Glowing flora (art only)");
+				Spot("GlowFlora", OnGround(ForestCentre.x + Mathf.Cos(angle) * radius, ForestCentre.z + Mathf.Sin(angle) * radius), "scatter:glowflora", FloraNote);
 			}
 
 			for (var i = 0; i < 10; i++)
 			{
 				var angle = Roll(0f, Mathf.PI * 2f);
 				var radius = Roll(14.5f, 19f);
-				Spot("GlowFlora", OnGround(PondCentre.x + Mathf.Cos(angle) * radius, PondCentre.z + Mathf.Sin(angle) * radius), "scatter:glowflora", "Glowing flora (art only)");
+				Spot("GlowFlora", OnGround(PondCentre.x + Mathf.Cos(angle) * radius, PondCentre.z + Mathf.Sin(angle) * radius), "scatter:glowflora", FloraNote);
 			}
 
 			for (var i = 0; i < 6; i++)

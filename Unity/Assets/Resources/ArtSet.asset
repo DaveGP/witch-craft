@@ -463,14 +463,6 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1.0293275
     KeepPlaceholder: 0
-  - Key: prop:storybook
-    Note: Storybook lectern (the floating book always shows)
-    Prefab: {fileID: 6466284189436583544, guid: 834aee8817d5dc44b8b68bbd3550105f, type: 3}
-    Material: {fileID: 0}
-    Offset: {x: 0.0778289, y: -0.0000007748604, z: -0.0011658565}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 6.914945
-    KeepPlaceholder: 0
   - Key: rock:boulder
     Note: Boulder (art stretches with the placeholder's shape)
     Prefab: {fileID: 1459820112213681578, guid: 51a5800a2dca8894cbaef0289d2c482a, type: 3}
@@ -488,7 +480,7 @@ MonoBehaviour:
     Scale: 1
     KeepPlaceholder: 0
   - Key: scatter:glowflora
-    Note: Glowing flora (art only)
+    Note: 'Forest flora: ferns, flowers, moss, never mushrooms (art only)'
     Prefab: {fileID: 1926837304738968094, guid: 8c7cde7ee61aa4e5990564cb4fc80491, type: 3}
     Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}

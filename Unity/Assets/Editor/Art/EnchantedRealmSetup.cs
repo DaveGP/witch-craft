@@ -71,7 +71,6 @@ namespace WitchCraftEditor
 			new("prop:crate", $"{Elven}/Props/SM_Prop_Crate_01.prefab", Fit.Box),
 			new("prop:signpost", $"{Elven}/Props/SM_Prop_Flag_01.prefab", Fit.Height),
 			new("prop:shrine", $"{Elven}/Props/SM_Prop_OfferingShrine_02.prefab", Fit.Height),
-			new("prop:storybook", $"{Elven}/Props/SM_Prop_BookHolder_01.prefab", Fit.Height),
 
 			new("gather:BerryBush", $"{Elven}/Environment/SM_Env_Bush_02.prefab", Fit.Height),
 			new("gather:Boulder", $"{Elven}/Environment/SM_Env_Rock_01.prefab", Fit.Box),
@@ -461,7 +460,9 @@ namespace WitchCraftEditor
 		private static GameObject GlowFloraKit()
 		{
 			return Kit("GlowFlora",
-				($"{Forest}/Prefabs/SM_Env_Mushroom_Small_Group_02.prefab", Vector3.zero, 0f, Uniform(0.7f)),
+				// Ferns and moss rather than mushrooms, which would look like Glowcaps that can't be picked
+				($"{Forest}/Prefabs/SM_Env_Fern_Koru_01.prefab", Vector3.zero, 0f, Uniform(0.9f)),
+				($"{Forest}/Prefabs/SM_Env_Moss_Lumps_02.prefab", new Vector3(0.3f, 0f, -0.9f), 200f, Uniform(0.6f)),
 				($"{Elven}/Environment/Flowers/SM_Env_Flowers_01.prefab", new Vector3(0.9f, 0f, 0.4f), 40f, Uniform(0.8f)),
 				($"{Forest}/Prefabs/SM_Env_Undergrowth_Fern_01.prefab", new Vector3(-0.6f, 0f, -0.5f), 120f, Uniform(1.6f)));
 		}

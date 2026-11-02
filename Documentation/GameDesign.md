@@ -139,7 +139,7 @@ Ember needs a potion only Pip can teach you, and Hoot needs you to brew, so the 
 
 ## Storybooks
 
-Six short stories sit open on lecterns around the world, one in each area, so exploring pays off with something to read as well as something to gather. Picking one up opens it straight away (two pages at a time; the buttons, arrow keys or A and D turn the pages) and sends it home. Any bookshelf at home is your bookcase: it lists every book found, ready to read again, and gives a hint for each one still missing. Every home has a bookshelf, and older saves are given one in the hut. The bookshelf can be built from level 1, so an unmade one can go straight back up.
+Six short stories float open at waist height around the world, one in each area, so exploring pays off with something to read as well as something to gather. Picking one up opens it straight away (two pages at a time; the buttons, arrow keys or A and D turn the pages) and sends it home. Any bookshelf at home is your bookcase: it lists every book found, ready to read again, and gives a hint for each one still missing. Every home has a bookshelf, and older saves are given one in the hut. The bookshelf can be built from level 1, so an unmade one can go straight back up.
 
 | Book | Author | Found |
 | ---- | ------ | ----- |
