@@ -285,9 +285,12 @@ namespace Debugging
 			Check("Building outside the plot is refused", !home.TrySnap(floor, new Vector3(30f, 0f, 30f), 0, out _, out _));
 
 			// Levitate a crate: lift it, move the witch, set it down
+			var modeBeforeTap = inputMode.Mode;
+			var modes = new List<string>();
+			StartCoroutine(WatchModes(inputMode, modes, 0.4f));
 			Tap(Key.Digit2);
 			yield return new WaitForSeconds(0.3f);
-			Check($"Key 2 readies Levitate (readied: {caster.ActiveSpell?.Id ?? "none"}, slot 2 holds {spellBook.GetSlot(1)?.Id ?? "nothing"})", caster.ActiveSpell != null && caster.ActiveSpell.Id == "levitate");
+			Check($"Key 2 readies Levitate (readied: {caster.ActiveSpell?.Id ?? "none"}, slot 2 holds {spellBook.GetSlot(1)?.Id ?? "nothing"}; input {modeBeforeTap} then {string.Join("/", modes.Distinct())})", caster.ActiveSpell != null && caster.ActiveSpell.Id == "levitate");
 
 			var crate = FindObjectsByType<Movable>(FindObjectsSortMode.None).FirstOrDefault(movable => movable.GetComponent<PlacedPiece>() == null);
 			Check("There is a crate to levitate", crate != null);
@@ -832,8 +835,27 @@ namespace Debugging
 
 			caster.SelectSlot(caster.ActiveSlot);
 
+			// Her hair and cloth sway (UnityChanSpringBone, when installed): a hair bone swings as she sets off
+			var springBones = swap.Art.GetComponentsInChildren<MonoBehaviour>().Where(component => component != null && component.GetType().Name == "SpringBone").ToList();
+			var hairBone = springBones.Select(bone => bone.transform).FirstOrDefault(bone => bone.name.ToLowerInvariant().Contains("hair")) ?? springBones.FirstOrDefault()?.transform;
+			var hairRest = hairBone != null ? hairBone.localRotation : Quaternion.identity;
+			var hairSwing = 0f;
+
 			Hold(Key.W);
-			yield return new WaitForSeconds(1.2f);
+
+			for (var t = 0f; t < 1.2f; t += Time.deltaTime)
+			{
+				if (hairBone != null)
+					hairSwing = Mathf.Max(hairSwing, Quaternion.Angle(hairRest, hairBone.localRotation));
+
+				yield return null;
+			}
+
+			if (springBones.Count > 0)
+				Check($"Her hair sways as she runs ({springBones.Count} spring bones; {hairBone.name} swung {hairSwing:0.0}°)", hairSwing > 2f);
+			else
+				report.AppendLine("NOTE  UnityChanSpringBone isn't installed; her hair doesn't sway");
+
 			var running = rig.GetCurrentAnimatorStateInfo(0);
 			Check($"Running uses the locomotion blend (speed {rig.GetFloat("Velocity"):0.0})", running.IsName("Locomotion") && rig.GetFloat("Velocity") > 4f);
 			yield return FrameWitch(player, 3.5f);
@@ -1256,6 +1278,15 @@ namespace Debugging
 
 		// Held for a tenth of a second, like a quick real press, and across at least two physics steps: a tap of a few
 		// frames could fall inside one slow frame and be gone before the game read it
+		private static IEnumerator WatchModes(GameState.Interfaces.IInputModeService inputMode, List<string> modes, float seconds)
+		{
+			for (var t = 0f; t < seconds; t += Time.unscaledDeltaTime)
+			{
+				modes.Add($"{inputMode.Mode}");
+				yield return null;
+			}
+		}
+
 		private IEnumerator TapRoutine(Key key)
 		{
 			Hold(key);
