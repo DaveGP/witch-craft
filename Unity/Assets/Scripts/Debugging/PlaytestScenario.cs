@@ -800,6 +800,11 @@ namespace Debugging
 			var headHeight = head.position.y - player.transform.position.y;
 			Check($"She is witch-sized (head {headHeight:0.00}m up)", headHeight > 1.25f && headHeight < 1.6f);
 
+			var untextured = swap.Art.GetComponentsInChildren<Renderer>().SelectMany(renderer => renderer.sharedMaterials)
+				.Where(material => material != null && (!material.HasProperty("_BaseMap") || material.GetTexture("_BaseMap") == null))
+				.Select(material => material.name).Distinct().ToList();
+			Check($"Her materials keep their textures ({string.Join(", ", untextured)})", untextured.Count == 0);
+
 			movement.Teleport(new Vector3(-3f, 0.2f, -15f));
 
 			// Spells put away: standing idle
@@ -898,8 +903,13 @@ namespace Debugging
 			var floating = pickups.Where(pickup => !Physics.Raycast(pickup.transform.position + Vector3.up * 0.5f, Vector3.down, 1.5f, ~0, QueryTriggerInteraction.Ignore)).Select(pickup => pickup.name).ToList();
 			Check($"Six storybooks stand on solid ground around the world ({pickups.Length}; floating: {string.Join(", ", floating)})", pickups.Length == 6 && books.AllBooks.Count == 6 && floating.Count == 0);
 
+			var shrines = FindObjectsByType<GlyphShrine>(FindObjectsSortMode.None);
+			var besideShrines = pickups.Where(pickup => shrines.Any(shrine => Vector3.Distance(shrine.transform.position, pickup.transform.position) < 12f)).Select(pickup => pickup.name).ToList();
+			Check($"No storybook sits beside a glyph shrine ({string.Join(", ", besideShrines)})", besideShrines.Count == 0);
+
 			var bookcases = FindObjectsByType<Bookcase>(FindObjectsSortMode.None);
 			Check($"The home has a bookcase ({bookcases.Length})", bookcases.Length >= 1);
+			Check($"Before any are found, the bookcase holds no storybooks ({bookcases[0].ShownCount})", bookcases[0].ShownCount == 0);
 
 			var database = ServiceLocator.Get<GameDatabase>();
 			Check("The bookshelf can be built from home level 1", database.FindBuildPiece("bookshelf").RequiredHomeLevel == 1);
@@ -923,6 +933,10 @@ namespace Debugging
 			var reader = FindAnyObjectByType<UserInterface.Views.BookView>();
 			Check("Picking up a storybook opens it to read", reader.IsOpen && reader.Book != null && reader.Book.Id == "bubble_witch" && books.Count == 1);
 			Check("The book is taken from where it floated", !bubbleWitch.CanInteract && bubbleWitch.transform.Find("Book") is { gameObject: { activeSelf: false } });
+
+			// And it now stands on the bookcase at home, in its own slot
+			var bubbleIndex = books.AllBooks.ToList().FindIndex(storyBook => storyBook.Id == "bubble_witch");
+			Check($"The book appears on the bookcase at home ({bookcases[0].ShownCount} shown)", bookcases[0].ShownCount == 1 && bookcases[0].Shows(bubbleIndex));
 
 			Tap(Key.D);
 			yield return new WaitForSeconds(0.3f);
@@ -975,6 +989,9 @@ namespace Debugging
 			Tap(Key.Escape);
 			yield return new WaitForSeconds(0.3f);
 			Check("Escape closes the book", !reader.IsOpen && inputMode.Mode == InputMode.Gameplay);
+
+			var shelf3D = bookcases[0].transform;
+			yield return View("19a_bookcase_books", shelf3D.position + shelf3D.forward * 2.2f + Vector3.up * 1.9f, shelf3D.position + Vector3.up * 1.7f);
 
 			bookcases[0].Interact(player.gameObject);
 			yield return new WaitForSeconds(0.3f);

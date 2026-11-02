@@ -377,8 +377,8 @@ namespace WitchCraftEditor
 			piece.Prefab = prefab;
 			piece.Cost = cost.Select(entry => new ItemStack(items[entry.item], entry.amount)).ToList();
 
-			// The planter's herbs stay visible over any art: they're the harvest. So does a roof's shell
-			ArtSlotOnPrefab(prefab, null, $"piece:{id}", name, snap == BuildSnap.Roof ? RoofShell : "Growth");
+			// The planter's herbs stay visible over any art: they're the harvest. So do a roof's shell and the storybooks on a shelf
+			ArtSlotOnPrefab(prefab, null, $"piece:{id}", name, snap == BuildSnap.Roof ? RoofShell : id == "bookshelf" ? StorybookShelf : "Growth");
 
 			EditorUtility.SetDirty(piece);
 
@@ -386,6 +386,8 @@ namespace WitchCraftEditor
 		}
 
 		private const string RoofShell = "Shell";
+
+		private const string StorybookShelf = "Storybooks";
 
 		private static GameObject Root(string name)
 		{
@@ -679,8 +681,16 @@ namespace WitchCraftEditor
 			body.center = new Vector3(0, 1f, 0);
 			body.size = new Vector3(1.2f, 2f, 0.4f);
 
-			// Every bookshelf holds the storybooks found so far
-			root.AddComponent<Bookcase>();
+			// Every bookshelf holds the storybooks found so far, one spine each, standing on top
+			var bookcase = root.AddComponent<Bookcase>();
+
+			var storybooks = Node(StorybookShelf, t, new Vector3(0, 2.025f, 0));
+
+			for (var i = 0; i < 6; i++)
+				Prim(PrimitiveType.Cube, $"Storybook{i}", storybooks.transform, new Vector3(-0.3f + i * 0.12f, 0.17f, 0f), new Vector3(0.09f, 0.34f, 0.26f),
+					Lit("StorybookSpine", Color.white, 0.2f), false, new Vector3(0, 0, i % 2 == 0 ? 0f : -4f));
+
+			Set(bookcase, "storybooks", storybooks.transform);
 
 			var zone = Node("Interact", t, new Vector3(0, 1f, 0.3f));
 			Trigger(zone, 1f);

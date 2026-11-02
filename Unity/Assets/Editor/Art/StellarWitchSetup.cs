@@ -329,7 +329,8 @@ namespace WitchCraftEditor
 
 			Material Convert(Material source)
 			{
-				if (source == null || source.shader == null || !(source.shader.name.Contains("Toon") || !source.shader.isSupported))
+				// Toon materials, or ones whose shader is gone now the toon package isn't installed
+				if (source == null || source.shader == null || !(source.shader.name.Contains("Toon") || source.shader.name.Contains("InternalErrorShader") || !source.shader.isSupported))
 					return source;
 
 				if (copies.TryGetValue(source, out var copy))
@@ -346,21 +347,20 @@ namespace WitchCraftEditor
 
 				copy.shader = simpleLit;
 
-				var colourMap = source.HasProperty("_MainTex") ? source.GetTexture("_MainTex") : null;
-				copy.SetTexture("_BaseMap", colourMap);
-				copy.SetColor("_BaseColor", source.HasProperty("_BaseColor") ? source.GetColor("_BaseColor") : Color.white);
+				copy.SetTexture("_BaseMap", SavedTexture(source, "_MainTex"));
+				copy.SetColor("_BaseColor", SavedColour(source, "_BaseColor", Color.white));
 				copy.SetFloat("_Smoothness", 0.1f);
 
 				// Skirts, sleeves and hair are single sheets
 				copy.SetFloat("_Cull", 0f);
 				copy.doubleSidedGI = true;
 
-				var glow = source.HasProperty("_Emissive_Tex") ? source.GetTexture("_Emissive_Tex") : null;
+				var glow = SavedTexture(source, "_Emissive_Tex");
 
 				if (glow != null)
 				{
 					copy.SetTexture("_EmissionMap", glow);
-					copy.SetColor("_EmissionColor", source.HasProperty("_Emissive_Color") ? source.GetColor("_Emissive_Color") : Color.white);
+					copy.SetColor("_EmissionColor", SavedColour(source, "_Emissive_Color", Color.white));
 					copy.EnableKeyword("_EMISSION");
 					copy.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
 				}
@@ -375,6 +375,38 @@ namespace WitchCraftEditor
 				renderer.sharedMaterials = renderer.sharedMaterials.Select(Convert).ToArray();
 
 			AssetDatabase.SaveAssets();
+		}
+
+		// A material's own saved textures and colours, read from its asset rather than through its shader, which may
+		// be missing (then the shader's properties, and so GetTexture, know nothing)
+		private static Texture SavedTexture(Material material, string name)
+		{
+			var properties = new SerializedObject(material).FindProperty("m_SavedProperties.m_TexEnvs");
+
+			for (var i = 0; properties != null && i < properties.arraySize; i++)
+			{
+				var entry = properties.GetArrayElementAtIndex(i);
+
+				if (entry.FindPropertyRelative("first").stringValue == name)
+					return entry.FindPropertyRelative("second.m_Texture").objectReferenceValue as Texture;
+			}
+
+			return null;
+		}
+
+		private static Color SavedColour(Material material, string name, Color fallback)
+		{
+			var properties = new SerializedObject(material).FindProperty("m_SavedProperties.m_Colors");
+
+			for (var i = 0; properties != null && i < properties.arraySize; i++)
+			{
+				var entry = properties.GetArrayElementAtIndex(i);
+
+				if (entry.FindPropertyRelative("first").stringValue == name)
+					return entry.FindPropertyRelative("second").colorValue;
+			}
+
+			return fallback;
 		}
 
 		#endregion

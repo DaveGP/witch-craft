@@ -17,7 +17,7 @@ namespace WitchCraftEditor
 			database.Books.Clear();
 
 			Add(database, "silver_spellbook", "The Silver Spellbook", "Hazel Thistlewick", new Color(0.78f, 0.82f, 0.9f),
-				"Somewhere in the forest clearing, among the stumps",
+				"On the summit of the tallest southern hill",
 				"In the village of Thimble Cross there lived a witch named Marigold who could not remember a single spell.\n\nShe wrote them on the backs of her hands, on the cuffs of her sleeves, and once, in a moment of real desperation, on Pudding, her very patient cat. Pudding walked about for a week with a cure for hiccups across his tummy, and never quite forgave her.",
 				"One winter morning Marigold went into the forest for kindling and found a ring of old stumps, white with snow. In the middle of the ring lay a book with a silver cover.\n\nIts pages were empty. But when she held it to her ear, it hummed, the way a kettle hums just before it sings.\n\nShe tucked it under her shawl and carried it home.",
 				"That night, as Marigold fumbled for the words to light a candle, something glimmered on the empty page. Letters were appearing, one at a time, written in moonlight.\n\nThe book was remembering the spell for her.\n\nIt waited patiently while she sounded the words out. The candle lit. Pudding, who had been bracing himself to be written on, let out a long breath.",
@@ -30,7 +30,7 @@ namespace WitchCraftEditor
 				"Then, one by one, its pages filled with names. Mrs Hobb. The mill-keeper and his four children. Old Mr Penny. The baker, and the baker's terrible dog.\n\nMarigold never did learn to remember a spell without help.\n\nBut she never once forgot a birthday.");
 
 			Add(database, "eye_of_newt", "Eye of Newt", "Bramble Underleaf", new Color(0.55f, 0.75f, 0.4f),
-				"On the pond's bank, where the frogs gossip",
+				"On the western shore, where the grass meets the sand",
 				"Every potion book in the land calls for an eye of newt, and every newt in the land is very tired of hearing about it.\n\nNone more so than Nettlebrook, a small spotted newt who lived under a flat stone at the edge of the pond. He was fond of his eyes. He used them for looking at things, and there were a great many things worth looking at.",
 				"Each spring the young witches came down to the bank with their baskets, and each spring every newt in the pond hid in the mud until they had gone.\n\n\"It's no way to live,\" said Nettlebrook, the year he turned seven. \"Somebody ought to ask.\"\n\nThe other newts agreed that somebody ought to. Then they all looked at him.",
 				"So Nettlebrook set off across the pond to see Granny Sedge, the oldest witch on the island, who lived in a boathouse on the far bank.\n\nIt was a long way for a newt. He crossed on the lily pads, one wobbly hop at a time, while the frogs sunbathing on them made remarks.\n\n\"Off to volunteer, are we?\" croaked the biggest. \"Very brave. Very crunchy.\"",
@@ -42,7 +42,7 @@ namespace WitchCraftEditor
 				"The frogs were so relieved that they threw a party of their own, and this time everybody came.\n\nTo this day the newts keep a jar of mustard seed by the water's edge, labelled in very careful handwriting: EYE OF NEWT (NOT REALLY). HELP YOURSELF.\n\nThe frogs keep a jar of buttercups beside it. Theirs says: TOE OF FROG. ALSO NOT REALLY. PLEASE.");
 
 			Add(database, "bubble_witch", "Bubble Witch", "Tilly", new Color(0.6f, 0.85f, 0.95f),
-				"Out on Tidewater's reef, past the stepping rocks",
+				"Atop a sea stack, halfway across to Tidewater",
 				"I was a much younger turtle when I knew Pearl, so you will have to trust my memory. Turtles have very good memories. It is one of the few advantages of being slow.\n\nPearl lived on the Tidewater shore with her grandmother, in a cottage made from an upturned boat. She was the smallest witch anyone could remember.",
 				"On their ninth birthdays the young witches of Tidewater were given their first brooms. Pearl was given hers, and climbed on, and the broom tipped her gently off into a rock pool.\n\nShe tried again the next day, and the day after. The broom was very sorry about it, but she was simply too small to steer. The crabs began saving her a spot.",
 				"So Pearl stopped trying to fly, and started blowing bubbles instead.\n\nShe made her soap from seafoam and kelp and one secret ingredient she never told anyone, not even me. Her bubbles didn't pop when you poked them. They wobbled. They held things.\n\nFirst a feather, then a shell, then a very surprised crab, and then, one breezy afternoon, Pearl herself.",
@@ -55,7 +55,7 @@ namespace WitchCraftEditor
 				"Pearl never did learn to ride a broom. She never needed to.\n\nShe is long gone now, and I am an old turtle. But on calm nights, if you look out from Tidewater, you can still see little bubbles rising over the water, each with a tiny light inside.\n\nThe village children blow them for her, to light the way home.");
 
 			Add(database, "phoenix_claw", "The Claw of the Phoenix", "Anonymous", new Color(0.95f, 0.55f, 0.25f),
-				"High above the spire, on the sky island",
+				"On a hidden isle floating above the southern hills",
 				"High above the clouds, on an island that floats where the spire points, there lived a phoenix who had grown tired of burning.\n\nEvery hundred years she flared into flame, crumbled into ash, and hatched again, small and new and remembering nothing at all.\n\n\"It's the forgetting I mind,\" she told the clouds. \"I never get to finish anything.\"",
 				"Visitors climbed the spire now and then. They came with nets and spears and polite smiles, and they all wanted the same thing: a claw of the phoenix, which every old book says will brew a potion to make you live forever.\n\nThe phoenix sent them back down rather faster than they had come up, and generally a little singed.",
 				"Then one spring a witch climbed up who was not like the others.\n\nShe was old and round and out of breath. On her back she carried a cauldron, a kettle, a picnic blanket and a bag so full of books that the strap had been mended four times.\n\nShe sat down heavily on a rock and said, \"Good afternoon. I've come for a claw of the phoenix.\"",
@@ -68,7 +68,7 @@ namespace WitchCraftEditor
 				"Some say the phoenix still lives on the sky island, reading through the long afternoons, and that she has started writing books of her own.\n\nThis one, you may have noticed, was never signed.\n\nBut if you look closely at its cover, there is a small scorch mark in one corner, shaped exactly like a claw.");
 
 			Add(database, "counted_stars", "The Owl Who Counted Stars", "Hoot", new Color(0.45f, 0.45f, 0.75f),
-				"Up on Starfall Ridge, where the stars hang low",
+				"In the Comet Nook past Starfall Ridge, where only a blink will take you",
 				"My great-great-grandmother was an owl named Wren, and she was the most precise owl who ever lived.\n\nShe counted everything. The acorns on her oak (two thousand and six). The raindrops on her branch in a shower (too many, but she tried). The number of times her husband said \"Hm\" in an evening (forty, on average; more in winter).",
 				"One clear autumn night, Wren looked up and realised that nobody, in the whole history of owls, had ever counted the stars.\n\n\"Well,\" she said. \"That won't do.\"\n\nShe packed a satchel of biscuits, flew to Starfall Ridge, where the stars hang low enough to touch, settled on the highest rock, and began.",
 				"One. Two. Three. She went from left to right, the way you read, and from top to bottom, the way you fall asleep.\n\nBy midnight she had reached four thousand and twelve, and she was feeling very pleased with herself.\n\nThen a star sprite drifted right past her beak, giggling, and Wren lost her place entirely.",
@@ -81,7 +81,7 @@ namespace WitchCraftEditor
 				"Nova says it is the most accurate star chart ever made, and Nova would know.\n\nI have started counting the stars too, from my perch on the sky island. Not to finish. Just to keep my great-great-grandmother company.\n\nI am on eleven. I keep getting distracted. They are very lovely.");
 
 			Add(database, "lantern_hill", "The Lantern Under the Hill", "Ember", new Color(1f, 0.7f, 0.35f),
-				"Deep in the crystal cave, beneath the southern hills",
+				"In the hollow behind the southernmost hill",
 				"Beneath the southern hills there is a cave where the crystals hum. Long ago a fox spirit lived there, all alone.\n\nShe was made of warm light, the way other foxes are made of fur, and her tail flickered like a candle. She had come to the cave in a snowstorm, many lifetimes before, and stayed.",
 				"On the night of that storm a traveller had been lost in the hills. The fox spirit had seen his little shape wandering in circles in the snow, and she had called and called, but she was too far away and too faint to be seen.\n\nIn the morning he found his own way home, cold but safe. Still, she never forgot watching him wander, and being no help at all.",
 				"So she made a lantern. She chose the clearest crystal in the cave, hollowed it out with her teeth, and breathed a little of her own flame inside.\n\nShe hung it at the mouth of the cave, where it could be seen from every path in the hills.\n\n\"There,\" she said. \"Nobody will ever be lost in the dark again. Not while I'm here.\"",

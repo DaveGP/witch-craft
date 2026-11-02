@@ -139,16 +139,16 @@ Ember needs a potion only Pip can teach you, and Hoot needs you to brew, so the 
 
 ## Storybooks
 
-Six short stories float open at waist height around the world, one in each area, so exploring pays off with something to read as well as something to gather. Picking one up opens it straight away (two pages at a time; the buttons, arrow keys or A and D turn the pages) and sends it home. Any bookshelf at home is your bookcase: it lists every book found, ready to read again, and gives a hint for each one still missing. Every home has a bookshelf, and older saves are given one in the hut. The bookshelf can be built from level 1, so an unmade one can go straight back up.
+Six short stories float open at waist height around the world, one in each area, so exploring pays off with something to read as well as something to gather. Picking one up opens it straight away (two pages at a time; the buttons, arrow keys or A and D turn the pages) and sends it home. No book sits beside a glyph shrine; each is a find of its own. Every book found also stands on top of each bookshelf at home in its cover colour, in a slot of its own, so the shelf fills up as you explore. Any bookshelf at home is your bookcase: it lists every book found, ready to read again, and gives a hint for each one still missing. Every home has a bookshelf, and older saves are given one in the hut. The bookshelf can be built from level 1, so an unmade one can go straight back up.
 
 | Book | Author | Found |
 | ---- | ------ | ----- |
-| The Silver Spellbook | Hazel Thistlewick | The forest clearing, in the ring of stumps |
-| Eye of Newt | Bramble Underleaf | The pond's north bank |
-| Bubble Witch | Tilly | The reef islet off Tidewater Isle |
-| The Claw of the Phoenix | Anonymous | The sky island |
-| The Owl Who Counted Stars | Hoot | Starfall Ridge |
-| The Lantern Under the Hill | Ember | The crystal cave |
+| The Silver Spellbook | Hazel Thistlewick | On the summit of the tallest southern hill |
+| Eye of Newt | Bramble Underleaf | The western shore, where the grass meets the sand |
+| Bubble Witch | Tilly | On top of the middle sea stack, halfway to Tidewater |
+| The Claw of the Phoenix | Anonymous | The hidden isle floating above the southern hills |
+| The Owl Who Counted Stars | Hoot | The Comet Nook past Starfall Ridge (Blink only) |
+| The Lantern Under the Hill | Ember | The hollow behind the southernmost hill |
 
 ## Ideas for later
 

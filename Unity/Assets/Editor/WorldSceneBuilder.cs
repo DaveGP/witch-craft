@@ -536,19 +536,30 @@ namespace WitchCraftEditor
 			Set(root.AddComponent<RecipeScroll>(), "recipe", ContentBuilder.Recipe(recipeId));
 		}
 
-		// One storybook in every corner of the world, floating open above the ground
+		// One storybook in every corner of the world, floating open above the ground. Never beside a glyph shrine:
+		// each is a find of its own, somewhere worth the climb, the crossing or the hunt
 		private static void BuildStorybooks()
 		{
 			var books = Node("Storybooks", world).transform;
 
-			Storybook(books, OnGround(ForestCentre.x - 2f, ForestCentre.z - 3f), "silver_spellbook", 30f);
-			Storybook(books, OnGround(PondCentre.x - 8f, PondCentre.z + 14f), "eye_of_newt", 150f);
-			Storybook(books, TidewaterCentre + new Vector3(50f, 2.8f, 3.6f), "bubble_witch", -60f);
-			Storybook(books, SkyIsleCentre + new Vector3(3f, 0f, -2.5f), "phoenix_claw", 210f);
-			Storybook(books, StarfallCentre + new Vector3(-4f, 0f, -2.5f), "counted_stars", 160f);
+			// The tallest southern hill's summit, above where the secret path begins
+			Storybook(books, OnGround(hills[1].centre.x, hills[1].centre.z), "silver_spellbook", 30f);
 
-			// The cave roof is ground too, so the cave floor height is given rather than found
-			Storybook(books, CaveCentre + new Vector3(3.5f, 0.06f, -2.4f), "lantern_hill", 20f);
+			// The western shore, where the grass meets the sand
+			Storybook(books, OnGround(-79f, 6f), "eye_of_newt", 100f);
+
+			// On the middle sea stack, halfway to Tidewater
+			Storybook(books, new Vector3(-1.4f, 2.4f, 102.4f), "bubble_witch", 180f);
+
+			// The hidden isle above the southern hills
+			Storybook(books, SecretIsleCentre + new Vector3(-2.8f, 0f, 2.6f), "phoenix_claw", 210f);
+
+			// The Comet Nook, which only a blink reaches
+			Storybook(books, CometNookCentre + new Vector3(-1.6f, 0f, -1.4f), "counted_stars", 160f);
+
+			// The hollow behind the southernmost hill
+			var hill = hills[4];
+			Storybook(books, OnGround(hill.centre.x, hill.centre.z - hill.radius - 1.8f), "lantern_hill", 0f);
 		}
 
 		private static void Storybook(Transform parent, Vector3 position, string bookId, float yaw)
