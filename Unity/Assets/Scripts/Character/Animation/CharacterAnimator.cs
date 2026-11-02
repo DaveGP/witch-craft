@@ -38,7 +38,14 @@ namespace Character.Animation
 
 		private Foot rightFoot;
 
-		private Transform hips;
+		private Transform leftThigh;
+
+		private Transform rightThigh;
+
+		/// <summary>
+		/// The height of the tops of her thighs, which rest on the stick when she rides (for the playtest).
+		/// </summary>
+		public float? SeatHeight => leftThigh != null && rightThigh != null ? (leftThigh.position.y + rightThigh.position.y) / 2f : null;
 
 		private Transform art;
 
@@ -47,6 +54,9 @@ namespace Character.Animation
 		private float seatOffset;
 
 		private float lastStep;
+
+		// From the stick's centre to her hip joints: the stick's radius and the thickness of her thigh beneath the joint
+		public const float SeatClearance = 0.12f;
 
 		private Vector3 restScale;
 
@@ -182,7 +192,8 @@ namespace Character.Animation
 
 			leftFoot = human ? new Foot(rig.GetBoneTransform(HumanBodyBones.LeftFoot)) : null;
 			rightFoot = human ? new Foot(rig.GetBoneTransform(HumanBodyBones.RightFoot)) : null;
-			hips = human ? rig.GetBoneTransform(HumanBodyBones.Hips) : null;
+			leftThigh = human ? rig.GetBoneTransform(HumanBodyBones.LeftUpperLeg) : null;
+			rightThigh = human ? rig.GetBoneTransform(HumanBodyBones.RightUpperLeg) : null;
 
 			art = artSwap != null && artSwap.Art != null ? artSwap.Art.transform : null;
 			artRestPosition = art != null ? art.localPosition : Vector3.zero;
@@ -206,13 +217,14 @@ namespace Character.Animation
 			}
 		}
 
-		// On the broom she sits on the stick: her hips are brought down (or up) to it, whatever pose the clip has
+		// On the broom she sits on the stick: the tops of her thighs (the hip joints) are brought to just above it,
+		// whatever pose the clip has. Her pelvis bone isn't a reliable seat on every rig
 		private void UpdateSeat(bool flying)
 		{
-			if (art == null || hips == null || broom == null)
+			if (art == null || SeatHeight == null || broom == null)
 				return;
 
-			var target = flying ? broom.position.y + 0.1f - hips.position.y : -seatOffset;
+			var target = flying ? broom.position.y + SeatClearance - SeatHeight.Value : -seatOffset;
 
 			seatOffset += target * (1f - Mathf.Exp(-12f * Time.deltaTime));
 

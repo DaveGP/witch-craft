@@ -892,10 +892,15 @@ namespace Debugging
 			yield return Until(() => player.GetComponent<IBroomController>().IsMounted);
 			yield return new WaitForSeconds(1.5f);
 
-			var seat = hips.position.y - broom.position.y;
-			Check($"On the broom her hips sit on the stick ({seat:0.00}m above it; riding {rig.GetCurrentAnimatorClipInfo(0).FirstOrDefault().clip?.name})", Mathf.Abs(seat - 0.1f) < 0.15f);
+			// Measured from the stick she's drawn on, to the tops of her thighs, with the other reference heights for comparison
+			var stick = broom.GetComponentsInChildren<Renderer>().First(part => part.name == "Handle").bounds.center.y;
+			var seat = animator.SeatHeight.Value - stick;
+			report.AppendLine($"NOTE  Broom ride heights above the stick: thighs {seat:0.00}, hips bone {hips.position.y - stick:0.00}, body {rig.bodyPosition.y - stick:0.00}, feet {Mathf.Min(rig.GetBoneTransform(HumanBodyBones.LeftFoot).position.y, rig.GetBoneTransform(HumanBodyBones.RightFoot).position.y) - stick:0.00}");
+			Check($"On the broom she sits on the stick (tops of her thighs {seat:0.00}m above it; riding {rig.GetCurrentAnimatorClipInfo(0).FirstOrDefault().clip?.name})", Mathf.Abs(seat - CharacterAnimator.SeatClearance) < 0.06f);
 			yield return FrameWitch(player, 3f);
 			Shot("30_witch_broom");
+			yield return FrameSpot(player.transform.position + player.transform.right * 2.6f + Vector3.up * 1.0f, player.transform.position + Vector3.up * 0.9f);
+			Shot("30b_witch_broom_side");
 			EndFrame();
 
 			Tap(Key.F);
