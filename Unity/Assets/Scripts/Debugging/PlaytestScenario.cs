@@ -888,8 +888,9 @@ namespace Debugging
 			Check("D turns the page", reader.Spread == 1);
 			Shot("18_book_pages");
 
-			// Every page of every book fits on the page
+			// Every page of every book fits on the page, and each page is numbered at its foot
 			var overflowing = new List<string>();
+			var misnumbered = new List<string>();
 
 			foreach (var storyBook in books.AllBooks)
 			{
@@ -902,11 +903,29 @@ namespace Debugging
 					if (reader.Overflowing)
 						overflowing.Add($"{storyBook.Id} spread {spread + 1}");
 
+					var (leftPage, rightPage) = reader.PageNumbers;
+					var expectedRight = spread * 2 + 2 <= storyBook.Pages.Count ? $"{spread * 2 + 2}" : "";
+
+					if (leftPage != $"{spread * 2 + 1}" || rightPage != expectedRight)
+						misnumbered.Add($"{storyBook.Id} spread {spread + 1}: {leftPage}|{rightPage}");
+
 					reader.Turn(1);
 				}
 			}
 
 			Check($"Every storybook page fits ({books.AllBooks.Sum(storyBook => storyBook.Pages.Count)} pages; too long: {string.Join(", ", overflowing)})", overflowing.Count == 0);
+			Check($"Every page carries its own number ({string.Join(", ", misnumbered)})", misnumbered.Count == 0);
+
+			// A book with an odd number of pages ends on a left page
+			var odd = books.AllBooks.FirstOrDefault(storyBook => storyBook.Pages.Count % 2 == 1);
+
+			if (odd != null)
+			{
+				reader.Show(odd);
+				reader.Turn(reader.SpreadCount);
+				yield return new WaitForSeconds(0.3f);
+				Shot("18c_book_last_page");
+			}
 
 			reader.Show(books.AllBooks.First(storyBook => storyBook.Id == "phoenix_claw"));
 			yield return new WaitForSeconds(0.3f);
