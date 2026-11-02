@@ -152,7 +152,7 @@ namespace WitchCraftEditor
 			BuildPaths();
 			BuildScatter();
 			BuildEnchantment();
-			BuildGroundPatches();
+			PaintGround();
 			BuildScenery();
 
 			var player = BuildPlayer();
@@ -297,7 +297,8 @@ namespace WitchCraftEditor
 
 		private static void BuildIsland()
 		{
-			var island = Prim(PrimitiveType.Cylinder, "Island", world, new Vector3(0, -2f, 0), new Vector3(170f, 2f, 170f), Grass);
+			// One ground for the whole island: grass blended with other grounds by a painted control map (see PaintGround)
+			var island = Prim(PrimitiveType.Cylinder, "Island", world, new Vector3(0, -2f, 0), new Vector3(170f, 2f, 170f), IslandGround);
 			island.layer = Ground;
 			ReplaceWithMeshCollider(island);
 
@@ -1428,21 +1429,19 @@ namespace WitchCraftEditor
 			SurfaceSlot(parent, "surface:sand", "Beaches", Sand);
 			SurfaceSlot(parent, "surface:path", "Path stones", PathMat);
 			SurfaceSlot(parent, "surface:rock", "Rocks, cliffs and stones", Rock, RockDark);
-			SurfaceSlot(parent, "surface:forest-floor", "Leaf litter under the forest", ForestFloor);
-			SurfaceSlot(parent, "surface:meadow", "Sunny meadow patches across the island", Meadow);
-			SurfaceSlot(parent, "surface:moss", "Deep moss patches", Moss);
-			SurfaceSlot(parent, "surface:mud", "Muddy bank round the pond", Mud);
-			SurfaceSlot(parent, "surface:dirt", "Bare earth by the cave mouth and the hills", Dirt);
+			SurfaceSlot(parent, "surface:island", "The island's ground: a WitchCraft/SplatGround material, grass blended with forest floor, meadow, moss and earth by the control map", IslandGround);
 		}
 
 		#region Ground patches and scenery
 
-		// Soft-edged: the patch shader fades each one out over a wobbly, dithered rim
-		private static Material ForestFloor => GroundPatch("ForestFloor", new Color(0.46f, 0.52f, 0.3f));
-		private static Material Meadow => GroundPatch("Meadow", new Color(0.66f, 0.8f, 0.42f));
-		private static Material Moss => GroundPatch("Moss", new Color(0.36f, 0.6f, 0.38f));
-		private static Material Mud => GroundPatch("Mud", new Color(0.45f, 0.38f, 0.3f));
-		private static Material Dirt => GroundPatch("Dirt", new Color(0.62f, 0.5f, 0.36f));
+		// Grass, then the control map's layers: forest floor, meadow, moss, earth (mud and bare dirt)
+		private static Material IslandGround => SplatGround("IslandGround", new Color(0.56f, 0.76f, 0.42f),
+			new Color(0.46f, 0.52f, 0.3f), new Color(0.66f, 0.8f, 0.42f), new Color(0.36f, 0.6f, 0.38f), new Color(0.5f, 0.42f, 0.33f));
+
+		private const int ControlMapSize = 512;
+
+		// The square of world the control map covers: the whole island and its beach
+		private static readonly Vector4 ControlRect = new(-90f, -90f, 180f, 180f);
 
 		// Places the island's flat ground shouldn't be painted or dressed: the home plot, the pond's water and the
 		// cave, plus the spire's foot
@@ -1457,45 +1456,57 @@ namespace WitchCraftEditor
 				&& Vector3.Distance(Flat(point), Vector3.zero) < 82f - margin;
 		}
 
-		// Is the ground flat (the island top, not a hill) across this circle?
-		private static bool Level(Vector3 centre, float radius)
+		// Paints the island's control map: irregular patches of forest floor, meadow, moss and earth, each a few
+		// overlapping blobs with wobbly, feathered edges. The ground shader blends them into the grass, so the ground
+		// stays one surface: nothing layered on top, nothing to flicker
+		private static void PaintGround()
 		{
-			for (var i = 0; i < 8; i++)
-			{
-				var angle = i * Mathf.PI / 4f;
-
-				if (Mathf.Abs(GroundY(centre.x + Mathf.Cos(angle) * radius, centre.z + Mathf.Sin(angle) * radius) - centre.y) > 0.05f)
-					return false;
-			}
-
-			return true;
-		}
-
-		// Irregular patches of different ground, laid flat over the island: a few overlapping discs per patch, each
-		// material a hair higher than the last so they stack cleanly, every disc fading out at a soft, wobbly edge.
-		// They're paint only: no colliders, and gameplay goes on exactly as on the grass beneath
-		private static void BuildGroundPatches()
-		{
-			var parent = Node("GroundPatches", world).transform;
 			var dice = new Random(11);
 
 			float Roll(float min, float max) => min + (float)dice.NextDouble() * (max - min);
 
-			void Patch(Vector3 centre, float size, Material material, float layer, int lobes)
+			const int forestFloor = 0, meadow = 1, moss = 2, earth = 3;
+
+			var weights = new float[4, ControlMapSize * ControlMapSize];
+			var metresPerPixel = ControlRect.z / ControlMapSize;
+
+			void Blob(Vector3 centre, float radius, int layer)
+			{
+				var seed = Roll(0f, Mathf.PI * 2f);
+				var feather = radius * 0.45f;
+
+				var minX = Mathf.Max(0, (int)((centre.x - radius - ControlRect.x) / metresPerPixel));
+				var maxX = Mathf.Min(ControlMapSize - 1, (int)((centre.x + radius - ControlRect.x) / metresPerPixel) + 1);
+				var minY = Mathf.Max(0, (int)((centre.z - radius - ControlRect.y) / metresPerPixel));
+				var maxY = Mathf.Min(ControlMapSize - 1, (int)((centre.z + radius - ControlRect.y) / metresPerPixel) + 1);
+
+				for (var y = minY; y <= maxY; y++)
+				for (var x = minX; x <= maxX; x++)
+				{
+					var dx = ControlRect.x + (x + 0.5f) * metresPerPixel - centre.x;
+					var dz = ControlRect.y + (y + 0.5f) * metresPerPixel - centre.z;
+					var angle = Mathf.Atan2(dz, dx);
+
+					// A wobbly rim, different for every blob
+					var edge = radius * (0.85f + 0.15f * (Mathf.Sin(angle * 3f + seed) * 0.5f + Mathf.Sin(angle * 7f + seed * 1.7f) * 0.3f + Mathf.Sin(angle * 13f + seed * 2.3f) * 0.2f));
+					var weight = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(edge - feather, edge, Mathf.Sqrt(dx * dx + dz * dz)));
+
+					var index = y * ControlMapSize + x;
+					weights[layer, index] = Mathf.Max(weights[layer, index], weight);
+				}
+			}
+
+			void Patch(Vector3 centre, float size, int layer, int lobes)
 			{
 				for (var i = 0; i < lobes; i++)
 				{
 					var angle = Roll(0f, Mathf.PI * 2f);
 					var offset = i == 0 ? Vector3.zero : new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * Roll(0.3f, 0.7f) * size;
 					var radius = size * Roll(0.45f, 0.75f);
-					var point = OnGround(centre.x + offset.x, centre.z + offset.z);
+					var point = centre + offset;
 
-					if (!Clear(point, radius * 0.5f) || !Level(point, radius))
-						continue;
-
-					var disc = Prim(PrimitiveType.Cylinder, "Patch", parent, point + Vector3.up * layer, new Vector3(radius * 2f, 0.004f, radius * 2f), material, false,
-						new Vector3(0f, Roll(0f, 360f), 0f));
-					disc.layer = EnvironmentLayer;
+					if (Clear(point, radius * 0.5f))
+						Blob(point, radius, layer);
 				}
 			}
 
@@ -1504,32 +1515,43 @@ namespace WitchCraftEditor
 			{
 				var angle = Roll(0f, Mathf.PI * 2f);
 				var distance = Roll(0f, 22f);
-				Patch(OnGround(ForestCentre.x + Mathf.Cos(angle) * distance, ForestCentre.z + Mathf.Sin(angle) * distance), Roll(7f, 11f), ForestFloor, 0.012f, 4);
+				Patch(ForestCentre + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * distance, Roll(7f, 11f), forestFloor, 4);
 			}
 
-			// A muddy bank all round the pond, overlapping enough to read as one ring
+			// A muddy bank all round the pond
 			for (var i = 0; i < 30; i++)
 			{
 				var angle = i * Mathf.PI * 2f / 30f + Roll(-0.05f, 0.05f);
 				var distance = Roll(15.5f, 16.5f);
-				Patch(OnGround(PondCentre.x + Mathf.Cos(angle) * distance, PondCentre.z + Mathf.Sin(angle) * distance), Roll(4.5f, 6f), Mud, 0.016f, 3);
+				Patch(PondCentre + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * distance, Roll(4.5f, 6f), earth, 3);
 			}
 
 			// Bare earth at the cave mouth and in the lee of the hills
-			Patch(OnGround(CaveCentre.x - 13f, CaveCentre.z), 7f, Dirt, 0.016f, 5);
+			Patch(CaveCentre + new Vector3(-13f, 0f, 0f), 7f, earth, 5);
 
 			foreach (var (centre, radius, _, _) in hills)
-				Patch(OnGround(centre.x + radius + 3f, centre.z + Roll(-3f, 3f)), Roll(3f, 5f), Dirt, 0.016f, 3);
+				Patch(centre + new Vector3(radius + 3f, 0f, Roll(-3f, 3f)), Roll(3f, 5f), earth, 3);
 
 			// Meadows and moss scattered over the open island
 			for (var i = 0; i < 26; i++)
 			{
 				var angle = Roll(0f, Mathf.PI * 2f);
 				var distance = Roll(18f, 76f);
-				var centre = OnGround(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance);
 
-				Patch(centre, Roll(5f, 9f), i % 3 == 0 ? Moss : Meadow, i % 3 == 0 ? 0.008f : 0.004f, 4);
+				Patch(new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * distance, Roll(5f, 9f), i % 3 == 0 ? moss : meadow, 4);
 			}
+
+			var pixels = new Color[ControlMapSize * ControlMapSize];
+
+			for (var i = 0; i < pixels.Length; i++)
+				pixels[i] = new Color(weights[forestFloor, i], weights[meadow, i], weights[moss, i], weights[earth, i]);
+
+			var control = SaveControlMap("IslandControl", pixels, ControlMapSize);
+
+			var ground = IslandGround;
+			ground.SetTexture("_Control", control);
+			ground.SetVector("_ControlRect", ControlRect);
+			EditorUtility.SetDirty(ground);
 		}
 
 		// Purely scenic spots for the Art Set: flowers, tufts, leaf litter, pebbles, shrubs and a ring of far

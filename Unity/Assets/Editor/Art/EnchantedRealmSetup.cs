@@ -181,9 +181,8 @@ namespace WitchCraftEditor
 			foreach (var (key, kit) in SceneryKits())
 				filled += FillKit(set, key, kit);
 
-			// Ground patches keep their soft edges: their art is the pack's ground texture on the patch shader
-			foreach (var (key, path, tint) in patchSurfaces)
-				filled += FillPatch(set, key, path, tint);
+			// The island's ground is one splat-blended surface: the packs' ground textures on its shader
+			filled += FillIslandGround(set);
 
 			foreach (var (key, path) in surfaces)
 			{
@@ -621,49 +620,67 @@ namespace WitchCraftEditor
 				($"{environment}/SM_Env_Mountains_Snow_01.prefab", Vector3.zero, 0f, Tall($"{environment}/SM_Env_Mountains_Snow_01.prefab", 95f))));
 		}
 
-		private static readonly (string key, string path, Color tint)[] patchSurfaces =
+		// Grass first, then the control map's layers in channel order: forest floor, meadow, moss, earth
+		private static readonly (string path, Color tint)[] islandLayers =
 		{
-			("surface:forest-floor", $"{Forest}/Materials/Dirt_Leaves_Triplanar_02.mat", Color.white),
-			("surface:meadow", $"{Forest}/Materials/Dirt_Grass_Triplanar_01.mat", Color.white),
-			("surface:moss", $"{Forest}/Materials/Moss_Enchanted_Triplanar_02.mat", Color.white),
-			("surface:mud", $"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat", new Color(0.75f, 0.68f, 0.62f)),
-			("surface:dirt", $"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat", Color.white),
+			($"{Forest}/Materials/Moss_Enchanted_Triplanar_01.mat", Color.white),
+			($"{Forest}/Materials/Dirt_Leaves_Triplanar_02.mat", Color.white),
+			($"{Forest}/Materials/Dirt_Grass_Triplanar_01.mat", Color.white),
+			($"{Forest}/Materials/Moss_Enchanted_Triplanar_02.mat", Color.white),
+			($"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat", new Color(0.85f, 0.78f, 0.72f)),
 		};
 
-		// A patch material from a pack's triplanar ground: its top texture and tiling on WitchCraft/GroundPatch. Replaces
-		// a hard-edged pack material left from before, but never something else picked by hand
-		private static int FillPatch(ArtSet set, string key, string sourcePath, Color tint)
+		private const string IslandGroundPath = "Assets/Materials/Generated/IslandGround.mat";
+
+		// The island's art material: WitchCraft/SplatGround with each pack ground's top texture and tiling, sharing the
+		// builder's control map. Replaced each run unless something else was picked by hand
+		private static int FillIslandGround(ArtSet set)
 		{
-			var entry = Entry(set, key);
-			var source = AssetDatabase.LoadAssetAtPath<Material>(sourcePath);
+			var entry = Entry(set, "surface:island");
+			var placeholder = AssetDatabase.LoadAssetAtPath<Material>(IslandGroundPath);
 
-			var ours = entry.Material == null || entry.Material == source || entry.Material.name.StartsWith("Patch_");
-
-			if (source == null || !ours)
+			if (placeholder == null || entry.Material != null && !entry.Material.name.StartsWith("IslandGround_Art"))
 				return 0;
 
-			Texture top = null;
-
-			foreach (var name in new[] { "_Top", "_TopAlbedo", "_TriplanarAlbedo", "_BaseMap" })
-				if (top == null && source.HasProperty(name))
-					top = source.GetTexture(name);
-
-			var tiling = source.HasProperty("_Tiling") ? source.GetFloat("_Tiling") : source.HasProperty("_TilingTop") ? source.GetFloat("_TilingTop") : 0.5f;
-
-			var path = $"{KitFolder}/Patch_{key.Replace("surface:", "")}.mat";
+			var path = $"{KitFolder}/IslandGround_Art.mat";
 			var material = AssetDatabase.LoadAssetAtPath<Material>(path);
 
 			if (material == null)
 			{
-				material = new Material(Shader.Find("WitchCraft/GroundPatch"));
+				material = new Material(placeholder.shader);
 				AssetDatabase.CreateAsset(material, path);
 			}
 
-			material.SetTexture("_BaseMap", top);
-			material.SetColor("_BaseColor", tint);
-			material.SetFloat("_Tiling", tiling);
-			EditorUtility.SetDirty(material);
+			material.shader = placeholder.shader;
+			material.SetTexture("_Control", placeholder.GetTexture("_Control"));
+			material.SetVector("_ControlRect", placeholder.GetVector("_ControlRect"));
 
+			for (var i = 0; i < islandLayers.Length; i++)
+			{
+				var (sourcePath, tint) = islandLayers[i];
+				var source = AssetDatabase.LoadAssetAtPath<Material>(sourcePath);
+
+				if (source == null)
+					continue;
+
+				Texture top = null;
+
+				foreach (var name in new[] { "_Top", "_TopAlbedo", "_TriplanarAlbedo", "_BaseMap" })
+					if (top == null && source.HasProperty(name))
+						top = source.GetTexture(name);
+
+				var tiling = source.HasProperty("_Tiling") ? source.GetFloat("_Tiling") : source.HasProperty("_TilingTop") ? source.GetFloat("_TilingTop") : 0.5f;
+
+				var texture = i == 0 ? "_BaseMap" : $"_Layer{i}";
+				var colour = i == 0 ? "_BaseColor" : $"_Tint{i}";
+				var scale = i == 0 ? "_Tiling" : $"_Tiling{i}";
+
+				material.SetTexture(texture, top);
+				material.SetColor(colour, tint);
+				material.SetFloat(scale, tiling);
+			}
+
+			EditorUtility.SetDirty(material);
 			entry.Material = material;
 
 			return 1;

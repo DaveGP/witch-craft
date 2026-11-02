@@ -77,19 +77,48 @@ namespace WitchCraftEditor
 		}
 
 		/// <summary>
-		/// A soft-edged patch of ground (WitchCraft/GroundPatch), for flattened cylinders laid over the island.
+		/// Ground that blends grass with up to four other grounds by a control map (WitchCraft/SplatGround).
 		/// </summary>
-		public static Material GroundPatch(string name, Color colour, Texture texture = null, float tiling = 0.5f)
+		public static Material SplatGround(string name, Color grass, params Color[] layers)
 		{
-			var material = GetMaterial(name, "WitchCraft/GroundPatch");
+			var material = GetMaterial(name, "WitchCraft/SplatGround");
 
-			material.SetColor("_BaseColor", colour);
-			material.SetTexture("_BaseMap", texture);
-			material.SetFloat("_Tiling", tiling);
+			material.SetColor("_BaseColor", grass);
+
+			for (var i = 0; i < layers.Length && i < 4; i++)
+				material.SetColor($"_Tint{i + 1}", layers[i]);
 
 			EditorUtility.SetDirty(material);
 
 			return material;
+		}
+
+		/// <summary>
+		/// Saves a painted control map: linear (it holds weights, not colours), clamped, and uncompressed so the
+		/// blends stay smooth.
+		/// </summary>
+		public static Texture2D SaveControlMap(string name, Color[] pixels, int size)
+		{
+			EnsureFolder(TextureFolder);
+
+			var path = $"{TextureFolder}/{name}.png";
+
+			var texture = new Texture2D(size, size, TextureFormat.RGBA32, false, true);
+			texture.SetPixels(pixels);
+			File.WriteAllBytes(path, texture.EncodeToPNG());
+			Object.DestroyImmediate(texture);
+
+			AssetDatabase.ImportAsset(path);
+
+			var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+			importer.sRGBTexture = false;
+			importer.alphaIsTransparency = false;
+			importer.wrapMode = TextureWrapMode.Clamp;
+			importer.mipmapEnabled = true;
+			importer.textureCompression = TextureImporterCompression.Uncompressed;
+			importer.SaveAndReimport();
+
+			return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
 		}
 
 		public static Material Unlit(string name, Color colour, bool transparent = false)

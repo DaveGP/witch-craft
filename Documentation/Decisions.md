@@ -56,7 +56,6 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 
 02/11/2026 - Scenic dressing never looks like something gatherable: no glowing mushrooms (scenic ones wear a muted, glow-free copy of the forest atlas), logs, the berry bush, the gather flowers, nettle-like ferns, the boulder rock), so players don't try to pick things they can't.
 
-## Soft-edged ground patches
+## Ground blended by a control map
 
-02/11/2026 - Flat discs of a different ground texture read as polka dots. A small URP shader projects the texture from above in world space (so it lines up with the ground around it) and fades each disc out over a wobbly, dithered edge. Dithering keeps the patches opaque, so they sort and receive shadows like the ground, with no transparency cost on the web.
-
+02/11/2026 - Varied ground was first laid as flat discs over the island, which z-fought with the ground beneath at a distance. Now the island is one surface whose shader blends grass with four other grounds by a painted control map, like a terrain's splat map: no layers, nothing to flicker, one draw. The builder paints the map, so the layout stays in code. A Unity Terrain would allow hand painting and sculpting, but would mean rebuilding the island's colliders and everything placed on it for the same look.

@@ -632,22 +632,6 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
-  - Key: surface:dirt
-    Note: Bare earth by the cave mouth and the hills
-    Prefab: {fileID: 0}
-    Material: {fileID: 2100000, guid: 0fe6f366f7f9a48fda5d24e55dd8da1a, type: 2}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
-    KeepPlaceholder: 0
-  - Key: surface:forest-floor
-    Note: Leaf litter under the forest
-    Prefab: {fileID: 0}
-    Material: {fileID: 2100000, guid: dc59e47b4bb644944a966f8c54e6de95, type: 2}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
-    KeepPlaceholder: 0
   - Key: surface:grass
     Note: Meadow grass on the island and hills (a world-space triplanar material
       suits the shapes)
@@ -665,26 +649,11 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
-  - Key: surface:meadow
-    Note: Sunny meadow patches across the island
+  - Key: surface:island
+    Note: 'The island''s ground: a WitchCraft/SplatGround material, grass blended
+      with forest floor, meadow, moss and earth by the control map'
     Prefab: {fileID: 0}
-    Material: {fileID: 2100000, guid: a6777e778e53d4a809620dd4f534d2de, type: 2}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
-    KeepPlaceholder: 0
-  - Key: surface:moss
-    Note: Deep moss patches
-    Prefab: {fileID: 0}
-    Material: {fileID: 2100000, guid: 04816a6e821394626bae38ca13f7fe30, type: 2}
-    Offset: {x: 0, y: 0, z: 0}
-    Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
-    KeepPlaceholder: 0
-  - Key: surface:mud
-    Note: Muddy bank round the pond
-    Prefab: {fileID: 0}
-    Material: {fileID: 2100000, guid: 64a9e2f6ac0e944b8917ad89496d7e8e, type: 2}
+    Material: {fileID: 2100000, guid: cb3080c06f70844c28b7ff67e0b36f79, type: 2}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1

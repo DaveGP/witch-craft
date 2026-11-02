@@ -162,6 +162,13 @@ namespace Debugging
 			Check("Started with two recipes", recipeBook.Known.Count == 2);
 			Check("Started with three glyphs", spellBook.KnownGlyphs.Count == 3);
 
+			// The island's ground is one surface, its grounds blended by a control map: nothing layered on top to flicker
+			var islandMaterial = FindObjectsByType<Renderer>(FindObjectsSortMode.None).Select(renderer => renderer.sharedMaterial)
+				.FirstOrDefault(material => material != null && material.shader.name == "WitchCraft/SplatGround");
+			var control = islandMaterial != null && islandMaterial.HasProperty("_Control") ? islandMaterial.GetTexture("_Control") : null;
+			Check($"The island's ground blends its textures by a control map ({islandMaterial?.shader.name}, map {(control != null ? $"{control.width}px" : "missing")})",
+				islandMaterial != null && islandMaterial.shader.name == "WitchCraft/SplatGround" && control != null && GameObject.Find("GroundPatches") == null);
+
 			// The art swap layer: every slot listed, and assigning a prefab swaps the look but not the collision
 			var artSet = Art.ArtSwap.Set;
 			var artKeys = artSet != null ? artSet.Entries.Select(entry => entry.Key).ToList() : new List<string>();
@@ -268,7 +275,7 @@ namespace Debugging
 			Check($"A wrong combination fizzles with a hint: \"{miss.Message}\"", miss.Spell == null);
 
 			Tap(Key.Digit1);
-			yield return new WaitForSeconds(0.3f);
+			yield return Until(() => caster.ActiveSpell?.Id == "conjure");
 			Check("Key 1 readies Conjure", caster.ActiveSpell != null && caster.ActiveSpell.Id == "conjure");
 
 			Shot("02_conjure_ready");
@@ -285,12 +292,9 @@ namespace Debugging
 			Check("Building outside the plot is refused", !home.TrySnap(floor, new Vector3(30f, 0f, 30f), 0, out _, out _));
 
 			// Levitate a crate: lift it, move the witch, set it down
-			var modeBeforeTap = inputMode.Mode;
-			var modes = new List<string>();
-			StartCoroutine(WatchModes(inputMode, modes, 0.4f));
 			Tap(Key.Digit2);
-			yield return new WaitForSeconds(0.3f);
-			Check($"Key 2 readies Levitate (readied: {caster.ActiveSpell?.Id ?? "none"}, slot 2 holds {spellBook.GetSlot(1)?.Id ?? "nothing"}; input {modeBeforeTap} then {string.Join("/", modes.Distinct())})", caster.ActiveSpell != null && caster.ActiveSpell.Id == "levitate");
+			yield return Until(() => caster.ActiveSpell?.Id == "levitate");
+			Check($"Key 2 readies Levitate (readied: {caster.ActiveSpell?.Id ?? "none"}, slot 2 holds {spellBook.GetSlot(1)?.Id ?? "nothing"})", caster.ActiveSpell != null && caster.ActiveSpell.Id == "levitate");
 
 			var crate = FindObjectsByType<Movable>(FindObjectsSortMode.None).FirstOrDefault(movable => movable.GetComponent<PlacedPiece>() == null);
 			Check("There is a crate to levitate", crate != null);
@@ -566,7 +570,7 @@ namespace Debugging
 			yield return new WaitForSeconds(0.8f);
 
 			Tap(Key.Digit3);
-			yield return new WaitForSeconds(0.3f);
+			yield return Until(() => caster.ActiveSpell?.Id == "bubble");
 			Check("Key 3 readies Bubble", caster.ActiveSpell?.Id == "bubble");
 
 			var floatStart = player.transform.position.y;
@@ -583,7 +587,7 @@ namespace Debugging
 			yield return new WaitForSeconds(2.5f);
 
 			Tap(Key.Digit4);
-			yield return new WaitForSeconds(0.3f);
+			yield return Until(() => caster.ActiveSpell?.Id == "blink");
 			Check("Key 4 readies Blink", caster.ActiveSpell?.Id == "blink");
 
 			typeof(global::Camera.CameraController).GetField("yaw", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(cameraController, 180f);
@@ -598,7 +602,7 @@ namespace Debugging
 			Check($"Blink steps the witch forward ({blinked:0.0}m; in the way: {blocker}; grounded {movement.IsGrounded})", blinked > 5f && blinked < 8f);
 
 			Tap(Key.Digit1);
-			yield return new WaitForSeconds(0.3f);
+			yield return Until(() => caster.ActiveSpell?.Id == "rain_call");
 			Check("Key 1 now readies Rain Call", caster.ActiveSpell?.Id == "rain_call");
 
 			var weatherService = ServiceLocator.Get<IWeather>();
@@ -1278,13 +1282,14 @@ namespace Debugging
 
 		// Held for a tenth of a second, like a quick real press, and across at least two physics steps: a tap of a few
 		// frames could fall inside one slow frame and be gone before the game read it
-		private static IEnumerator WatchModes(GameState.Interfaces.IInputModeService inputMode, List<string> modes, float seconds)
+		// Waits for something the game does in response to input, up to a real-time limit. A fixed wait in game time can
+		// run out inside one slow frame, before the physics step that acts on a key press has happened
+		private static IEnumerator Until(Func<bool> done, float seconds = 1.5f)
 		{
-			for (var t = 0f; t < seconds; t += Time.unscaledDeltaTime)
-			{
-				modes.Add($"{inputMode.Mode}");
+			var giveUp = Time.realtimeSinceStartup + seconds;
+
+			while (!done() && Time.realtimeSinceStartup < giveUp)
 				yield return null;
-			}
 		}
 
 		private IEnumerator TapRoutine(Key key)
