@@ -59,3 +59,8 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 ## Ground blended by a control map
 
 02/11/2026 - Varied ground was first laid as flat discs over the island, which z-fought with the ground beneath at a distance. Now the island is one surface whose shader blends grass with four other grounds by a painted control map, like a terrain's splat map: no layers, nothing to flicker, one draw. The builder paints the map, so the layout stays in code. A Unity Terrain would allow hand painting and sculpting, but would mean rebuilding the island's colliders and everything placed on it for the same look.
+
+## The broom holds its height
+
+02/11/2026 - Flying felt like a constant sink. Forward flight steered by the camera's full look, and the follow camera rests looking down at the witch, so plain forward was a slow dive; the hover ceiling also ignored the sea (no ground found, so always "too high") and forced a 2.5 m/s descent. Now forward flight is level and only a deliberate tilt past the camera's resting angle climbs or dives; the sea counts for the ceiling; above the ceiling the broom eases down in proportion to how far over it is, so it settles instead of bobbing; and the ceiling follows the land down slowly, so leaving a height is still the glide the original design wanted.
+

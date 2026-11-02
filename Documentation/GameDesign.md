@@ -64,7 +64,7 @@ All sound is synthesised at startup (`Audio/SoundSynth`): footsteps, jumps and l
 * Camera relative running with walk, run and sprint speeds.
 * Jumps are buffered and forgiving (coyote time). Holding jump goes higher, tapping hops. One air jump.
 * Bounce mushrooms launch you and refresh your air jump. Moving platforms carry you.
-* **Broom** (F): fly where the camera looks, Space to climb, Ctrl to dive, Shift to boost. Flight uses a charge that refills on the ground. The broom skims the land: above its hover ceiling it glides down, so the high places still need platforming. Updrafts lift you past the ceiling and refill the broom.
+* **Broom** (F): fly level where the camera faces (it holds its height), Space to climb, Ctrl to dive, Shift to boost; tilting the view well up or down also climbs or dives. Flight uses a charge that refills on the ground. The broom skims the land and the sea: above its 7 m hover ceiling it eases back down, and flying off something high becomes a long glide, so the high places still need platforming. Updrafts lift you past the ceiling and refill the broom.
 * Falling into the sea puts you back on the last safe ground.
 
 ## Alchemy

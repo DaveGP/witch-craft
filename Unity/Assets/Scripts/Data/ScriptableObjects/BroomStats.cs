@@ -24,5 +24,11 @@ namespace Data.ScriptableObjects
 		public float RechargeRate = 2.5f;
 
 		public float BoostDrainMultiplier = 2f;
+
+		[Tooltip("Fastest the broom eases back down when above its hover ceiling (a glide, not a drop)")]
+		public float GlideSpeed = 1.5f;
+
+		[Tooltip("How quickly the ceiling follows the land down after flying off something high, metres a second")]
+		public float CeilingFollowDown = 1.2f;
 	}
 }

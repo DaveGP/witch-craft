@@ -108,6 +108,11 @@ namespace Character.Movement
 			movementController.Move(CameraRelative(move, cameraController.Forward));
 		}
 
+		// The camera's usual downward look while following her, and how far past it the view must tilt to steer
+		private const float RestingCameraPitch = 15f;
+
+		private const float PitchDeadZone = 12f;
+
 		private void Fly(CharacterInput characterInput)
 		{
 			movementController.SetGait(CharacterGait.Fly);
@@ -120,8 +125,15 @@ namespace Character.Movement
 			if (characterInput.Action.HasFlag(CharacterAction.Descend))
 				vertical -= 1f;
 
-			// Steer with the full camera look so pitching the view climbs and dives
-			var direction = CameraRelative(characterInput.Move, cameraController.LookDirection);
+			// Forward flight is level. The camera normally looks down at her, which used to tip every flight into a
+			// slow dive; now only a deliberate tilt of the view, well past where it rests, climbs or dives
+			var lookingDown = -Mathf.Asin(Mathf.Clamp(cameraController.LookDirection.y, -1f, 1f)) * Mathf.Rad2Deg;
+			var tilt = lookingDown - RestingCameraPitch;
+			var steer = Mathf.Sign(tilt) * Mathf.Clamp01((Mathf.Abs(tilt) - PitchDeadZone) / 30f);
+
+			vertical = Mathf.Clamp(vertical - steer * Mathf.Max(0f, characterInput.Move.y), -1f, 1f);
+
+			var direction = CameraRelative(characterInput.Move, cameraController.Forward);
 
 			broomController.Fly(direction, vertical, characterInput.Action.HasFlag(CharacterAction.Sprint));
 		}

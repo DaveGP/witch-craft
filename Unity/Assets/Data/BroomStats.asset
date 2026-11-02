@@ -21,3 +21,5 @@ MonoBehaviour:
   MaxCharge: 10
   RechargeRate: 2.5
   BoostDrainMultiplier: 2
+  GlideSpeed: 1.5
+  CeilingFollowDown: 1.2

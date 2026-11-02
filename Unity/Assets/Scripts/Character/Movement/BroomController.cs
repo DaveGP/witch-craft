@@ -46,7 +46,11 @@ namespace Character.Movement
 
 		private float upliftUntil;
 
-		private LayerMask groundMask;
+		private LayerMask ceilingMask;
+
+		// What the hover ceiling is measured from: the land below, followed up at once but down only gradually, so
+		// flying off a hill or the spire is a long glide rather than a sudden sink
+		private float ceilingGround;
 
 
 		private void Awake()
@@ -70,7 +74,8 @@ namespace Character.Movement
 
 			charge = stats.MaxCharge;
 
-			groundMask = LayerMask.GetMask("Ground", "Environment");
+			// The sea counts as something to fly above
+			ceilingMask = LayerMask.GetMask("Ground", "Environment", "Water");
 
 			if (broomVisual != null)
 				broomVisual.SetActive(false);
@@ -95,6 +100,8 @@ namespace Character.Movement
 			IsMounted = true;
 
 			mountedTime = Time.time;
+
+			ceilingGround = GroundBelow() ?? transform.position.y;
 
 			movementController.Suspended = true;
 
@@ -159,21 +166,37 @@ namespace Character.Movement
 				Dismount();
 		}
 
-		// A broom skims the land: above its ceiling it glides gently down, unless an updraft is carrying it
+		// A broom skims the land and the sea: it holds its height anywhere under its ceiling, and above it eases back
+		// down, gently and more slowly the closer it is, so it settles at the ceiling instead of bobbing. Updrafts
+		// carry it past
 		private float ApplyCeiling(float verticalVelocity)
 		{
+			var ground = GroundBelow();
+
+			if (ground.HasValue && ground.Value >= ceilingGround)
+				ceilingGround = ground.Value;
+			else
+				ceilingGround = Mathf.MoveTowards(ceilingGround, ground ?? float.NegativeInfinity, stats.CeilingFollowDown * Time.fixedDeltaTime);
+
 			if (Time.time < upliftUntil)
+			{
+				// Ride the updraft up, and the ceiling with it
+				ceilingGround = Mathf.Max(ceilingGround, transform.position.y - hoverCeiling);
 				return Mathf.Max(verticalVelocity, stats.VerticalSpeed);
+			}
 
-			var altitude = Physics.Raycast(transform.position, Vector3.down, out var hit, 200f, groundMask, QueryTriggerInteraction.Ignore)
-				? transform.position.y - hit.point.y
-				: float.PositiveInfinity;
+			var excess = transform.position.y - ceilingGround - hoverCeiling;
 
-			if (altitude <= hoverCeiling)
+			if (excess <= 0f)
 				return verticalVelocity;
 
-			return Mathf.Min(verticalVelocity, -2.5f);
+			return Mathf.Min(verticalVelocity, -Mathf.Min(excess * 1.5f, stats.GlideSpeed));
 		}
+
+		private float? GroundBelow() =>
+			Physics.Raycast(transform.position, Vector3.down, out var hit, 200f, ceilingMask, QueryTriggerInteraction.Ignore)
+				? hit.point.y
+				: null;
 
 		private void UpdateFacing(Vector3 direction)
 		{

@@ -373,6 +373,29 @@ namespace Debugging
 			var ceilingHeight = player.transform.position.y;
 			Check($"The broom keeps under its hover ceiling over open ground ({ceilingHeight:0.0}m)", ceilingHeight < 9.5f);
 
+			// Flying level under the ceiling, the broom holds its height: no steady sink
+			movement.Teleport(new Vector3(-3f, 4f, -15f));
+			yield return new WaitForSeconds(0.3f);
+			var levelStart = player.transform.position.y;
+			Hold(Key.W);
+			yield return new WaitForSeconds(1.5f);
+			Release();
+			var levelDrift = player.transform.position.y - levelStart;
+			Check($"Flying level holds its height ({levelDrift:+0.00;-0.00}m over 1.5 s)", Mathf.Abs(levelDrift) < 0.4f);
+
+			// Out over the sea she cruises above the waves instead of sinking towards them
+			movement.Teleport(new Vector3(25f, 4f, 88f));
+			yield return new WaitForSeconds(0.3f);
+			var seaStart = player.transform.position.y;
+			Hold(Key.W);
+			yield return new WaitForSeconds(1.5f);
+			Release();
+			var seaDrift = player.transform.position.y - seaStart;
+			Check($"Over the sea the broom holds its height ({seaDrift:+0.00;-0.00}m over 1.5 s)", broom.IsMounted && Mathf.Abs(seaDrift) < 0.5f);
+
+			movement.Teleport(flyStart + Vector3.up * 3f);
+			yield return new WaitForSeconds(0.5f);
+
 			Tap(Key.F);
 			yield return new WaitForSeconds(2f);
 			Check("F again dismounts", !broom.IsMounted);
