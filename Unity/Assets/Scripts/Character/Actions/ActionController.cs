@@ -61,6 +61,7 @@ namespace Character.Actions
 			IInteractable nearest = null;
 
 			var nearestDistance = float.MaxValue;
+			var nearestInBackground = true;
 
 			for (var i = 0; i < count; i++)
 			{
@@ -69,13 +70,18 @@ namespace Character.Actions
 				if (interactable == null || !interactable.CanInteract)
 					continue;
 
+				// Something to pick or use beats a background interactable (Sable) however close she is
+				if (interactable.InBackground && !nearestInBackground)
+					continue;
+
 				var distance = (interactable.Position - centre).sqrMagnitude;
 
-				if (distance >= nearestDistance)
+				if (distance >= nearestDistance && interactable.InBackground == nearestInBackground)
 					continue;
 
 				nearest = interactable;
 				nearestDistance = distance;
+				nearestInBackground = interactable.InBackground;
 			}
 
 			if (nearest == focus)

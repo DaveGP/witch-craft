@@ -252,13 +252,35 @@ namespace UserInterface.Views
 			objectivePanel.SetActive(!string.IsNullOrEmpty(text));
 		}
 
+		/// <summary>
+		/// What the interact prompt says right now, for the playtest.
+		/// </summary>
+		public string PromptText => prompt.text;
+
+		/// <summary>
+		/// What the interact prompt is offering, for the playtest.
+		/// </summary>
+		public IInteractable Focus => focus;
+
 		private void SetFocus(IInteractable interactable)
 		{
 			focus = interactable;
 
-			var button = Gamepad ? "(X)" : "[E]";
+			UpdatePrompt();
+		}
 
-			prompt.text = interactable != null ? $"<color=#{UIFactory.Hex(UIFactory.Accent)}>{button}</color> {interactable.Prompt}" : "";
+		// Redrawn every frame: what E does can change without the focus changing (a moonpetal opening at dusk, a
+		// recruit's gift now in the satchel), and something just gathered must never stay on screen
+		private void UpdatePrompt()
+		{
+			if (focus is Object destroyed && destroyed == null || focus is { CanInteract: false })
+				focus = null;
+
+			var button = Gamepad ? "(X)" : "[E]";
+			var text = focus != null ? $"<color=#{UIFactory.Hex(UIFactory.Accent)}>{button}</color> {focus.Prompt}" : "";
+
+			if (prompt.text != text)
+				prompt.text = text;
 		}
 
 		private bool Gamepad => controlScheme != null && controlScheme.UsingGamepad;
@@ -345,6 +367,8 @@ namespace UserInterface.Views
 			broomFill.color = potionEffects.IsActive(PotionEffect.Skyward) ? UIFactory.Accent : new Color(0.6f, 0.75f, 1f);
 
 			potions.text = string.Join("\n", potionEffects.Active.Select(pair => $"{pair.Key}  {Mathf.CeilToInt(pair.Value)}s"));
+
+			UpdatePrompt();
 
 			homeInfo.text = $"{Clock()}\n<size=17><color=#{UIFactory.Hex(UIFactory.TextMuted)}>{HomeSummary()}</color></size>";
 

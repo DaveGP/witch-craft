@@ -11,6 +11,11 @@ namespace Interaction.Interfaces
 
 		bool CanInteract { get; }
 
+		/// <summary>
+		/// Only offered when nothing else is in reach: Sable at the witch's heel shouldn't steal E from a herb.
+		/// </summary>
+		bool InBackground => false;
+
 		Vector3 Position { get; }
 
 		void Interact(GameObject interactor);

@@ -197,6 +197,9 @@ namespace Companions
 
 		public bool CanInteract => mode != Mode.Ride && mode != Mode.Hop;
 
+		// She's always close by, so anything else in reach comes first
+		public bool InBackground => true;
+
 		public Vector3 Position => transform.position;
 
 		public bool IsAsleep => stage == Stage.Sleep && mode is Mode.Follow or Mode.Bed;

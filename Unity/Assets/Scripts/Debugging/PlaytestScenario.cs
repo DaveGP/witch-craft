@@ -734,7 +734,48 @@ namespace Debugging
 
 			yield return WitchArt(player);
 
+			yield return GatherPrompt(player);
+
 			report.AppendLine($"Inventory: {string.Join(", ", inventory.Items.Select(stack => stack.ToString()))}");
+		}
+
+		// The interact prompt names what E will do: a herb in reach beats Sable at the witch's feet, and once it's
+		// gathered the prompt changes straight away
+		private IEnumerator GatherPrompt(PlayerCharacter player)
+		{
+			var hud = FindAnyObjectByType<UserInterface.Views.HudView>();
+			var movement = player.GetComponent<IMovementController>();
+			var cat = FindAnyObjectByType<CatCompanion>();
+			var respawn = typeof(Gatherable).GetField("respawnSeconds", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+			var herb = FindObjectsByType<Gatherable>(FindObjectsSortMode.None)
+				.Where(gatherable => gatherable.CanInteract && !gatherable.Prompt.Contains("opens at night") && (float)respawn.GetValue(gatherable) > 0f)
+				.OrderBy(gatherable => Vector3.Distance(gatherable.transform.position, player.transform.position))
+				.FirstOrDefault();
+
+			if (herb == null)
+			{
+				report.AppendLine("NOTE  No gatherable to test the prompt with");
+				yield break;
+			}
+
+			movement.Teleport(herb.transform.position - player.transform.forward * 1.1f + Vector3.up * 0.2f);
+			yield return new WaitForSeconds(0.3f);
+
+			// Sable right where the witch is looking, closer than the herb
+			cat.transform.position = player.transform.position + player.transform.forward * 0.9f;
+			yield return new WaitForFixedUpdate();
+			yield return null;
+
+			var before = hud.PromptText;
+			Check($"With a herb in reach, the prompt offers it, not Sable (\"{before}\")", ReferenceEquals(hud.Focus, herb) && before.Contains(herb.Prompt));
+
+			Tap(Key.E);
+			yield return new WaitForSeconds(0.3f);
+
+			// A neighbouring herb of the same kind may take its place; this one must be gone from the prompt
+			var after = hud.PromptText;
+			Check($"Gathering it updates the prompt straight away (now \"{after}\")", !herb.CanInteract && !ReferenceEquals(hud.Focus, herb));
 		}
 
 		// The Stellar Witch art (on machines with the packs): locomotion from Synty, and the Human Spellcasting
@@ -1196,11 +1237,13 @@ namespace Debugging
 			StartCoroutine(TapRoutine(key));
 		}
 
+		// Held across at least two physics steps, as a real press is: a few fast batch-mode frames can fall between
+		// fixed updates and be missed by anything read there
 		private IEnumerator TapRoutine(Key key)
 		{
 			Hold(key);
-			yield return null;
-			yield return null;
+			yield return new WaitForFixedUpdate();
+			yield return new WaitForFixedUpdate();
 			yield return null;
 			Release();
 		}
