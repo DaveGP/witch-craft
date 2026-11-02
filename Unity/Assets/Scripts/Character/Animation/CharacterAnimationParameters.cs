@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Character.Animation
 {
 	// Crewfall's locomotion parameter names, so its Synty Animator Controller can drive the witch,
-	// plus a few for jumping and the broom.
+	// plus a few for jumping, the broom and casting spells.
 	public static class CharacterAnimationParameters
 	{
 		public static readonly int ForwardVelocity =
@@ -33,5 +33,14 @@ namespace Character.Animation
 
 		public static readonly int Jump =
 			Animator.StringToHash("Jump");
+
+		public static readonly int SpellReady =
+			Animator.StringToHash("SpellReady");
+
+		public static readonly int Cast =
+			Animator.StringToHash("Cast");
+
+		public static readonly int CastStyle =
+			Animator.StringToHash("CastStyle");
 	}
 }

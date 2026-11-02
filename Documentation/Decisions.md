@@ -43,3 +43,16 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 ## Starter hut refunds half
 
 01/11/2026 - Unmake gave back the full cost of anything, including the starter hut the witch is given for free, so pulling the hut down was a pile of free materials and a shortcut past gathering for the first expansion. Starter pieces are flagged on their `PieceRecord` and return half their cost, rounded down; the Unmake prompt says why. Players can still clear the hut to redesign it, but never come out ahead. The bookshelf moved to level 1 so the storybook bookcase can always be rebuilt.
+
+## The witch's art: Synty locomotion plus a casting layer, on Simple Lit
+
+02/11/2026 - The Stellar Witch model is Humanoid, so Synty's Base Locomotion and the Human Spellcasting clips both retarget onto her. Locomotion fills the base layer; casting plays on an upper-body layer, so she can cast while running. Each spell picks one of four gestures (point, push, call, sweep) rather than one clip per spell, so new spells only need a gesture. Her materials use Unity's toon shader package, which doesn't compile on this Unity's URP and drew her magenta, so the setup tool copies them onto URP Simple Lit with her own textures; that's also light for the web build.
+
+## Roofs keep a shell under their art
+
+02/11/2026 - Art for a roof replaces only the slope; the placeholder's gable ends and ceiling stay. The pack's curved roofs have open ends, and a roof with gaps let the sky (and the rain) in. Rain now collides with buildings too, so a roof means shelter.
+
+## Scenery that can't be picked
+
+02/11/2026 - Scenic dressing never uses a model that a gatherable uses (mushrooms, logs, the berry bush, the gather flowers, nettle-like ferns, the boulder rock), so players don't try to pick things they can't.
+

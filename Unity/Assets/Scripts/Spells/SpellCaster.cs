@@ -25,6 +25,8 @@ namespace Spells
 
 		public bool IsAiming => activeEffect?.IsAiming ?? false;
 
+		public event System.Action<SpellDefinition> SpellCast;
+
 		private ISpellBook spellBook;
 
 		private IEventBusSender eventBus;
@@ -100,6 +102,8 @@ namespace Spells
 			}
 
 			ServiceLocator.Get<IAudioService>()?.Play(Sound.Cast, 0.45f, 0.1f);
+
+			SpellCast?.Invoke(activeDefinition);
 
 			activeEffect.Cast();
 		}

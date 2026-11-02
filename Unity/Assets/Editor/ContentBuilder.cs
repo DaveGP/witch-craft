@@ -377,13 +377,15 @@ namespace WitchCraftEditor
 			piece.Prefab = prefab;
 			piece.Cost = cost.Select(entry => new ItemStack(items[entry.item], entry.amount)).ToList();
 
-			// The planter's herbs stay visible over any art: they're the harvest
-			ArtSlotOnPrefab(prefab, null, $"piece:{id}", name, "Growth");
+			// The planter's herbs stay visible over any art: they're the harvest. So does a roof's shell
+			ArtSlotOnPrefab(prefab, null, $"piece:{id}", name, snap == BuildSnap.Roof ? RoofShell : "Growth");
 
 			EditorUtility.SetDirty(piece);
 
 			Database.BuildPieces.Add(piece);
 		}
+
+		private const string RoofShell = "Shell";
 
 		private static GameObject Root(string name)
 		{
@@ -472,6 +474,9 @@ namespace WitchCraftEditor
 			var root = Root(name);
 
 			MeshObject("Slope", root.transform, Wedge(), Vector3.zero, Vector3.one, material, true);
+
+			// Gable ends and ceiling, kept under roof art, which only replaces the slope. Timber, like the beams
+			MeshObject(RoofShell, root.transform, WedgeShell(), Vector3.zero, Vector3.one, Wood);
 
 			return Save(root, "Building");
 		}

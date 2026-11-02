@@ -10,6 +10,7 @@ using Alchemy.Interfaces;
 using Audio;
 using Audio.Interfaces;
 using Character;
+using Character.Animation;
 using Character.Movement.Interfaces;
 using Companions;
 using Companions.Interfaces;
@@ -694,6 +695,35 @@ namespace Debugging
 			weather.SetWeather(WeatherKind.Rain);
 			yield return new WaitForSeconds(9f);
 			Check("Rain sets in", weather.IsRaining);
+
+			// The hut's roof keeps the rain out: no drops below the roof inside its footprint
+			var roofs = FindObjectsByType<PlacedPiece>(FindObjectsSortMode.None).Where(piece => piece.Definition.Snap == BuildSnap.Roof).ToList();
+			var roofArea = roofs.Select(piece => piece.GetComponentInChildren<Collider>().bounds).Aggregate((all, next) => { all.Encapsulate(next); return all; });
+			var drops = new ParticleSystem.Particle[3000];
+			var rainSystem = GameObject.Find("Rain").GetComponent<ParticleSystem>();
+			var sheltered = 0;
+			var near = 0;
+
+			for (var sample = 0; sample < 20; sample++)
+			{
+				var count = rainSystem.GetParticles(drops);
+
+				for (var i = 0; i < count; i++)
+				{
+					var drop = drops[i].position;
+					var inside = drop.x > roofArea.min.x + 0.4f && drop.x < roofArea.max.x - 0.4f && drop.z > roofArea.min.z + 0.4f && drop.z < roofArea.max.z - 0.4f;
+
+					if (inside && drop.y < roofArea.min.y - 0.2f && drop.y > roofArea.min.y - 3f)
+						sheltered++;
+					else if (!inside && drop.y < 2.5f && Vector3.Distance(drop, roofArea.center) < 12f)
+						near++;
+				}
+
+				yield return new WaitForSeconds(0.1f);
+			}
+
+			Check($"Under the hut's roof it stays dry ({sheltered} drops inside, {near} falling nearby)", roofs.Count > 0 && sheltered == 0 && near > 0);
+			yield return View("16b_roof", new Vector3(-6f, 4.5f, -6f), new Vector3(0f, 2.8f, 2f));
 			yield return View("16_rain", new Vector3(9f, 6f, -14f), new Vector3(0f, 1.5f, 0f));
 
 			weather.SetWeather(WeatherKind.Clear);
@@ -702,7 +732,87 @@ namespace Debugging
 
 			yield return WitchName(inputMode, player);
 
+			yield return WitchArt(player);
+
 			report.AppendLine($"Inventory: {string.Join(", ", inventory.Items.Select(stack => stack.ToString()))}");
+		}
+
+		// The Stellar Witch art (on machines with the packs): locomotion from Synty, and the Human Spellcasting
+		// clips on the upper body while a spell is readied and for each cast
+		private IEnumerator WitchArt(PlayerCharacter player)
+		{
+			var swap = player.GetComponentsInChildren<Art.ArtSwap>().FirstOrDefault(art => art.Key == "witch");
+			var rig = swap != null ? swap.ArtAnimator : null;
+
+			if (rig == null || rig.runtimeAnimatorController == null || rig.parameters.All(parameter => parameter.name != "CastStyle"))
+			{
+				report.AppendLine("NOTE  The witch has no rigged art on this machine; animation checks skipped");
+				yield break;
+			}
+
+			var movement = player.GetComponent<IMovementController>();
+			var caster = player.GetComponent<ISpellCaster>();
+
+			Check($"The witch's art is a humanoid rig with the casting layer ({rig.layerCount} layers)", rig.isHuman && rig.layerCount == 2);
+
+			var head = rig.GetBoneTransform(HumanBodyBones.Head);
+			var headHeight = head.position.y - player.transform.position.y;
+			Check($"She is witch-sized (head {headHeight:0.00}m up)", headHeight > 1.25f && headHeight < 1.6f);
+
+			movement.Teleport(new Vector3(-3f, 0.2f, -15f));
+
+			// Spells put away: standing idle
+			if (caster.ActiveSpell != null)
+				caster.SelectSlot(caster.ActiveSlot);
+
+			yield return new WaitForSeconds(1.5f);
+			Check("Standing still she idles", rig.GetCurrentAnimatorStateInfo(0).IsName("Locomotion") && rig.GetCurrentAnimatorStateInfo(1).IsName("Empty"));
+			yield return FrameWitch(player, 3.2f);
+			Shot("27_witch_idle");
+
+			caster.SelectSlot(0);
+			yield return new WaitForSeconds(1.2f);
+			var ready = rig.GetCurrentAnimatorStateInfo(1);
+			Check($"Readying a spell raises her casting hand ({caster.ActiveSpell?.Id})", ready.IsName("Ready") || ready.IsName("ReadyIdle"));
+
+			// Bubble is called down from the sky; everything else she points or pushes
+			caster.Cast();
+			yield return new WaitForSeconds(0.25f);
+			var cast = rig.GetCurrentAnimatorStateInfo(1);
+			var expected = $"Cast{(int)CharacterAnimator.CastStyleFor(caster.ActiveSpell.Effect)}";
+			Check($"Casting plays a cast ({expected})", cast.IsName(expected));
+			Shot("28_witch_cast");
+			EndFrame();
+
+			caster.SelectSlot(caster.ActiveSlot);
+
+			Hold(Key.W);
+			yield return new WaitForSeconds(1.2f);
+			var running = rig.GetCurrentAnimatorStateInfo(0);
+			Check($"Running uses the locomotion blend (speed {rig.GetFloat("Velocity"):0.0})", running.IsName("Locomotion") && rig.GetFloat("Velocity") > 4f);
+			yield return FrameWitch(player, 3.5f);
+			Shot("29_witch_run");
+			Release();
+			EndFrame();
+
+			movement.Teleport(new Vector3(-3f, 0.2f, -15f));
+			yield return new WaitForSeconds(0.5f);
+		}
+
+		private IEnumerator FrameWitch(PlayerCharacter player, float distance)
+		{
+			var target = player.transform.position + Vector3.up * 1f;
+			var offset = (player.transform.forward + player.transform.right * 0.6f).normalized * distance + Vector3.up * 0.6f;
+
+			EndFrame();
+
+			frame = new GameObject("View_Witch").transform;
+			frame.position = target + offset;
+			frame.LookAt(target);
+
+			ServiceLocator.Get<IEventBusSender>().SetCameraOverride(frame);
+
+			yield return new WaitForSeconds(0.3f);
 		}
 
 		// The name given on the title screen is saved, shown on the HUD, filled into dialogue, and can be changed at the hearth

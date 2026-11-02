@@ -1,6 +1,8 @@
 using Art;
 using Character.Movement.Interfaces;
 using Data.Enums;
+using Data.ScriptableObjects;
+using Spells.Interfaces;
 using UnityEngine;
 using Utilities;
 
@@ -9,7 +11,8 @@ namespace Character.Animation
 {
 	// Procedural animation for the placeholder witch: squash and stretch on jumps and landings,
 	// a running bob and lean, and a seated pose on the broom. When the Art Set gives the witch a rigged model,
-	// its Animator is driven too, using Crewfall's locomotion parameter names.
+	// its Animator is driven too, using Crewfall's locomotion parameter names, plus SpellReady while a spell is
+	// readied and a Cast trigger with a CastStyle for each spell cast.
 	public class CharacterAnimator : MonoBehaviour
 	{
 		[SerializeField] private Transform body;
@@ -17,6 +20,8 @@ namespace Character.Animation
 		[SerializeField] private Transform hat;
 
 		private ICharacterMovementState movementState;
+
+		private ISpellCasterState spells;
 
 		private Vector3 restScale;
 
@@ -49,6 +54,8 @@ namespace Character.Animation
 			restPosition = body.localPosition;
 
 			artSwap = GetComponent<ArtSwap>();
+
+			spells = GetComponentInParent<ISpellCasterState>();
 		}
 
 		private void Start()
@@ -59,7 +66,36 @@ namespace Character.Animation
 				rigParameters?.SetTrigger(CharacterAnimationParameters.Jump);
 			};
 			movementState.Landed += () => squash = 0.3f;
+
+			if (spells != null)
+				spells.SpellCast += Cast;
 		}
+
+		private void OnDestroy()
+		{
+			if (spells != null)
+				spells.SpellCast -= Cast;
+		}
+
+		private void Cast(SpellDefinition spell)
+		{
+			if (rigParameters == null || spell == null)
+				return;
+
+			rigParameters.SetInteger(CharacterAnimationParameters.CastStyle, (int)CastStyleFor(spell.Effect));
+			rigParameters.SetTrigger(CharacterAnimationParameters.Cast);
+		}
+
+		/// <summary>
+		/// The gesture each spell is cast with, matching the casting layer's CastStyle states.
+		/// </summary>
+		public static CastStyle CastStyleFor(SpellEffectType effect) => effect switch
+		{
+			SpellEffectType.Gust or SpellEffectType.Blink => CastStyle.Push,
+			SpellEffectType.Bubble or SpellEffectType.RainCall => CastStyle.Call,
+			SpellEffectType.Bloom => CastStyle.Sweep,
+			_ => CastStyle.Point
+		};
 
 		private void LateUpdate()
 		{
@@ -96,6 +132,8 @@ namespace Character.Animation
 			// Crewfall's controller reads Gait 4 as crouching, so flying shows as idle unless IsFlying is wired up
 			rigParameters.SetInteger(CharacterAnimationParameters.Gait, flying ? 0 : (int)movementState.Gait);
 			rigParameters.SetInteger(CharacterAnimationParameters.MovementDirection, (int)MovementDirectionUtility.FromLocalVelocity(local));
+
+			rigParameters.SetBool(CharacterAnimationParameters.SpellReady, spells?.ActiveSpell != null && !flying);
 		}
 
 		private void UpdateSquash()

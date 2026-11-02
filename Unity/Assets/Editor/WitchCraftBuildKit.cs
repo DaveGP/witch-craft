@@ -214,6 +214,8 @@ namespace WitchCraftEditor
 
 		public static Mesh Wedge() => SaveMesh("Wedge", BuildWedge());
 
+		public static Mesh WedgeShell() => SaveMesh("WedgeShell", BuildWedgeShell());
+
 		private static Mesh SaveMesh(string name, Mesh mesh)
 		{
 			EnsureFolder(MeshFolder);
@@ -273,6 +275,55 @@ namespace WitchCraftEditor
 			AddQuad(vertices, triangles, frontLeft, frontRight, backRight, backLeft);
 			AddTriangle(vertices, triangles, frontLeft, backLeft, ridgeLeft);
 			AddTriangle(vertices, triangles, frontRight, ridgeRight, backRight);
+
+			return Finish(vertices, triangles);
+		}
+
+		// Everything of the wedge but its slope, a hair inside it: the gable ends, the ceiling underneath and the back.
+		// Roof art only replaces the slope, so this stays to close the gables and keep the sky (and rain) out
+		private static Mesh BuildWedgeShell()
+		{
+			var vertices = new List<Vector3>();
+			var triangles = new List<int>();
+
+			const float half = 1.14f;
+			const float height = 1.18f;
+			const float front = -1.14f;
+			const float back = 0.99f;
+			const float floor = 0.01f;
+
+			var frontLeft = new Vector3(-half, floor, front);
+			var frontRight = new Vector3(half, floor, front);
+			var backLeft = new Vector3(-half, floor, back);
+			var backRight = new Vector3(half, floor, back);
+			var ridgeLeft = new Vector3(-half, height, back);
+			var ridgeRight = new Vector3(half, height, back);
+
+			AddQuad(vertices, triangles, backRight, ridgeRight, ridgeLeft, backLeft);
+			AddQuad(vertices, triangles, frontLeft, frontRight, backRight, backLeft);
+
+			// Seen from inside the hut too
+			AddQuad(vertices, triangles, backLeft, backRight, frontRight, frontLeft);
+
+			// The gable's top edge sags like the curved roof art, rising slowly from the eave and steeply to the
+			// ridge, so it tucks under the roof rather than poking out above it
+			const int steps = 8;
+
+			foreach (var x in new[] { -half, half })
+			{
+				var foot = new Vector3(x, floor, back);
+
+				for (var i = 0; i < steps; i++)
+				{
+					var a = Sag(x, i / (float)steps);
+					var b = Sag(x, (i + 1) / (float)steps);
+
+					AddTriangle(vertices, triangles, foot, a, b);
+					AddTriangle(vertices, triangles, foot, b, a);
+				}
+			}
+
+			Vector3 Sag(float x, float t) => new(x, floor + (height - floor) * Mathf.Pow(t, 1.6f), Mathf.Lerp(front, back, t));
 
 			return Finish(vertices, triangles);
 		}

@@ -105,6 +105,7 @@ namespace WitchCraftEditor
 				// Local-only art packs, when this machine has them
 				CasualCatSetup.Run();
 				EnchantedRealmSetup.Run();
+				StellarWitchSetup.Run();
 
 				EditorApplication.Exit(0);
 			}
@@ -151,6 +152,8 @@ namespace WitchCraftEditor
 			BuildPaths();
 			BuildScatter();
 			BuildEnchantment();
+			BuildGroundPatches();
+			BuildScenery();
 
 			var player = BuildPlayer();
 			BuildCat(player);
@@ -1414,7 +1417,173 @@ namespace WitchCraftEditor
 			SurfaceSlot(parent, "surface:sand", "Beaches", Sand);
 			SurfaceSlot(parent, "surface:path", "Path stones", PathMat);
 			SurfaceSlot(parent, "surface:rock", "Rocks, cliffs and stones", Rock, RockDark);
+			SurfaceSlot(parent, "surface:forest-floor", "Leaf litter under the forest", ForestFloor);
+			SurfaceSlot(parent, "surface:meadow", "Sunny meadow patches across the island", Meadow);
+			SurfaceSlot(parent, "surface:moss", "Deep moss patches", Moss);
+			SurfaceSlot(parent, "surface:mud", "Muddy bank round the pond", Mud);
+			SurfaceSlot(parent, "surface:dirt", "Bare earth by the cave mouth and the hills", Dirt);
 		}
+
+		#region Ground patches and scenery
+
+		private static Material ForestFloor => Lit("ForestFloor", new Color(0.46f, 0.52f, 0.3f));
+		private static Material Meadow => Lit("Meadow", new Color(0.66f, 0.8f, 0.42f));
+		private static Material Moss => Lit("Moss", new Color(0.36f, 0.6f, 0.38f));
+		private static Material Mud => Lit("Mud", new Color(0.45f, 0.38f, 0.3f));
+		private static Material Dirt => Lit("Dirt", new Color(0.62f, 0.5f, 0.36f));
+
+		// Places the island's flat ground shouldn't be painted or dressed: the home plot, the pond's water and the
+		// cave, plus the spire's foot
+		private static bool Clear(Vector3 point, float margin)
+		{
+			Vector3 Flat(Vector3 v) => new(v.x, 0f, v.z);
+
+			return Vector3.Distance(Flat(point), Flat(HomeCentre)) > 15f + margin
+				&& Vector3.Distance(Flat(point), Flat(PondCentre)) > 13.6f + margin
+				&& Vector3.Distance(Flat(point), Flat(SpireCentre)) > 7f + margin
+				&& !(Mathf.Abs(point.x - CaveCentre.x) < 11f + margin && Mathf.Abs(point.z - CaveCentre.z) < 7f + margin)
+				&& Vector3.Distance(Flat(point), Vector3.zero) < 82f - margin;
+		}
+
+		// Is the ground flat (the island top, not a hill) across this circle?
+		private static bool Level(Vector3 centre, float radius)
+		{
+			for (var i = 0; i < 8; i++)
+			{
+				var angle = i * Mathf.PI / 4f;
+
+				if (Mathf.Abs(GroundY(centre.x + Mathf.Cos(angle) * radius, centre.z + Mathf.Sin(angle) * radius) - centre.y) > 0.05f)
+					return false;
+			}
+
+			return true;
+		}
+
+		// Irregular patches of different ground, laid flat over the island: a few overlapping discs per patch, each
+		// material a hair higher than the last so they stack cleanly. They're paint only: no colliders, and gameplay
+		// goes on exactly as on the grass beneath
+		private static void BuildGroundPatches()
+		{
+			var parent = Node("GroundPatches", world).transform;
+			var dice = new Random(11);
+
+			float Roll(float min, float max) => min + (float)dice.NextDouble() * (max - min);
+
+			void Patch(Vector3 centre, float size, Material material, float layer, int lobes)
+			{
+				for (var i = 0; i < lobes; i++)
+				{
+					var angle = Roll(0f, Mathf.PI * 2f);
+					var offset = i == 0 ? Vector3.zero : new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * Roll(0.3f, 0.7f) * size;
+					var radius = size * Roll(0.45f, 0.75f);
+					var point = OnGround(centre.x + offset.x, centre.z + offset.z);
+
+					if (!Clear(point, radius * 0.5f) || !Level(point, radius))
+						continue;
+
+					var disc = Prim(PrimitiveType.Cylinder, "Patch", parent, point + Vector3.up * layer, new Vector3(radius * 2f, 0.004f, radius * 2f), material, false,
+						new Vector3(0f, Roll(0f, 360f), 0f));
+					disc.layer = EnvironmentLayer;
+				}
+			}
+
+			// Leaf litter right through the forest
+			for (var i = 0; i < 14; i++)
+			{
+				var angle = Roll(0f, Mathf.PI * 2f);
+				var distance = Roll(0f, 22f);
+				Patch(OnGround(ForestCentre.x + Mathf.Cos(angle) * distance, ForestCentre.z + Mathf.Sin(angle) * distance), Roll(7f, 11f), ForestFloor, 0.012f, 4);
+			}
+
+			// A muddy bank all round the pond, overlapping enough to read as one ring
+			for (var i = 0; i < 30; i++)
+			{
+				var angle = i * Mathf.PI * 2f / 30f + Roll(-0.05f, 0.05f);
+				var distance = Roll(15.5f, 16.5f);
+				Patch(OnGround(PondCentre.x + Mathf.Cos(angle) * distance, PondCentre.z + Mathf.Sin(angle) * distance), Roll(4.5f, 6f), Mud, 0.016f, 3);
+			}
+
+			// Bare earth at the cave mouth and in the lee of the hills
+			Patch(OnGround(CaveCentre.x - 13f, CaveCentre.z), 7f, Dirt, 0.016f, 5);
+
+			foreach (var (centre, radius, _, _) in hills)
+				Patch(OnGround(centre.x + radius + 3f, centre.z + Roll(-3f, 3f)), Roll(3f, 5f), Dirt, 0.016f, 3);
+
+			// Meadows and moss scattered over the open island
+			for (var i = 0; i < 26; i++)
+			{
+				var angle = Roll(0f, Mathf.PI * 2f);
+				var distance = Roll(18f, 76f);
+				var centre = OnGround(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance);
+
+				Patch(centre, Roll(5f, 9f), i % 3 == 0 ? Moss : Meadow, i % 3 == 0 ? 0.008f : 0.004f, 4);
+			}
+		}
+
+		// Purely scenic spots for the Art Set: flowers, tufts, leaf litter, pebbles, shrubs and a ring of far
+		// mountains. They collide with nothing and are empty without art, and none of them looks like anything the
+		// witch can gather. Their own dice keep the rest of the world where it was
+		private static void BuildScenery()
+		{
+			var parent = Node("Scenery", world).transform;
+			var dice = new Random(23);
+
+			float Roll(float min, float max) => min + (float)dice.NextDouble() * (max - min);
+
+			Vector3 Around(Vector3 centre, float min, float max)
+			{
+				var angle = Roll(0f, Mathf.PI * 2f);
+				var distance = Roll(min, max);
+				return OnGround(centre.x + Mathf.Cos(angle) * distance, centre.z + Mathf.Sin(angle) * distance);
+			}
+
+			void Spot(string name, Vector3 position, string key, string note)
+			{
+				var spot = Node(name, parent, position, Roll(0f, 360f));
+				ArtSlot(spot, key, note);
+			}
+
+			// Three variants of each, picked at random, so a meadow doesn't look stamped
+			void Scatter(int count, string name, string key, string note, Func<Vector3> place, float margin = 0.5f)
+			{
+				for (var i = 0; i < count; i++)
+				{
+					var position = place();
+
+					if (Clear(position, margin))
+						Spot(name, position, $"{key}-{dice.Next(3) + 1}", note);
+				}
+			}
+
+			Scatter(80, "Flowers", "scenery:flowers", "Wildflower clump (art only)", () => Around(Vector3.zero, 16f, 80f));
+			Scatter(140, "Tuft", "scenery:tuft", "Grass tuft (art only)", () => Around(Vector3.zero, 16f, 81f), 0.2f);
+			Scatter(50, "LeafLitter", "scenery:leaves", "Fallen leaves on the forest floor (art only)", () => Around(ForestCentre, 2f, 27f));
+			Scatter(24, "Flowers", "scenery:flowers", "Wildflower clump (art only)", () => Around(PondCentre, 15f, 20f));
+			Scatter(30, "Shrub", "scenery:shrub", "Low shrub at a hill's foot (art only)", () =>
+			{
+				var hill = hills[dice.Next(hills.Length)];
+				return Around(hill.centre, hill.radius * 0.95f, hill.radius * 1.25f);
+			});
+
+			// Pebbles along the beach, between the grass edge and the sea
+			for (var i = 0; i < 36; i++)
+			{
+				var angle = Roll(0f, Mathf.PI * 2f);
+				var distance = Roll(85.5f, 89f);
+				Spot("Pebbles", OnGround(Mathf.Cos(angle) * distance, Mathf.Sin(angle) * distance), $"scenery:pebbles-{dice.Next(3) + 1}", "Beach pebbles (art only)");
+			}
+
+			// Far mountains round the horizon, well past anywhere a broom can reach
+			for (var i = 0; i < 14; i++)
+			{
+				var angle = i * Mathf.PI * 2f / 14f + Roll(-0.12f, 0.12f);
+				var distance = Roll(330f, 380f);
+				var spot = Node("Mountain", parent, new Vector3(Mathf.Cos(angle) * distance, -0.6f, Mathf.Sin(angle) * distance), Roll(0f, 360f));
+				ArtSlot(spot, i % 4 == 0 ? "scenery:mountain-snow" : "scenery:mountain", i % 4 == 0 ? "Snowy far mountain (art only)" : "Far mountain (art only)");
+			}
+		}
+
+		#endregion
 
 		#endregion
 
@@ -1715,7 +1884,7 @@ namespace WitchCraftEditor
 
 			Set(player.AddComponent<PotionAura>(), "glimmerLight", glimmer);
 
-			ArtSlot(visual, "witch", "The witch (an Animator using Crewfall's locomotion parameters is driven)");
+			ArtSlot(visual, "witch", "The witch (an Animator gets Velocity, IsGrounded, IsFlying, Jump, SpellReady, Cast and CastStyle)");
 			ArtSlot(broom, "broom", "The broom (shown while flying)");
 
 			var animator = visual.AddComponent<CharacterAnimator>();

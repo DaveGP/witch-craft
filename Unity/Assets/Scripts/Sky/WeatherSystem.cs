@@ -167,6 +167,16 @@ namespace Sky
 			shape.scale = new Vector3(40f, 40f, 1f);
 			shape.rotation = new Vector3(90f, 0f, 0f);
 
+			// Drops stop on the ground, roofs and walls, so it stays dry under a roof
+			var collision = system.collision;
+			collision.enabled = true;
+			collision.type = ParticleSystemCollisionType.World;
+			collision.mode = ParticleSystemCollisionMode.Collision3D;
+			collision.collidesWith = LayerMask.GetMask("Ground", "Environment");
+			collision.quality = ParticleSystemCollisionQuality.High;
+			collision.lifetimeLoss = 1f;
+			collision.radiusScale = 0.1f;
+
 			var renderer = system.GetComponent<ParticleSystemRenderer>();
 			renderer.renderMode = ParticleSystemRenderMode.Stretch;
 			renderer.lengthScale = 6f;

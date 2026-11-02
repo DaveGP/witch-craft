@@ -495,6 +495,158 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
+  - Key: scenery:flowers-1
+    Note: Wildflower clump (art only)
+    Prefab: {fileID: 849282439367077208, guid: 3a116c84f5c12446dadf8580e4a624c2, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:flowers-2
+    Note: Wildflower clump (art only)
+    Prefab: {fileID: 3622354948504924221, guid: 3fc8bbf19d29a4e278bd295312e2ee6e, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:flowers-3
+    Note: Wildflower clump (art only)
+    Prefab: {fileID: 57601098532229688, guid: e1dbec6a532ad4b1aaa90b7635bd030a, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:leaves-1
+    Note: Fallen leaves on the forest floor (art only)
+    Prefab: {fileID: 1785587500824458759, guid: 25efa31c16f834285b49089acefd394f, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:leaves-2
+    Note: Fallen leaves on the forest floor (art only)
+    Prefab: {fileID: 2587103777413897489, guid: b0cbfe7142dd1452eaa525b1a938fbd1, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:leaves-3
+    Note: Fallen leaves on the forest floor (art only)
+    Prefab: {fileID: 5649629958870421083, guid: abf8f954bd41a46478aa841f9b08784c, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:mountain
+    Note: Far mountain (art only)
+    Prefab: {fileID: 408495052010191136, guid: 7f62564dfce3b4dc7b8056d22273bad7, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:mountain-snow
+    Note: Snowy far mountain (art only)
+    Prefab: {fileID: 3716233567428585036, guid: e6a28e1bf03914b0da43af9e55c21f2c, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:pebbles-1
+    Note: Beach pebbles (art only)
+    Prefab: {fileID: 973294002194077649, guid: 5cc00ce3f7fdc438eb0a9bf60cae5d9e, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:pebbles-2
+    Note: Beach pebbles (art only)
+    Prefab: {fileID: 1060737313297830233, guid: 2767a977365504fe7afa0bb3d1cd170c, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:pebbles-3
+    Note: Beach pebbles (art only)
+    Prefab: {fileID: 8987945970027491184, guid: 1d99d4a4dac444643be9ec54a57598d0, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:shrub-1
+    Note: Low shrub at a hill's foot (art only)
+    Prefab: {fileID: 5354915620067258289, guid: 43299759af1e246c39eb1feb5548e0d5, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:shrub-2
+    Note: Low shrub at a hill's foot (art only)
+    Prefab: {fileID: 4781827026151593269, guid: b6ffb170b035a4d4bb3a64a1e6f8b99c, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:shrub-3
+    Note: Low shrub at a hill's foot (art only)
+    Prefab: {fileID: 4868622859082451739, guid: 1ee51a2d53c8f4a84a14778f7e32ec87, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:tuft-1
+    Note: Grass tuft (art only)
+    Prefab: {fileID: 4705234412413854867, guid: aafc538f156d343109872b15f34bdd36, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:tuft-2
+    Note: Grass tuft (art only)
+    Prefab: {fileID: 7060927915769110582, guid: ff4e09bc892604c98a64fe3a87962eeb, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: scenery:tuft-3
+    Note: Grass tuft (art only)
+    Prefab: {fileID: 1049330757673976522, guid: 770168fdd208a44b49bb74a83d3dbef3, type: 3}
+    Material: {fileID: 0}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:dirt
+    Note: Bare earth by the cave mouth and the hills
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: 519281facf011924cb71aa22560143da, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:forest-floor
+    Note: Leaf litter under the forest
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: 9a088b6f4b5017146859baacc2d8e8ba, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
   - Key: surface:grass
     Note: Meadow grass on the island and hills (a world-space triplanar material
       suits the shapes)
@@ -508,6 +660,30 @@ MonoBehaviour:
     Note: Darker grass on some hills
     Prefab: {fileID: 0}
     Material: {fileID: 2100000, guid: bc3a1e5391b2fa24fb3fdb8dd46b20b6, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:meadow
+    Note: Sunny meadow patches across the island
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: a7b03bd27b6dc5545a0d9547431a6a3d, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:moss
+    Note: Deep moss patches
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: bc3a1e5391b2fa24fb3fdb8dd46b20b6, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:mud
+    Note: Muddy bank round the pond
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: 519281facf011924cb71aa22560143da, type: 2}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
@@ -569,10 +745,11 @@ MonoBehaviour:
     Scale: 0.55815524
     KeepPlaceholder: 0
   - Key: witch
-    Note: The witch (an Animator using Crewfall's locomotion parameters is driven)
-    Prefab: {fileID: 0}
+    Note: The witch (an Animator gets Velocity, IsGrounded, IsFlying, Jump, SpellReady,
+      Cast and CastStyle)
+    Prefab: {fileID: 1456208754814783012, guid: 8c35e8cdc815e4643a1e4bfa48e29f11, type: 3}
     Material: {fileID: 0}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
-    Scale: 1
+    Scale: 1.0408297
     KeepPlaceholder: 0

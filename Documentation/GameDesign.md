@@ -53,7 +53,7 @@ A day lasts about fourteen minutes: dawn at 06:00, dusk at 20:00. The HUD shows 
 * Silverbells (Moon Dew) and moonpetals are closed buds by day and only open at night.
 * Companions sleep at night. Hoot the owl is nocturnal and sleeps by day instead.
 * Any bed lets you sleep until morning, or nap until evening. Sleeping saves.
-* Every few hours the weather may change: clear, cloudy or rain. Rain greys the sky, brings the fog in, hushes the birds and makes herbs regrow twice as fast.
+* Every few hours the weather may change: clear, cloudy or rain. Rain greys the sky, brings the fog in, hushes the birds and makes herbs regrow twice as fast. Rain stops on roofs, walls and the ground, so it's dry under any roof you build.
 
 ## Sound
 

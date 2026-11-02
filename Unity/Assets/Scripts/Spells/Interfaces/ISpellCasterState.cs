@@ -14,5 +14,10 @@ namespace Spells.Interfaces
 		string Status { get; }
 
 		bool IsAiming { get; }
+
+		/// <summary>
+		/// The witch cast the readied spell (whether or not it found a target), for the casting animation.
+		/// </summary>
+		event System.Action<SpellDefinition> SpellCast;
 	}
 }

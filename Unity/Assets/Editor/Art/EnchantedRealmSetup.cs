@@ -102,7 +102,8 @@ namespace WitchCraftEditor
 			new("piece:wall_door", $"{Elven}/Base/SM_Bld_Base_Wall_Door_01.prefab", Fit.Length),
 			new("piece:floor_timber", $"{Elven}/Buildings/SM_Bld_Floor_01.prefab", Fit.Footprint),
 			new("piece:floor_stone", $"{Elven}/Base/SM_Bld_Base_Floor_01.prefab", Fit.Footprint),
-			// Concave roofs rise towards the cell's back edge, the placeholders towards the front
+			// Concave roofs rise towards the cell's back edge, the placeholders towards the front. They have no gable
+			// ends, so the placeholder roof keeps its shell (gables and ceiling) under them
 			new("piece:roof_thatch", $"{Elven}/Buildings/SM_Bld_Roof_Concave_01.prefab", Fit.Footprint, 1f, 180f),
 			new("piece:roof_slate", $"{Elven}/Buildings/SM_Bld_Roof_Concave_Small_01.prefab", Fit.Footprint, 1f, 180f),
 			new("piece:stairs", $"{Elven}/Base/SM_Bld_Base_Stairs_02.prefab", Fit.Footprint),
@@ -115,6 +116,11 @@ namespace WitchCraftEditor
 			("surface:grass-dark", $"{Forest}/Materials/Moss_Enchanted_Triplanar_02.mat"),
 			("surface:path", $"{Forest}/Materials/Dirt_Leaves_Triplanar_01.mat"),
 			("surface:rock", $"{Synty}/PolygonElvenRealm/Materials/Environment/RockTriplanar_Mat_01.mat"),
+			("surface:forest-floor", $"{Forest}/Materials/Dirt_Leaves_Triplanar_02.mat"),
+			("surface:meadow", $"{Forest}/Materials/Dirt_Grass_Triplanar_01.mat"),
+			("surface:moss", $"{Forest}/Materials/Moss_Enchanted_Triplanar_02.mat"),
+			("surface:mud", $"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat"),
+			("surface:dirt", $"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat"),
 		};
 
 		[MenuItem("Witch Craft/Art/Set Up Enchanted Realm", false, 41)]
@@ -176,6 +182,9 @@ namespace WitchCraftEditor
 			filled += FillKit(set, "scatter:lantern", LanternKit());
 			filled += FillKit(set, "scatter:glowflora", GlowFloraKit());
 			filled += FillKit(set, "scatter:crystals", CrystalKit());
+
+			foreach (var (key, kit) in SceneryKits())
+				filled += FillKit(set, key, kit);
 
 			foreach (var (key, path) in surfaces)
 			{
@@ -465,6 +474,57 @@ namespace WitchCraftEditor
 				($"{Forest}/Prefabs/SM_Env_Moss_Lumps_02.prefab", new Vector3(0.3f, 0f, -0.9f), 200f, Uniform(0.6f)),
 				($"{Elven}/Environment/Flowers/SM_Env_Flowers_01.prefab", new Vector3(0.9f, 0f, 0.4f), 40f, Uniform(0.8f)),
 				($"{Forest}/Prefabs/SM_Env_Undergrowth_Fern_01.prefab", new Vector3(-0.6f, 0f, -0.5f), 120f, Uniform(1.6f)));
+		}
+
+		// Scenery: nothing here may look like something the witch gathers, so no mushrooms, logs, the berry bush
+		// (Bush_02), the gather flowers (Flowers_02 to _04), ferns like the nettle, or the boulder rock
+		private static IEnumerable<(string key, GameObject kit)> SceneryKits()
+		{
+			var flowers = $"{Elven}/Environment/Flowers";
+			var environment = $"{Elven}/Environment";
+
+			yield return ("scenery:flowers-1", Kit("Flowers1",
+				($"{environment}/SM_Env_Flowers_Clump_01.prefab", Vector3.zero, 0f, Uniform(1f)),
+				($"{flowers}/SM_Env_Grass_01.prefab", new Vector3(0.6f, 0f, 0.3f), 60f, Uniform(1f))));
+			yield return ("scenery:flowers-2", Kit("Flowers2",
+				($"{environment}/SM_Env_Flowers_Clump_02.prefab", Vector3.zero, 0f, Uniform(1f)),
+				($"{flowers}/SM_Env_Flowers_06.prefab", new Vector3(-0.5f, 0f, 0.4f), 120f, Uniform(1f))));
+			yield return ("scenery:flowers-3", Kit("Flowers3",
+				($"{environment}/SM_Env_Flowers_Clump_03.prefab", Vector3.zero, 0f, Uniform(1f)),
+				($"{flowers}/SM_Env_Flowers_07.prefab", new Vector3(0.4f, 0f, -0.5f), 200f, Uniform(1f)),
+				($"{flowers}/SM_Env_Grass_03.prefab", new Vector3(-0.5f, 0f, -0.2f), 30f, Uniform(1f))));
+
+			yield return ("scenery:tuft-1", Kit("Tuft1", ($"{flowers}/SM_Generic_Grass_Patch_01.prefab", Vector3.zero, 0f, Uniform(1f))));
+			yield return ("scenery:tuft-2", Kit("Tuft2", ($"{flowers}/SM_Generic_Grass_Patch_02.prefab", Vector3.zero, 0f, Uniform(1f))));
+			yield return ("scenery:tuft-3", Kit("Tuft3", ($"{flowers}/SM_Env_Grass_02.prefab", Vector3.zero, 0f, Uniform(1f))));
+
+			yield return ("scenery:leaves-1", Kit("Leaves1", ($"{environment}/SM_Env_Leaves_Clump_01.prefab", Vector3.zero, 0f, Uniform(1f))));
+			yield return ("scenery:leaves-2", Kit("Leaves2",
+				($"{environment}/SM_Env_Leaves_Clump_03.prefab", Vector3.zero, 0f, Uniform(1f)),
+				($"{Forest}/Prefabs/SM_Env_Fern_Koru_02.prefab", new Vector3(0.6f, 0f, 0.2f), 90f, Uniform(0.8f))));
+			yield return ("scenery:leaves-3", Kit("Leaves3", ($"{environment}/SM_Env_Leaves_Clump_05.prefab", Vector3.zero, 0f, Uniform(1f))));
+
+			yield return ("scenery:pebbles-1", Kit("Pebbles1", ($"{flowers}/SM_Env_Pebbles_01.prefab", Vector3.zero, 0f, Uniform(1f))));
+			yield return ("scenery:pebbles-2", Kit("Pebbles2", ($"{flowers}/SM_Env_Pebbles_02.prefab", Vector3.zero, 0f, Uniform(1f))));
+			yield return ("scenery:pebbles-3", Kit("Pebbles3", ($"{flowers}/SM_Env_Pebbles_03.prefab", Vector3.zero, 0f, Uniform(1f))));
+
+			yield return ("scenery:shrub-1", Kit("Shrub1", ($"{environment}/SM_Env_Hedge_Shrub_01.prefab", Vector3.zero, 0f, Uniform(0.8f))));
+			yield return ("scenery:shrub-2", Kit("Shrub2", ($"{environment}/SM_Env_Hedge_Shrub_02.prefab", Vector3.zero, 0f, Uniform(0.8f))));
+			yield return ("scenery:shrub-3", Kit("Shrub3", ($"{environment}/SM_Env_Hedge_Shrub_03.prefab", Vector3.zero, 0f, Uniform(0.8f))));
+
+			// Sized by height rather than a guess at the model's scale
+			yield return ("scenery:mountain", Kit("Mountain",
+				($"{environment}/SM_Env_Mountains_Grass_01.prefab", Vector3.zero, 0f, Tall($"{environment}/SM_Env_Mountains_Grass_01.prefab", 70f)),
+				($"{environment}/SM_Env_Mountains_Grass_02.prefab", new Vector3(45f, 0f, 20f), 140f, Tall($"{environment}/SM_Env_Mountains_Grass_02.prefab", 50f))));
+			yield return ("scenery:mountain-snow", Kit("MountainSnow",
+				($"{environment}/SM_Env_Mountains_Snow_01.prefab", Vector3.zero, 0f, Tall($"{environment}/SM_Env_Mountains_Snow_01.prefab", 95f))));
+		}
+
+		private static Vector3 Tall(string path, float height)
+		{
+			var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+
+			return prefab == null ? Vector3.one : Uniform(height / Mathf.Max(0.01f, ArtBounds(prefab, 0f).size.y));
 		}
 
 		private static GameObject CrystalKit()
