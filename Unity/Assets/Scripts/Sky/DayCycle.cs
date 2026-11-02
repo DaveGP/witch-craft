@@ -1,3 +1,4 @@
+using Art;
 using Data.Save;
 using DependencyInjection;
 using Persistence.Interfaces;
@@ -11,7 +12,9 @@ namespace Sky
 
 	// Moves the sun and moon through a day, and shifts the sky, ambient light and fog with them. A full day lasts
 	// about fourteen minutes: dawn at six, dusk at eight in the evening. Nights are moonlit and blue rather than
-	// black, with fireflies near the witch, so the island stays playable after dark.
+	// black, with fireflies near the witch, so the island stays playable after dark. When the Art Set has Polyverse
+	// skies (sky:day, sky:dusk, sky:night) the sky blends through them, with the sun and moon drawn where the lights
+	// are; otherwise the plain skybox darkens.
 	public class DayCycle : MonoBehaviour, IDayCycle, ISaveParticipant
 	{
 		public const float DawnHour = 6f;
@@ -73,6 +76,14 @@ namespace Sky
 
 		private float skyExposure;
 
+		private Material daySky, duskSky, nightSky;
+
+		private static readonly int PolyverseSunDir = Shader.PropertyToID("PolyverseSunDir");
+		private static readonly int PolyverseMoonDir = Shader.PropertyToID("PolyverseMoonDir");
+		private static readonly int SkyColor = Shader.PropertyToID("_SkyColor");
+		private static readonly int EquatorColor = Shader.PropertyToID("_EquatorColor");
+		private static readonly int GroundColor = Shader.PropertyToID("_GroundColor");
+
 		private ParticleSystem fireflies;
 
 		private Transform fireflyAnchor;
@@ -89,8 +100,21 @@ namespace Sky
 			if (moon == null)
 				Debug.LogError($"{nameof(moon)} is null");
 
+			var set = ArtSwap.Set;
+			daySky = set?.Find("sky:day")?.Material;
+			duskSky = set?.Find("sky:dusk")?.Material;
+			nightSky = set?.Find("sky:night")?.Material;
+
+			// A blend can't switch a material's features on or off, so the working sky starts as the night's (stars,
+			// clouds) and the day's presets dim what it doesn't show
+			if (daySky != null && nightSky != null)
+			{
+				duskSky ??= daySky;
+				sky = new Material(nightSky);
+				RenderSettings.skybox = sky;
+			}
 			// Work on a copy so the editor's skybox asset isn't changed while playing
-			if (RenderSettings.skybox != null)
+			else if (RenderSettings.skybox != null)
 			{
 				sky = new Material(RenderSettings.skybox);
 				RenderSettings.skybox = sky;
@@ -193,7 +217,9 @@ namespace Sky
 			// Reflections come from the daytime sky, so fade them out or water glows white at night
 			RenderSettings.reflectionIntensity = Mathf.Lerp(1f, 0.12f, Darkness) * Mathf.Lerp(1f, 0.7f, overcast);
 
-			if (sky != null)
+			if (sky != null && nightSky != null)
+				BlendPolyverseSky(overcast);
+			else if (sky != null)
 			{
 				if (sky.HasProperty("_Exposure"))
 					sky.SetFloat("_Exposure", Mathf.Lerp(skyExposure, 0.18f, Darkness) * Mathf.Lerp(1f, 0.6f, overcast));
@@ -203,6 +229,26 @@ namespace Sky
 			}
 
 			UpdateFireflies();
+		}
+
+		// Day to dusk as the light goes, dusk to night after, greyed under cloud
+		private void BlendPolyverseSky(float overcast)
+		{
+			if (Darkness < 0.5f)
+				sky.Lerp(daySky, duskSky, Darkness * 2f);
+			else
+				sky.Lerp(duskSky, nightSky, (Darkness - 0.5f) * 2f);
+
+			if (overcast > 0f)
+				foreach (var colour in new[] { SkyColor, EquatorColor, GroundColor })
+				{
+					var clear = sky.GetColor(colour);
+					var grey = clear.grayscale * Mathf.Lerp(0.85f, 0.5f, Darkness);
+					sky.SetColor(colour, Color.Lerp(clear, new Color(grey, grey, grey * 1.05f, clear.a), overcast * 0.75f));
+				}
+
+			Shader.SetGlobalVector(PolyverseSunDir, sun.transform.forward);
+			Shader.SetGlobalVector(PolyverseMoonDir, moon.transform.forward);
 		}
 
 		private void UpdateFireflies()

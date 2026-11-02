@@ -632,6 +632,32 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1
     KeepPlaceholder: 0
+  - Key: sky:day
+    Note: 'Skybox material for the daytime sky: Polyverse Skies (BOXOPHOBIC)''s Standard
+      shader, blended with dusk and night by the day cycle'
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: e74c5e07766fe40169d0d83c60ea2357, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: sky:dusk
+    Note: Skybox material for dusk and dawn, same shader as sky:day
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: b4d1e1180d6b45d4eaa6f6b684d18e2b, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: sky:night
+    Note: Skybox material for the night sky, same shader as sky:day. Its features
+      (stars, clouds) are the ones the blended sky shows all day
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: d0523d8917957bb429a32997cb0e52b2, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
   - Key: surface:grass
     Note: Meadow grass on the island and hills (a world-space triplanar material
       suits the shapes)

@@ -261,6 +261,168 @@ namespace WitchCraftEditor
 
 		public static Mesh WedgeShell() => SaveMesh("WedgeShell", BuildWedgeShell());
 
+		public static Mesh HillMesh() => ReplaceMesh("Hill", BuildHill(28, 48));
+
+		public static Mesh RockyUnderside(int seed) => ReplaceMesh($"RockyUnderside{seed}", BuildRockyUnderside(seed));
+
+		// Saves a generated mesh over the last build's, for shapes that are still being tuned
+		private static Mesh ReplaceMesh(string name, Mesh mesh)
+		{
+			EnsureFolder(MeshFolder);
+
+			var path = $"{MeshFolder}/{name}.asset";
+			var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+
+			if (existing == null)
+			{
+				mesh.name = name;
+				AssetDatabase.CreateAsset(mesh, path);
+				return mesh;
+			}
+
+			existing.Clear();
+			existing.SetVertices(mesh.vertices);
+			existing.SetTriangles(mesh.triangles, 0);
+			existing.SetNormals(mesh.normals);
+			existing.RecalculateBounds();
+			EditorUtility.SetDirty(existing);
+			Object.DestroyImmediate(mesh);
+
+			return existing;
+		}
+
+		// A hill of radius 1 and height 1: a smooth bell that rises from level ground and rounds over the top, so
+		// walking on and off it is seamless. Its rim tucks just under the ground. Smooth-shaded
+		private static Mesh BuildHill(int rings, int segments)
+		{
+			var vertices = new List<Vector3> { new(0f, 1f, 0f) };
+			var triangles = new List<int>();
+
+			Vector3 Ring(float r, float h, int s)
+			{
+				var angle = s * Mathf.PI * 2f / segments;
+				return new Vector3(Mathf.Cos(angle) * r, h, Mathf.Sin(angle) * r);
+			}
+
+			for (var i = 1; i <= rings; i++)
+			{
+				var r = i / (float)rings;
+				var h = (Mathf.Cos(Mathf.PI * r) + 1f) / 2f;
+
+				for (var s = 0; s < segments; s++)
+					vertices.Add(Ring(r, h, s));
+			}
+
+			for (var s = 0; s < segments; s++)
+				vertices.Add(Ring(1.04f, -0.03f, s));
+
+			int At(int ring, int s) => 1 + (ring - 1) * segments + (s % segments);
+
+			for (var s = 0; s < segments; s++)
+			{
+				triangles.Add(0);
+				triangles.Add(At(1, s + 1));
+				triangles.Add(At(1, s));
+			}
+
+			for (var ring = 1; ring <= rings; ring++)
+			for (var s = 0; s < segments; s++)
+			{
+				triangles.Add(At(ring, s));
+				triangles.Add(At(ring, s + 1));
+				triangles.Add(At(ring + 1, s + 1));
+
+				triangles.Add(At(ring, s));
+				triangles.Add(At(ring + 1, s + 1));
+				triangles.Add(At(ring + 1, s));
+			}
+
+			return FaceOut(Finish(vertices, triangles), Vector3.up);
+		}
+
+		// The rock torn out beneath a floating isle: radius 1 at the top (y 0), narrowing in jagged, uneven rings to a
+		// point about 1 below, with a few stalactite teeth hanging lower. Faceted, like the rest of the low-poly world
+		private static Mesh BuildRockyUnderside(int seed)
+		{
+			var random = new System.Random(seed);
+			float Roll(float min, float max) => min + (float)random.NextDouble() * (max - min);
+
+			const int segments = 12;
+			const int rings = 6;
+
+			var grid = new Vector3[rings + 1, segments];
+
+			for (var ring = 0; ring <= rings; ring++)
+			{
+				var t = ring / (float)rings;
+				var twist = Roll(-0.2f, 0.2f);
+
+				for (var s = 0; s < segments; s++)
+				{
+					var angle = (s + twist) * Mathf.PI * 2f / segments;
+					var radius = Mathf.Pow(1f - t * 0.92f, 0.8f) * (ring == 0 ? Roll(0.94f, 1f) : Roll(0.72f, 1.12f));
+					var y = ring == 0 ? 0f : -t + Roll(-0.06f, 0.06f);
+
+					// Teeth: some points of the lower rings pulled down
+					if (ring >= rings - 2 && random.NextDouble() < 0.3)
+						y -= Roll(0.15f, 0.45f);
+
+					grid[ring, s] = new Vector3(Mathf.Cos(angle) * radius, y, Mathf.Sin(angle) * radius);
+				}
+			}
+
+			var tip = new Vector3(Roll(-0.1f, 0.1f), -1.25f, Roll(-0.1f, 0.1f));
+
+			var vertices = new List<Vector3>();
+			var triangles = new List<int>();
+
+			void Face(Vector3 a, Vector3 b, Vector3 c)
+			{
+				// Outward from the rock's axis, so the faces are seen from outside
+				var centre = (a + b + c) / 3f;
+				var normal = Vector3.Cross(b - a, c - a);
+
+				if (Vector3.Dot(normal, new Vector3(centre.x, 0f, centre.z)) < 0f)
+					(b, c) = (c, b);
+
+				AddTriangle(vertices, triangles, a, b, c);
+			}
+
+			for (var ring = 0; ring < rings; ring++)
+			for (var s = 0; s < segments; s++)
+			{
+				var next = (s + 1) % segments;
+				Face(grid[ring, s], grid[ring, next], grid[ring + 1, next]);
+				Face(grid[ring, s], grid[ring + 1, next], grid[ring + 1, s]);
+			}
+
+			for (var s = 0; s < segments; s++)
+				Face(grid[rings, s], grid[rings, (s + 1) % segments], tip);
+
+			// A lid, under the isle's grass, so nothing shows through from the side
+			for (var s = 0; s < segments; s++)
+				AddTriangle(vertices, triangles, Vector3.zero, grid[0, (s + 1) % segments], grid[0, s]);
+
+			return Finish(vertices, triangles);
+		}
+
+		// Flips a mesh whose first normal points away from the given side
+		private static Mesh FaceOut(Mesh mesh, Vector3 side)
+		{
+			if (Vector3.Dot(mesh.normals[0], side) >= 0f)
+				return mesh;
+
+			var triangles = mesh.triangles;
+
+			for (var i = 0; i < triangles.Length; i += 3)
+				(triangles[i + 1], triangles[i + 2]) = (triangles[i + 2], triangles[i + 1]);
+
+			mesh.triangles = triangles;
+			mesh.RecalculateNormals();
+
+			return mesh;
+		}
+
 		private static Mesh SaveMesh(string name, Mesh mesh)
 		{
 			EnsureFolder(MeshFolder);
@@ -568,6 +730,11 @@ namespace WitchCraftEditor
 		public const string ArtSetPath = "Assets/Resources/ArtSet.asset";
 
 		private static readonly SortedDictionary<string, string> artSlots = new();
+
+		/// <summary>
+		/// An Art Set slot with no placeholder in the scene, read by a script at play (the sky's presets).
+		/// </summary>
+		public static void NamedSlot(string key, string note) => artSlots[key] = note;
 
 		/// <summary>
 		/// Gives a placeholder an Art Set slot. The placeholder renderers are hidden while the slot has art;

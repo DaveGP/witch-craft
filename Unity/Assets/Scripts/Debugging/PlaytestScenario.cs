@@ -715,6 +715,13 @@ namespace Debugging
 			yield return View("12_cave", new Vector3(20f, 3.5f, -46f), new Vector3(38f, 1.5f, -46f));
 			yield return View("13_forest", new Vector3(14f, 6f, 22f), new Vector3(32f, 2f, 38f));
 			yield return View("14_sky_isle", new Vector3(30f, 40f, 0f), new Vector3(44f, 34f, 14f));
+			yield return View("14b_sky_isle_underside", new Vector3(26f, 24f, -6f), new Vector3(44f, 31f, 14f));
+			yield return View("14c_hills", new Vector3(-8f, 9f, -78f), new Vector3(0f, 2f, -50f));
+
+			// Hills are smooth bells of the island's own ground, walked on exactly as they look
+			var hillParts = GameObject.Find("Hills").GetComponentsInChildren<MeshCollider>();
+			Check($"Hills are smooth ground, not hulls ({hillParts.Length} hills)",
+				hillParts.Length >= 6 && hillParts.All(hill => !hill.convex && hill.GetComponent<Renderer>().sharedMaterial.shader.name == "WitchCraft/SplatGround"));
 
 			// Day, night and weather
 			var dayCycle = ServiceLocator.Get<IDayCycle>();
@@ -729,6 +736,14 @@ namespace Debugging
 			var moonpetal = FindObjectsByType<Gatherable>(FindObjectsSortMode.None).First(found => found.name == "Moonpetal");
 			Check($"By day, moonpetals are closed (\"{moonpetal.Prompt}\")", moonpetal.Prompt.Contains("opens at night"));
 
+			// The backdrop: Polyverse skies blended through the day, when the Art Set has them
+			var skyArt = artSet.Find("sky:night")?.Material;
+			Check($"The sky is {(skyArt != null ? "the Polyverse sky" : "the plain skybox")} ({RenderSettings.skybox?.shader.name})",
+				RenderSettings.skybox != null && (skyArt == null || RenderSettings.skybox.shader == skyArt.shader));
+
+			dayCycle.SkipTo(19.4f);
+			yield return View("14d_dusk", new Vector3(-30f, 30f, -75f), new Vector3(10f, 12f, 0f));
+
 			var day = dayCycle.Day;
 			dayCycle.SkipTo(22f);
 			yield return new WaitForSeconds(1f);
@@ -741,6 +756,7 @@ namespace Debugging
 
 			movement.Teleport(new Vector3(0f, 0.2f, -9f));
 			yield return View("15_night", new Vector3(9f, 6f, -14f), new Vector3(0f, 1.5f, 0f));
+			yield return View("15b_night_sky", new Vector3(-30f, 30f, -75f), new Vector3(10f, 22f, 0f));
 
 			// At night by home, Sable takes herself off to her Cat Bed
 			for (var t = 0f; t < 14f && !cat.IsInBed; t += Time.deltaTime)

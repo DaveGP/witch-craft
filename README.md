@@ -20,7 +20,7 @@ Run, jump and fly around a little island gathering herbs for potions, glyphs for
 * Home comfort: furniture makes companions fonder each morning, especially their favourite piece
 * Companions to recruit with gifts, who live at home and reward friendship with recipes
 * A home plot that expands as you gather materials and friends
-* With the local art packs: a rigged witch who walks, runs, jumps and casts each spell with its own gesture, and an island dressed with varied ground, wildflowers, leaf litter and far mountains
+* With the local art packs: a rigged witch who walks, runs, jumps and casts each spell with its own gesture, and an island dressed with varied ground, smooth rolling hills, wildflowers, leaf litter and far mountains under a Polyverse sky that shifts from day to dusk to starry night
 * Six storybooks hidden around the world, each a short tale to read; found books go on your bookcase at home to read again
 * A guided first five minutes: Sable suggests what to try next, with a beacon showing where
 * Sound effects, ambience and a music loop, all generated in code, with separate music, sound and ambience volumes

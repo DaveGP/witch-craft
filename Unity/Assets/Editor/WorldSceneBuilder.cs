@@ -106,6 +106,7 @@ namespace WitchCraftEditor
 				CasualCatSetup.Run();
 				EnchantedRealmSetup.Run();
 				StellarWitchSetup.Run();
+				PolyverseSkySetup.Run();
 
 				EditorApplication.Exit(0);
 			}
@@ -227,6 +228,11 @@ namespace WitchCraftEditor
 
 			RenderSettings.sun = sun;
 			RenderSettings.skybox = Skybox("Sky");
+
+			// The day cycle blends these when the Art Set has them, in place of the plain skybox
+			NamedSlot("sky:day", "Skybox material for the daytime sky: Polyverse Skies (BOXOPHOBIC)'s Standard shader, blended with dusk and night by the day cycle");
+			NamedSlot("sky:dusk", "Skybox material for dusk and dawn, same shader as sky:day");
+			NamedSlot("sky:night", "Skybox material for the night sky, same shader as sky:day. Its features (stars, clouds) are the ones the blended sky shows all day");
 			RenderSettings.ambientMode = AmbientMode.Trilight;
 			RenderSettings.ambientSkyColor = new Color(0.66f, 0.66f, 0.85f);
 			RenderSettings.ambientEquatorColor = new Color(0.62f, 0.57f, 0.62f);
@@ -335,17 +341,17 @@ namespace WitchCraftEditor
 			var parent = Node("Hills", world).transform;
 
 			foreach (var (centre, radius, height, material) in hills)
-				Hill(parent, centre, radius, height, material == 0 ? GrassDark : Grass);
+				Hill(parent, centre, radius, height, IslandGround);
 		}
 
+		// A smooth bell of ground that rises out of the land with no seam. On the home island it wears the island's own
+		// ground, so the control map paints across it (moss on the darker hills). Its collider is the exact surface,
+		// not a hull
 		private static void Hill(Transform parent, Vector3 centre, float radius, float height, Material material)
 		{
-			// A squashed sphere sunk into the ground so its sides slope gently
-			var depth = height * 2.5f;
-
-			var hill = Prim(PrimitiveType.Sphere, "Hill", parent, new Vector3(centre.x, height - depth, centre.z), new Vector3(radius * 2.5f, depth * 2f, radius * 2.5f), material);
+			var hill = MeshObject("Hill", parent, WitchCraftBuildKit.HillMesh(), centre, new Vector3(radius * 1.4f, height, radius * 1.4f), material);
 			hill.layer = Ground;
-			ReplaceWithMeshCollider(hill);
+			hill.AddComponent<MeshCollider>().sharedMesh = hill.GetComponent<MeshFilter>().sharedMesh;
 		}
 
 		private static void ReplaceWithMeshCollider(GameObject target)
@@ -652,7 +658,22 @@ namespace WitchCraftEditor
 			var top = Prim(PrimitiveType.Cylinder, "IsleTop", parent, topCentre - Vector3.up * 0.75f, new Vector3(radius * 2f, 0.75f, radius * 2f), Grass);
 			top.layer = Ground;
 
-			MeshObject("IsleRoots", parent, Cone(), topCentre - Vector3.up * 1.4f, new Vector3(radius * 1.9f, radius * 1.4f, radius * 1.9f), Rock, false, new Vector3(180, 0, 0));
+			// The rock it was torn up with, jagged and hanging, with a few loose crags still clinging below
+			var seed = Mathf.RoundToInt(topCentre.x * 7f + topCentre.z * 13f);
+			var rock = new Random(seed);
+
+			MeshObject("IsleRoots", parent, WitchCraftBuildKit.RockyUnderside(Mathf.Abs(seed) % 8), topCentre - Vector3.up * 1.3f,
+				new Vector3(radius * 1.05f, radius * 1.5f, radius * 1.05f), Rock, false, new Vector3(0f, (float)rock.NextDouble() * 360f, 0f));
+
+			for (var i = 0; i < 3; i++)
+			{
+				var angle = (i / 3f + (float)rock.NextDouble() * 0.2f) * Mathf.PI * 2f;
+				var size = radius * (0.22f + (float)rock.NextDouble() * 0.12f);
+				var offset = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius * 0.55f;
+
+				MeshObject("IsleCrag", parent, WitchCraftBuildKit.RockyUnderside((Mathf.Abs(seed) + i + 3) % 8), topCentre + offset - Vector3.up * (1.2f + radius * 0.2f),
+					new Vector3(size, size * 2.2f, size), Rock, false, new Vector3(0f, (float)rock.NextDouble() * 360f, 0f));
+			}
 		}
 
 		#endregion
@@ -1540,6 +1561,11 @@ namespace WitchCraftEditor
 
 				Patch(new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * distance, Roll(5f, 9f), i % 3 == 0 ? moss : meadow, 4);
 			}
+
+			// Moss over the darker hills
+			foreach (var (centre, radius, _, material) in hills)
+				if (material == 0)
+					Patch(centre, radius * 1.1f, moss, 4);
 
 			var pixels = new Color[ControlMapSize * ControlMapSize];
 
