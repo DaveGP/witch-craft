@@ -135,6 +135,8 @@ Gamepad: left stick move, right stick look, A jump, X interact, Y broom, RT cast
 
 Created by David Pearson.
 
+Optional, for the witch's hair and cloth sway with the local Stellar Witch model: [UnityChanSpringBone](https://github.com/unity3d-jp/UnityChanSpringBone) by Unity Technologies Japan (MIT licence). Install it from Package Manager > Add package from git URL with `https://github.com/unity3d-jp/UnityChanSpringBone.git#1.2.1-preview`.
+
 ## License
 
 This project is currently private and all rights reserved.

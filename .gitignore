@@ -25,6 +25,7 @@ Unity/[Rr]ecordings/
 # Unity/[Aa]ssets/AssetStoreTools*
 
 # JetBrains Rider plugin and settings
+Unity/.idea/
 Unity/[Aa]ssets/Plugins/Editor/JetBrains*
 Unity/*.DotSettings.user
 

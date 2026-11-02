@@ -76,6 +76,22 @@ namespace WitchCraftEditor
 			return material;
 		}
 
+		/// <summary>
+		/// A soft-edged patch of ground (WitchCraft/GroundPatch), for flattened cylinders laid over the island.
+		/// </summary>
+		public static Material GroundPatch(string name, Color colour, Texture texture = null, float tiling = 0.5f)
+		{
+			var material = GetMaterial(name, "WitchCraft/GroundPatch");
+
+			material.SetColor("_BaseColor", colour);
+			material.SetTexture("_BaseMap", texture);
+			material.SetFloat("_Tiling", tiling);
+
+			EditorUtility.SetDirty(material);
+
+			return material;
+		}
+
 		public static Material Unlit(string name, Color colour, bool transparent = false)
 		{
 			var material = GetMaterial(name, "Universal Render Pipeline/Unlit");

@@ -1254,11 +1254,12 @@ namespace Debugging
 			StartCoroutine(TapRoutine(key));
 		}
 
-		// Held across at least two physics steps, as a real press is: a few fast batch-mode frames can fall between
-		// fixed updates and be missed by anything read there
+		// Held for a tenth of a second, like a quick real press, and across at least two physics steps: a tap of a few
+		// frames could fall inside one slow frame and be gone before the game read it
 		private IEnumerator TapRoutine(Key key)
 		{
 			Hold(key);
+			yield return new WaitForSecondsRealtime(0.1f);
 			yield return new WaitForFixedUpdate();
 			yield return new WaitForFixedUpdate();
 			yield return null;

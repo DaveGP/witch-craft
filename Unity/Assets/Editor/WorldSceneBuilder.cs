@@ -1437,11 +1437,12 @@ namespace WitchCraftEditor
 
 		#region Ground patches and scenery
 
-		private static Material ForestFloor => Lit("ForestFloor", new Color(0.46f, 0.52f, 0.3f));
-		private static Material Meadow => Lit("Meadow", new Color(0.66f, 0.8f, 0.42f));
-		private static Material Moss => Lit("Moss", new Color(0.36f, 0.6f, 0.38f));
-		private static Material Mud => Lit("Mud", new Color(0.45f, 0.38f, 0.3f));
-		private static Material Dirt => Lit("Dirt", new Color(0.62f, 0.5f, 0.36f));
+		// Soft-edged: the patch shader fades each one out over a wobbly, dithered rim
+		private static Material ForestFloor => GroundPatch("ForestFloor", new Color(0.46f, 0.52f, 0.3f));
+		private static Material Meadow => GroundPatch("Meadow", new Color(0.66f, 0.8f, 0.42f));
+		private static Material Moss => GroundPatch("Moss", new Color(0.36f, 0.6f, 0.38f));
+		private static Material Mud => GroundPatch("Mud", new Color(0.45f, 0.38f, 0.3f));
+		private static Material Dirt => GroundPatch("Dirt", new Color(0.62f, 0.5f, 0.36f));
 
 		// Places the island's flat ground shouldn't be painted or dressed: the home plot, the pond's water and the
 		// cave, plus the spire's foot
@@ -1471,8 +1472,8 @@ namespace WitchCraftEditor
 		}
 
 		// Irregular patches of different ground, laid flat over the island: a few overlapping discs per patch, each
-		// material a hair higher than the last so they stack cleanly. They're paint only: no colliders, and gameplay
-		// goes on exactly as on the grass beneath
+		// material a hair higher than the last so they stack cleanly, every disc fading out at a soft, wobbly edge.
+		// They're paint only: no colliders, and gameplay goes on exactly as on the grass beneath
 		private static void BuildGroundPatches()
 		{
 			var parent = Node("GroundPatches", world).transform;

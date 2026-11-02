@@ -116,11 +116,6 @@ namespace WitchCraftEditor
 			("surface:grass-dark", $"{Forest}/Materials/Moss_Enchanted_Triplanar_02.mat"),
 			("surface:path", $"{Forest}/Materials/Dirt_Leaves_Triplanar_01.mat"),
 			("surface:rock", $"{Synty}/PolygonElvenRealm/Materials/Environment/RockTriplanar_Mat_01.mat"),
-			("surface:forest-floor", $"{Forest}/Materials/Dirt_Leaves_Triplanar_02.mat"),
-			("surface:meadow", $"{Forest}/Materials/Dirt_Grass_Triplanar_01.mat"),
-			("surface:moss", $"{Forest}/Materials/Moss_Enchanted_Triplanar_02.mat"),
-			("surface:mud", $"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat"),
-			("surface:dirt", $"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat"),
 		};
 
 		[MenuItem("Witch Craft/Art/Set Up Enchanted Realm", false, 41)]
@@ -185,6 +180,10 @@ namespace WitchCraftEditor
 
 			foreach (var (key, kit) in SceneryKits())
 				filled += FillKit(set, key, kit);
+
+			// Ground patches keep their soft edges: their art is the pack's ground texture on the patch shader
+			foreach (var (key, path, tint) in patchSurfaces)
+				filled += FillPatch(set, key, path, tint);
 
 			foreach (var (key, path) in surfaces)
 			{
@@ -620,6 +619,54 @@ namespace WitchCraftEditor
 				($"{environment}/SM_Env_Mountains_Grass_02.prefab", new Vector3(45f, 0f, 20f), 140f, Tall($"{environment}/SM_Env_Mountains_Grass_02.prefab", 50f))));
 			yield return ("scenery:mountain-snow", Kit("MountainSnow",
 				($"{environment}/SM_Env_Mountains_Snow_01.prefab", Vector3.zero, 0f, Tall($"{environment}/SM_Env_Mountains_Snow_01.prefab", 95f))));
+		}
+
+		private static readonly (string key, string path, Color tint)[] patchSurfaces =
+		{
+			("surface:forest-floor", $"{Forest}/Materials/Dirt_Leaves_Triplanar_02.mat", Color.white),
+			("surface:meadow", $"{Forest}/Materials/Dirt_Grass_Triplanar_01.mat", Color.white),
+			("surface:moss", $"{Forest}/Materials/Moss_Enchanted_Triplanar_02.mat", Color.white),
+			("surface:mud", $"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat", new Color(0.75f, 0.68f, 0.62f)),
+			("surface:dirt", $"{Synty}/PolygonElvenRealm/Materials/Environment/Dirt_Triplanar.mat", Color.white),
+		};
+
+		// A patch material from a pack's triplanar ground: its top texture and tiling on WitchCraft/GroundPatch. Replaces
+		// a hard-edged pack material left from before, but never something else picked by hand
+		private static int FillPatch(ArtSet set, string key, string sourcePath, Color tint)
+		{
+			var entry = Entry(set, key);
+			var source = AssetDatabase.LoadAssetAtPath<Material>(sourcePath);
+
+			var ours = entry.Material == null || entry.Material == source || entry.Material.name.StartsWith("Patch_");
+
+			if (source == null || !ours)
+				return 0;
+
+			Texture top = null;
+
+			foreach (var name in new[] { "_Top", "_TopAlbedo", "_TriplanarAlbedo", "_BaseMap" })
+				if (top == null && source.HasProperty(name))
+					top = source.GetTexture(name);
+
+			var tiling = source.HasProperty("_Tiling") ? source.GetFloat("_Tiling") : source.HasProperty("_TilingTop") ? source.GetFloat("_TilingTop") : 0.5f;
+
+			var path = $"{KitFolder}/Patch_{key.Replace("surface:", "")}.mat";
+			var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+
+			if (material == null)
+			{
+				material = new Material(Shader.Find("WitchCraft/GroundPatch"));
+				AssetDatabase.CreateAsset(material, path);
+			}
+
+			material.SetTexture("_BaseMap", top);
+			material.SetColor("_BaseColor", tint);
+			material.SetFloat("_Tiling", tiling);
+			EditorUtility.SetDirty(material);
+
+			entry.Material = material;
+
+			return 1;
 		}
 
 		private static Vector3 Tall(string path, float height)

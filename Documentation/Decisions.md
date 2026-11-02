@@ -46,7 +46,7 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 
 ## The witch's art: Synty locomotion plus a casting layer, on Simple Lit
 
-02/11/2026 - The Stellar Witch model is Humanoid, so Synty's Base Locomotion and the Human Spellcasting clips both retarget onto her. Locomotion fills the base layer; casting plays on an upper-body layer, so she can cast while running. Each spell picks one of four gestures (point, push, call, sweep) rather than one clip per spell, so new spells only need a gesture. Her materials use Unity's toon shader package, which doesn't compile on this Unity's URP and drew her magenta, so the setup tool copies them onto URP Simple Lit with her own textures; that's also light for the web build.
+02/11/2026 - The Stellar Witch model is Humanoid, so Synty's Base Locomotion and the Human Spellcasting clips both retarget onto her. Locomotion fills the base layer; casting plays on an upper-body layer, so she can cast while running. Each spell picks one of four gestures (point, push, call, sweep) rather than one clip per spell, so new spells only need a gesture. Her materials use Unity's toon shader package, which doesn't compile on this Unity's URP and drew her magenta, so the setup tool moves the pack's materials onto URP Simple Lit in place, reading her textures from the materials' saved properties (the shader is gone), so nothing in the project refers to the toon shader; that's also light for the web build. Her hair physics (UnityChanSpringBone, MIT) is an optional package: with it installed the model's own spring bone set-up works as its author made it.
 
 ## Roofs keep a shell under their art
 
@@ -55,4 +55,8 @@ Witch Craft is single player, so Crewfall's `CharacterNetworkController` becomes
 ## Scenery that can't be picked
 
 02/11/2026 - Scenic dressing never looks like something gatherable: no glowing mushrooms (scenic ones wear a muted, glow-free copy of the forest atlas), logs, the berry bush, the gather flowers, nettle-like ferns, the boulder rock), so players don't try to pick things they can't.
+
+## Soft-edged ground patches
+
+02/11/2026 - Flat discs of a different ground texture read as polka dots. A small URP shader projects the texture from above in world space (so it lines up with the ground around it) and fades each disc out over a wobbly, dithered edge. Dithering keeps the patches opaque, so they sort and receive shadows like the ground, with no transparency cost on the web.
 

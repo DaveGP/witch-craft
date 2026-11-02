@@ -8,8 +8,8 @@ using Object = UnityEngine.Object;
 
 namespace WitchCraftEditor
 {
-	// Makes the Stellar Witch model the player's art: a local copy of her prefab with the scripts the package
-	// expects from GitHub stripped out and her wand in her right hand, driven by a generated Animator Controller.
+	// Makes the Stellar Witch model the player's art: a local copy of her prefab with her wand in her right hand and
+	// her hair physics (UnityChanSpringBone, when installed), driven by a generated Animator Controller.
 	// The base layer is Synty's Base Locomotion (idle, walk, run, sprint, jump, fall, land, and a crouch for the
 	// broom); an upper body layer plays the Human Spellcasting clips: a ready stance while a spell is readied and a
 	// cast for each click, picked by CastStyle. Everything is written inside the packs' own (git-ignored) folders.
@@ -263,7 +263,8 @@ namespace WitchCraftEditor
 				instance.name = "StellarWitchPlayer";
 				instance.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
 
-				// UnityChanSpringBone (hair and cloth sway) comes from GitHub and isn't installed: drop its missing scripts
+				// Her hair and cloth sway with UnityChanSpringBone (com.unity.springbone). With that package installed its
+				// components resolve and stay; without it they're missing scripts, dropped so she still loads cleanly
 				foreach (var child in instance.GetComponentsInChildren<Transform>(true))
 					GameObjectUtility.RemoveMonoBehavioursWithMissingScript(child.gameObject);
 
@@ -277,7 +278,7 @@ namespace WitchCraftEditor
 
 				wand = AttachWand(animator);
 
-				ReplaceToonMaterials(instance);
+				ReplaceToonMaterials();
 
 				return PrefabUtility.SaveAsPrefabAsset(instance, VariantPath);
 			}
@@ -316,63 +317,49 @@ namespace WitchCraftEditor
 			return true;
 		}
 
-		// Her materials use Unity's toon shader (UTS3), whose package doesn't compile on this Unity's URP and draws
-		// her magenta. Copies on URP Simple Lit keep her own textures (and the wand's glow), cost little on the web,
-		// and leave the pack's materials alone
-		private static void ReplaceToonMaterials(GameObject instance)
+		// Her materials were made for Unity's toon shader (UTS3), whose package doesn't compile on this Unity's URP and
+		// isn't installed. Every material in the pack is moved onto URP Simple Lit in place, keeping its own textures
+		// (and the wand's glow): nothing in the project refers to the toon shader any more, it's cheap on the web, and
+		// the pack's sample scene shows her properly too
+		private static void ReplaceToonMaterials()
 		{
-			var folder = $"{OutputFolder}/Materials";
-			EnsureFolder(folder);
-
 			var simpleLit = Shader.Find("Universal Render Pipeline/Simple Lit");
-			var copies = new System.Collections.Generic.Dictionary<Material, Material>();
 
-			Material Convert(Material source)
+			var materials = AssetDatabase.FindAssets("t:Material", new[] { $"{WitchFolder}/Materials" })
+				.Select(guid => AssetDatabase.LoadAssetAtPath<Material>(AssetDatabase.GUIDToAssetPath(guid)))
+				.Where(material => material != null && material.shader != null &&
+					(material.shader.name.Contains("Toon") || material.shader.name.Contains("InternalErrorShader") || !material.shader.isSupported));
+
+			foreach (var material in materials)
 			{
-				// Toon materials, or ones whose shader is gone now the toon package isn't installed
-				if (source == null || source.shader == null || !(source.shader.name.Contains("Toon") || source.shader.name.Contains("InternalErrorShader") || !source.shader.isSupported))
-					return source;
+				// Read before the shader changes: the saved properties are the only record of the toon set-up
+				var colourMap = SavedTexture(material, "_MainTex");
+				var colour = SavedColour(material, "_BaseColor", Color.white);
+				var glow = SavedTexture(material, "_Emissive_Tex");
+				var glowColour = SavedColour(material, "_Emissive_Color", Color.white);
 
-				if (copies.TryGetValue(source, out var copy))
-					return copy;
-
-				var path = $"{folder}/{source.name}.mat";
-				copy = AssetDatabase.LoadAssetAtPath<Material>(path);
-
-				if (copy == null)
-				{
-					copy = new Material(simpleLit);
-					AssetDatabase.CreateAsset(copy, path);
-				}
-
-				copy.shader = simpleLit;
-
-				copy.SetTexture("_BaseMap", SavedTexture(source, "_MainTex"));
-				copy.SetColor("_BaseColor", SavedColour(source, "_BaseColor", Color.white));
-				copy.SetFloat("_Smoothness", 0.1f);
+				material.shader = simpleLit;
+				material.SetTexture("_BaseMap", colourMap);
+				material.SetColor("_BaseColor", colour);
+				material.SetFloat("_Smoothness", 0.1f);
 
 				// Skirts, sleeves and hair are single sheets
-				copy.SetFloat("_Cull", 0f);
-				copy.doubleSidedGI = true;
-
-				var glow = SavedTexture(source, "_Emissive_Tex");
+				material.SetFloat("_Cull", 0f);
+				material.doubleSidedGI = true;
 
 				if (glow != null)
 				{
-					copy.SetTexture("_EmissionMap", glow);
-					copy.SetColor("_EmissionColor", SavedColour(source, "_Emissive_Color", Color.white));
-					copy.EnableKeyword("_EMISSION");
-					copy.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+					material.SetTexture("_EmissionMap", glow);
+					material.SetColor("_EmissionColor", glowColour);
+					material.EnableKeyword("_EMISSION");
+					material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
 				}
 
-				EditorUtility.SetDirty(copy);
-				copies[source] = copy;
-
-				return copy;
+				EditorUtility.SetDirty(material);
 			}
 
-			foreach (var renderer in instance.GetComponentsInChildren<Renderer>(true))
-				renderer.sharedMaterials = renderer.sharedMaterials.Select(Convert).ToArray();
+			// Copies from before the pack's own materials were converted
+			AssetDatabase.DeleteAsset($"{OutputFolder}/Materials");
 
 			AssetDatabase.SaveAssets();
 		}
