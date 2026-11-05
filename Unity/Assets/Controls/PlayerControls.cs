@@ -44,6 +44,8 @@ namespace Controls
 			public InputAction Spell4 { get; }
 			public InputAction Satchel { get; }
 			public InputAction Spellbook { get; }
+
+			public InputAction Journal { get; }
 			public InputAction Cancel { get; }
 			public InputAction Undo { get; }
 			public InputAction Pick { get; }
@@ -101,6 +103,7 @@ namespace Controls
 				Spell4 = Button("Spell4", "<Keyboard>/4");
 				Satchel = Button("Satchel", "<Keyboard>/tab", "<Gamepad>/select");
 				Spellbook = Button("Spellbook", "<Keyboard>/b", "<Gamepad>/rightStickPress");
+				Journal = Button("Journal", "<Keyboard>/j");
 				Cancel = Button("Cancel", "<Keyboard>/escape", "<Gamepad>/start");
 				Undo = Button("Undo", "<Keyboard>/z");
 				Pick = Button("Pick", "<Mouse>/middleButton", "<Keyboard>/v");

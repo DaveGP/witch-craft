@@ -14,6 +14,8 @@ namespace Data.Enums
 
 		Cancel = 1 << 2,
 
-		Pump = 1 << 3
+		Pump = 1 << 3,
+
+		Journal = 1 << 4
 	}
 }

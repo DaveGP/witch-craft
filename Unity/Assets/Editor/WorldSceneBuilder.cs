@@ -47,6 +47,8 @@ namespace WitchCraftEditor
 
 		public static readonly Vector3 ForestCentre = new(32f, 0f, 38f);
 
+		public static readonly Vector3 OakCentre = new(24f, 0f, 56f);
+
 		public static readonly Vector3 PondCentre = new(-40f, 0f, 12f);
 
 		public static readonly Vector3 HillsCentre = new(-5f, 0f, -45f);
@@ -920,6 +922,15 @@ namespace WitchCraftEditor
 			for (var i = 0; i < 46; i++)
 			{
 				var position = Around(ForestCentre, 4f, 24f);
+
+				// The Old Oak's climb needs clear air around it
+				if (Vector3.Distance(position, OakCentre) < 13f)
+					continue;
+
+				// A clearing for Bramble and her burrow
+				if (Vector3.Distance(position, ForestCentre + new Vector3(7f, 0f, 7f)) < 8f)
+					continue;
+
 				Tree(forest, position, Range(0.9f, 1.5f), random.NextDouble() < 0.5 ? 0 : random.Next(1, 4));
 			}
 
@@ -943,6 +954,9 @@ namespace WitchCraftEditor
 
 			Recruit(forest, OnGround(ForestCentre.x + 4f, ForestCentre.z + 6f), "bramble", 200f);
 
+			BuildBrambleBurrow(forest);
+			BuildOldOak(forest);
+
 			BounceMushroom(forest, OnGround(22f, 26f));
 			BounceMushroom(forest, OnGround(40f, 30f), 0.8f, 13f);
 
@@ -953,6 +967,217 @@ namespace WitchCraftEditor
 				var angle = i * 72f * Mathf.Deg2Rad;
 				Prim(PrimitiveType.Cylinder, "Stump", camp.transform, new Vector3(Mathf.Cos(angle) * 2.5f, 0.3f, Mathf.Sin(angle) * 2.5f), new Vector3(0.7f, 0.3f, 0.7f), Trunk).layer = EnvironmentLayer;
 			}
+		}
+
+		// A grassy mound with a dark doorway, and a boulder rolled across it for Levitate to shift. It can only be moved
+		// by magic: walking into it won't push it aside
+		private static void BuildBrambleBurrow(Transform parent)
+		{
+			var mound = OnGround(ForestCentre.x + 9.5f, ForestCentre.z + 8f);
+
+			var burrow = Node("BrambleBurrow", parent, mound);
+			burrow.layer = Ground;
+
+			var hill = MeshObject("Mound", burrow.transform, WitchCraftBuildKit.HillMesh(), Vector3.zero, new Vector3(3.4f, 1.7f, 3.4f), IslandGround);
+			hill.layer = Ground;
+			hill.AddComponent<MeshCollider>().sharedMesh = hill.GetComponent<MeshFilter>().sharedMesh;
+
+			Prim(PrimitiveType.Sphere, "Doorway", burrow.transform, new Vector3(-1.7f, 0.55f, 0f), new Vector3(0.5f, 1.1f, 1.1f), Lit("BurrowDark", new Color(0.08f, 0.06f, 0.06f)), false);
+
+			var boulder = Prim(PrimitiveType.Sphere, "LooseBoulder", parent, mound + new Vector3(-2.6f, 0.75f, 0f), Vector3.one * 1.5f, Rock);
+			boulder.layer = EnvironmentLayer;
+
+			var body = boulder.AddComponent<Rigidbody>();
+			body.mass = 40f;
+			body.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+
+			boulder.AddComponent<Movable>();
+
+			var goal = boulder.AddComponent<QuestMoveGoal>();
+			SetString(goal, "goal", ContentBuilder.BrambleBurrowGoal);
+			SetVector(goal, "restOffset", new Vector3(-1f, 0f, 3.2f));
+			SetString(goal, "clearedMessage", "The burrow's door is clear. Bramble will want to know.");
+
+			ArtSlot(boulder, "rock:boulder", "Boulder (art stretches with the placeholder's shape)");
+		}
+
+		private const float OakShelfRadius = 6.6f;
+
+		private static Vector3 OakShelf(int index, float height)
+		{
+			var angle = (-90f + index * 42f) * Mathf.Deg2Rad;
+
+			return new Vector3(Mathf.Cos(angle) * OakShelfRadius, height, Mathf.Sin(angle) * OakShelfRadius);
+		}
+
+		// The Old Oak: a climb spiralling up a huge tree to a nest on top. A mushroom starts it, one branch glides,
+		// and the last big gap can only be jumped with a Leaping Tonic. The branches are too tangled to fly through,
+		// and landing on the marked branches means a fall lifts her back to the last of them
+		private static void BuildOldOak(Transform parent)
+		{
+			var bramble = database.FindCompanion("bramble");
+
+			var root = Node("OldOak", parent, OnGround(OakCentre.x, OakCentre.z));
+			root.layer = Ground;
+			var oak = root.transform;
+
+			var trunk = MeshObject("Trunk", oak, WitchCraftBuildKit.OakTrunk(), Vector3.zero, Vector3.one, Trunk);
+			trunk.layer = Ground;
+			trunk.AddComponent<MeshCollider>().sharedMesh = trunk.GetComponent<MeshFilter>().sharedMesh;
+
+			BounceMushroom(oak, OakShelf(-1, 0f), 0.8f, 14.5f);
+
+			// Heights of the climb, in order. Each hop rises 1.7 m (a held jump reaches 1.8 m), bar the tonic's gap
+			var checkpoints = new List<Transform>();
+			const float tonicGap = 3.9f;
+			var heights = new[] { 4.6f, 6.3f, 8f, 9.7f, 11.4f, 13.1f, 14.8f, 14.8f + tonicGap, 14.8f + tonicGap + 1.7f };
+
+			for (var i = 0; i < heights.Length; i++)
+			{
+				// 4 and 5 are the two ends of the gliding branch
+				if (i is 4 or 5)
+					continue;
+
+				var shelf = OakBranch(oak, $"Shelf{i}", OakShelf(i, heights[i]), i);
+
+				if (i is 3 or 6)
+				{
+					checkpoints.Add(shelf.transform);
+					Lantern(shelf.transform);
+				}
+			}
+
+			var glider = OakShelfDisc(oak, "GlidingBranch", OakShelf(4, heights[4]), 4);
+			glider.AddComponent<Rigidbody>();
+			var moving = glider.AddComponent<MovingPlatform>();
+			SetVector(moving, "offset", OakShelf(5, heights[5]) - OakShelf(4, heights[4]));
+			SetValue(moving, "period", 5f);
+
+			// The nest on top
+			var nest = Node("OakNest", oak, new Vector3(0f, 22f, 0f));
+			var floor = Prim(PrimitiveType.Cylinder, "NestFloor", nest.transform, Vector3.up * 0.1f, new Vector3(7.4f, 0.1f, 7.4f), Lit("NestFloor", new Color(0.55f, 0.42f, 0.27f)));
+			floor.layer = Ground;
+
+			for (var i = 0; i < 14; i++)
+			{
+				var angle = i * 360f / 14f;
+				var twig = Prim(PrimitiveType.Cylinder, "Twig", nest.transform, new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad) * 3.5f, 0.3f, Mathf.Sin(angle * Mathf.Deg2Rad) * 3.5f),
+					new Vector3(0.18f, 1.05f, 0.18f), Trunk, false, new Vector3(Range(-8f, 8f), -angle, 90f));
+				twig.layer = Ground;
+			}
+
+			QuestItem(nest.transform, "Acorn", new Vector3(0.6f, 0.2f, 0.6f), bramble, 4, visual =>
+			{
+				var acornMaterial = Lit("Acorn", ContentBuilder.Item("winter_acorn").Color, 0.4f);
+				Prim(PrimitiveType.Sphere, "Nut", visual, new Vector3(0, 0.3f, 0), new Vector3(0.4f, 0.55f, 0.4f), acornMaterial, false);
+				Prim(PrimitiveType.Sphere, "Cup", visual, new Vector3(0, 0.5f, 0), new Vector3(0.45f, 0.25f, 0.45f), DarkWood, false);
+				PointLight(visual, new Vector3(0, 0.6f, 0), new Color(1f, 0.85f, 0.5f), 4f, 1.5f);
+			});
+
+			// A crown of leaves, high enough not to get in the way of the camera on the nest
+			for (var i = 0; i < 16; i++)
+			{
+				var angle = i * 137.5f * Mathf.Deg2Rad;
+				var reach = i < 10 ? Range(7f, 10f) : Range(2f, 5f);
+				var size = Range(3f, 4.6f);
+
+				MeshObject("Leaves", oak, WitchCraftBuildKit.LeafClump(i % 3), new Vector3(Mathf.Cos(angle) * reach, Range(26.5f, 29.5f), Mathf.Sin(angle) * reach),
+					new Vector3(size, size * 0.7f, size), Leaf(i % 2), false, new Vector3(0f, Range(0, 360), 0f));
+			}
+
+			// The spectacles, where it's shady, past the far side from the forest: among mushrooms under a few big trees
+			var hollow = new Vector3(OakCentre.x - 9f, 0f, OakCentre.z + 13f);
+
+			foreach (var (x, z) in new[] { (-3.5f, 1.5f), (2.5f, 3f), (0.5f, -3.5f) })
+				Tree(parent, OnGround(hollow.x + x, hollow.z + z), 1.5f, 0);
+
+			Glowcaps(parent, OnGround(hollow.x + 1.1f, hollow.z - 0.8f));
+			Glowcaps(parent, OnGround(hollow.x - 1.2f, hollow.z + 0.5f));
+
+			QuestItem(parent, "Spectacles", OnGround(OakCentre.x - 9f, OakCentre.z + 13f), bramble, 0, visual =>
+			{
+				var frame = Lit("Spectacles", ContentBuilder.Item("brambles_spectacles").Color, 0.8f);
+				var lens = Lit("SpectacleLens", new Color(0.8f, 0.95f, 1f), 0.9f, new Color(0.5f, 0.7f, 0.8f));
+
+				foreach (var side in new[] { -0.13f, 0.13f })
+				{
+					Prim(PrimitiveType.Cylinder, "Rim", visual, new Vector3(side, 0.14f, 0f), new Vector3(0.22f, 0.012f, 0.22f), frame, false, new Vector3(75f, 0f, 0f));
+					Prim(PrimitiveType.Cylinder, "Lens", visual, new Vector3(side, 0.14f, -0.01f), new Vector3(0.17f, 0.014f, 0.17f), lens, false, new Vector3(75f, 0f, 0f));
+				}
+
+				PointLight(visual, new Vector3(0f, 0.4f, 0f), new Color(1f, 0.95f, 0.7f), 2f, 0.7f);
+			});
+
+			var noFly = root.AddComponent<NoFlyZone>();
+			SetValue(noFly, "radius", 12f);
+			SetString(noFly, "message", "The Old Oak's branches are too tangled to fly through. You'll have to climb.");
+
+			var course = root.AddComponent<TrialCourse>();
+			SetString(course, "liftMessage", "A breath of wind lifts you back up to the last lantern.");
+
+			var serialized = new SerializedObject(course);
+			var list = serialized.FindProperty("checkpoints");
+			list.arraySize = checkpoints.Count;
+
+			for (var i = 0; i < checkpoints.Count; i++)
+				list.GetArrayElementAtIndex(i).objectReferenceValue = checkpoints[i];
+
+			serialized.ApplyModifiedPropertiesWithoutUndo();
+		}
+
+		private static GameObject OakShelfDisc(Transform parent, string name, Vector3 topCentre, int seed)
+		{
+			var shelf = Node(name, parent, topCentre, seed * 47f % 360f);
+			shelf.layer = Ground;
+
+			var top = Prim(PrimitiveType.Cylinder, "Top", shelf.transform, Vector3.down * 0.12f, new Vector3(3f, 0.12f, 3f), Grass);
+			top.layer = Ground;
+
+			MeshObject("Underside", shelf.transform, WitchCraftBuildKit.LeafClump(seed % 3), Vector3.down * 0.45f, new Vector3(1.6f, 0.4f, 1.6f), Leaf(seed % 2));
+
+			return shelf;
+		}
+
+		// A grassy shelf on the end of a branch reaching out from the trunk
+		private static GameObject OakBranch(Transform oak, string name, Vector3 topCentre, int seed)
+		{
+			var shelf = OakShelfDisc(oak, name, topCentre, seed);
+
+			var flat = new Vector3(topCentre.x, 0f, topCentre.z);
+			var yaw = Quaternion.LookRotation(flat.normalized).eulerAngles.y;
+
+			Prim(PrimitiveType.Cube, "Branch", oak, flat.normalized * (OakShelfRadius * 0.6f) + Vector3.up * (topCentre.y - 0.4f), new Vector3(0.7f, 0.5f, OakShelfRadius * 0.8f), Trunk, false,
+				new Vector3(0f, yaw, 0f));
+
+			return shelf;
+		}
+
+		private static void Lantern(Transform shelf)
+		{
+			Prim(PrimitiveType.Cylinder, "Post", shelf, new Vector3(0.9f, 0.45f, 0f), new Vector3(0.07f, 0.45f, 0.07f), DarkWood, false);
+			Prim(PrimitiveType.Sphere, "Glow", shelf, new Vector3(0.9f, 1f, 0f), Vector3.one * 0.22f, Lit("CheckpointGlow", new Color(1f, 0.85f, 0.5f), 0.3f, new Color(1f, 0.75f, 0.35f) * 2f), false);
+			PointLight(shelf, new Vector3(0.9f, 1f, 0f), new Color(1f, 0.85f, 0.5f), 5f, 1.5f);
+		}
+
+		// Something to find for a companion's quest step. Only shows while that step is under way
+		private static void QuestItem(Transform parent, string name, Vector3 position, CompanionDefinition companion, int step, Action<Transform> visual)
+		{
+			var root = Node(name, parent, position);
+			root.layer = Interactable;
+
+			Trigger(root, 1f, new Vector3(0f, 0.4f, 0f));
+
+			var look = Node("Visual", root.transform);
+			visual(look.transform);
+			SetLayer(look, Interactable);
+
+			var pickup = root.AddComponent<QuestPickup>();
+			Set(pickup, "companion", companion);
+			Set(pickup, "visual", look);
+
+			var serialized = new SerializedObject(pickup);
+			serialized.FindProperty("step").intValue = step;
+			serialized.ApplyModifiedPropertiesWithoutUndo();
 		}
 
 		private static void Leaves(Transform visual, Color colour)
@@ -1451,6 +1676,10 @@ namespace WitchCraftEditor
 
 			void Spot(string name, Vector3 position, string key, string note)
 			{
+				// Nothing grows on the Old Oak's climb or in its nest
+				if (new Vector2(position.x - OakCentre.x, position.z - OakCentre.z).magnitude < 9f)
+					return;
+
 				var spot = Node(name, parent, position, Roll(0f, 360f));
 				ArtSlot(spot, key, note);
 			}
@@ -1526,6 +1755,7 @@ namespace WitchCraftEditor
 			return Vector3.Distance(Flat(point), Flat(HomeCentre)) > 15f + margin
 				&& Vector3.Distance(Flat(point), Flat(PondCentre)) > 13.6f + margin
 				&& Vector3.Distance(Flat(point), Flat(SpireCentre)) > 9.5f + margin
+				&& Vector3.Distance(Flat(point), Flat(OakCentre)) > 9f + margin
 				&& !(Mathf.Abs(point.x - CaveCentre.x - 2f) < 11.5f + margin && Mathf.Abs(point.z - CaveCentre.z) < 9f + margin)
 				&& Vector3.Distance(Flat(point), Vector3.zero) < 82f - margin;
 		}
@@ -1652,6 +1882,10 @@ namespace WitchCraftEditor
 
 			void Spot(string name, Vector3 position, string key, string note)
 			{
+				// Nothing grows on the Old Oak's climb or in its nest
+				if (new Vector2(position.x - OakCentre.x, position.z - OakCentre.z).magnitude < 9f)
+					return;
+
 				var spot = Node(name, parent, position, Roll(0f, 360f));
 				ArtSlot(spot, key, note);
 			}
@@ -1739,6 +1973,7 @@ namespace WitchCraftEditor
 			}
 
 			Place("Home Meadow", HomeCentre, 17f, -5f, 14f);
+			Place("The Old Oak", OakCentre, 12f, -5f, 34f);
 			Place("The Forest", ForestCentre, 27f, -5f, 22f);
 			Place("The Pond", PondCentre, 19f, -5f, 14f);
 			Place("The Southern Hills", HillsCentre + new Vector3(-6f, 0f, -4f), 30f, -5f, 16f);

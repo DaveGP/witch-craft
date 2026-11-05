@@ -29,6 +29,18 @@ namespace Data.ScriptableObjects
 
 		[TextArea] public string MoveInLine;
 
+		[Tooltip("The storybook that leads to them: they can't be found until it's been read. Empty means they're there from the start")]
+		public StoryBookDefinition RevealBook;
+
+		[Tooltip("Where to look, finishing \"Find Bramble ...\"")]
+		public string Whereabouts;
+
+		[Tooltip("What they ask of the witch, in order, before moving in. Empty means the recruit gift alone")]
+		public List<QuestStep> Quests = new();
+
+		[Tooltip("What they say when she's back with a step done")]
+		[TextArea] public string Expectant;
+
 		public List<string> ChatLines = new();
 
 		public List<ItemDefinition> LikedGifts = new();

@@ -54,6 +54,9 @@ namespace Character.Movement
 
 		private bool jumpHeld;
 
+		// Thrown by a bounce mushroom: the arc is the mushroom's, so letting go of jump doesn't cut it short
+		private bool launched;
+
 		private bool isJumping;
 
 		private int airJumpsUsed;
@@ -168,9 +171,11 @@ namespace Character.Movement
 			desiredRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
 		}
 
-		public void Launch(Vector3 velocity, bool restoreAirJumps)
+		public void Launch(Vector3 velocity, bool restoreAirJumps, bool fullArc = false)
 		{
 			rigidbody.linearVelocity = velocity;
+
+			launched = fullArc;
 
 			isJumping = true;
 
@@ -230,6 +235,8 @@ namespace Character.Movement
 
 		private void PerformJump(float height)
 		{
+			launched = false;
+
 			var velocity = rigidbody.linearVelocity;
 
 			velocity.y = Mathf.Sqrt(height * potionEffects.JumpMultiplier * 2f * stats.Gravity) + Mathf.Max(0f, PlatformVelocity.y);
@@ -272,8 +279,11 @@ namespace Character.Movement
 
 			if (velocity.y < 0f)
 				gravity *= stats.FallGravityMultiplier * potionEffects.FallGravityMultiplier;
-			else if (!jumpHeld)
+			else if (!jumpHeld && !launched)
 				gravity *= stats.LowJumpGravityMultiplier;
+
+			if (velocity.y < 0f)
+				launched = false;
 
 			velocity.y -= gravity * Time.fixedDeltaTime;
 

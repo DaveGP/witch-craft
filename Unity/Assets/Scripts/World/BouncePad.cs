@@ -35,7 +35,7 @@ namespace World
 			var velocity = body.linearVelocity;
 			velocity.y = bounceSpeed;
 
-			movement.Launch(velocity, true);
+			movement.Launch(velocity, true, true);
 
 			squash = 1f;
 

@@ -12,7 +12,8 @@ using Utilities;
 
 namespace Companions
 {
-	// A magical creature met out in the world. Bring them what they ask for and they'll move into the witch's home.
+	// A magical creature met out in the world. Do what they ask and they'll move into the witch's home. Some stay out
+	// of the world until the storybook that leads to them has been read.
 	public class CompanionRecruit : MonoBehaviour, IInteractable
 	{
 		[SerializeField] private CompanionDefinition companion;
@@ -23,11 +24,17 @@ namespace Companions
 
 		private IEventBusSender eventBus;
 
+		private IQuestLog quests;
+
+		private Vector3 home;
+
+		private bool hidden;
+
 		public CompanionDefinition Companion => companion;
 
 		public string Prompt => $"Talk to {companion.DisplayName}";
 
-		public bool CanInteract => !roster.IsResident(companion);
+		public bool CanInteract => !hidden && !roster.IsResident(companion);
 
 		public Vector3 Position => transform.position;
 
@@ -36,6 +43,7 @@ namespace Companions
 			roster = ServiceLocator.Get<ICompanionRoster>();
 			inventory = ServiceLocator.Get<IInventory>();
 			eventBus = ServiceLocator.Get<IEventBusSender>();
+			quests = ServiceLocator.Get<IQuestLog>();
 
 			if (roster == null)
 				Debug.LogError($"{nameof(roster)} is null");
@@ -46,13 +54,37 @@ namespace Companions
 
 		private void Start()
 		{
+			home = transform.position;
+
 			if (roster.IsResident(companion))
 				gameObject.SetActive(false);
+			else
+				UpdateHiding();
+		}
+
+		private void Update() => UpdateHiding();
+
+		// Parked far below the world rather than switched off, so the art and everything else on them stays ready
+		private void UpdateHiding()
+		{
+			var hide = !quests.IsRevealed(companion);
+
+			if (hide == hidden)
+				return;
+
+			hidden = hide;
+			transform.position = hide ? home + Vector3.down * 500f : home;
 		}
 
 		public void Interact(GameObject interactor)
 		{
 			FaceWitch(interactor.transform);
+
+			if (companion.Quests.Count > 0)
+			{
+				Converse();
+				return;
+			}
 
 			var gift = companion.RecruitGift;
 
@@ -74,6 +106,53 @@ namespace Companions
 			eventBus.RequestDialogue(new DialogueRequest($"{companion.DisplayName} the {companion.Species}", body, companion.Color, options));
 		}
 
+		// Earned rather than bribed: a first meeting explains, and each return hands in or reminds
+		private void Converse()
+		{
+			var firstMeeting = !quests.HasStarted(companion);
+
+			quests.Begin(companion);
+
+			var step = quests.Current(companion);
+
+			var body = firstMeeting
+				? $"{companion.Greeting}\n\n{companion.Plea}\n\n{step.Ask}"
+				: quests.IsMet(step) ? companion.Expectant : step.Ask;
+
+			ShowStep(body, step);
+		}
+
+		private void ShowStep(string body, QuestStep step)
+		{
+			var options = new List<DialogueOption>();
+
+			if (quests.IsMet(step))
+				options.Add(new DialogueOption(step.Offer, TurnIn, true));
+
+			options.Add(new DialogueOption("Chat", Chat, true));
+			options.Add(new DialogueOption("Goodbye", null));
+
+			eventBus.RequestDialogue(new DialogueRequest($"{companion.DisplayName} the {companion.Species}", body, companion.Color, options));
+		}
+
+		private void TurnIn()
+		{
+			var thanks = quests.Current(companion).Thanks;
+
+			if (!quests.TurnIn(companion))
+				return;
+
+			var next = quests.Current(companion);
+
+			if (next == null)
+			{
+				Welcome($"{thanks}\n\n{companion.MoveInLine}");
+				return;
+			}
+
+			ShowStep($"{thanks}\n\n{next.Ask}", next);
+		}
+
 		private void Chat()
 		{
 			if (companion.ChatLines.Count == 0)
@@ -90,7 +169,12 @@ namespace Companions
 			if (!inventory.Remove(companion.RecruitGift.Item, companion.RecruitGift.Amount))
 				return;
 
-			eventBus.RequestDialogue(new DialogueRequest(companion.DisplayName, companion.MoveInLine, companion.Color,
+			Welcome(companion.MoveInLine);
+		}
+
+		private void Welcome(string line)
+		{
+			eventBus.RequestDialogue(new DialogueRequest(companion.DisplayName, line, companion.Color,
 				new List<DialogueOption> { new("See you at home!", null) }));
 
 			roster.Recruit(companion);

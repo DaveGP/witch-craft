@@ -46,6 +46,8 @@ namespace UserInterface
 
 		private NameView nameView;
 
+		private JournalView journal;
+
 		private View current;
 
 		private void Awake()
@@ -77,6 +79,7 @@ namespace UserInterface
 			bookView = AddView<BookView>(canvas, "Book");
 			bookcase = AddView<BookcaseView>(canvas, "Bookcase");
 			nameView = AddView<NameView>(canvas, "Name");
+			journal = AddView<JournalView>(canvas, "Journal");
 
 			bookcase.Read = ReadFromBookcase;
 
@@ -175,6 +178,9 @@ namespace UserInterface
 
 			if (actions.HasFlag(MenuAction.Spellbook))
 				Toggle(spellbook);
+
+			if (actions.HasFlag(MenuAction.Journal))
+				Toggle(journal);
 
 			if (actions.HasFlag(MenuAction.Pump) && current == alchemy)
 				alchemy.Pump();

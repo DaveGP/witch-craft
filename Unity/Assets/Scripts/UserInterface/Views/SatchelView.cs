@@ -68,6 +68,7 @@ namespace UserInterface.Views
 			Section("Brewing bases", ItemCategory.Base);
 			Section("Herbs and ingredients", ItemCategory.Ingredient);
 			Section("Potions", ItemCategory.Potion);
+			Section("Keepsakes", ItemCategory.Keepsake);
 		}
 
 		private void Section(string heading, ItemCategory category)

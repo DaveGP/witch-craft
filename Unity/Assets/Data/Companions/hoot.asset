@@ -26,6 +26,10 @@ MonoBehaviour:
     Item: {fileID: 11400000, guid: 4ba4f1c8ab72043a3b35ddda89ef478b, type: 2}
     Amount: 1
   MoveInLine: '"Hoo hoo! Already I feel younger. I''ll meet you at your hearth."'
+  RevealBook: {fileID: 0}
+  Whereabouts: 
+  Quests: []
+  Expectant: 
   ChatLines:
   - '"From my perch, your home looks like a little lantern."'
   - '"Wisdom is mostly sitting still and listening. And snacks."'

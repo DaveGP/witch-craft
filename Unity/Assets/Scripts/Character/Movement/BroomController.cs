@@ -6,6 +6,7 @@ using Events.Interfaces;
 using Potions.Interfaces;
 using UnityEngine;
 using Utilities;
+using World;
 
 
 namespace Character.Movement
@@ -92,6 +93,14 @@ namespace Character.Movement
 
 		private void Mount()
 		{
+			var zone = NoFlyZone.At(transform.position);
+
+			if (zone != null)
+			{
+				eventBus.Notify(zone.Message);
+				return;
+			}
+
 			if (charge < stats.MaxCharge * 0.15f && !potionEffects.IsActive(PotionEffect.Skyward))
 			{
 				eventBus.Notify("Your broom needs to rest on the ground a moment.");
@@ -143,6 +152,15 @@ namespace Character.Movement
 		{
 			if (!IsMounted)
 				return;
+
+			var zone = NoFlyZone.At(transform.position);
+
+			if (zone != null)
+			{
+				Dismount();
+				eventBus.Notify(zone.Message);
+				return;
+			}
 
 			IsBoosting = boost && direction.sqrMagnitude > 0.1f;
 

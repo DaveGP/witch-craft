@@ -62,6 +62,10 @@ namespace WitchCraftEditor
 			BuildNewGame();
 			StoryBookContent.Build(Database);
 
+			// The books are built after the companions they lead to
+			Database.FindCompanion("bramble").RevealBook = Database.FindBook("eye_of_newt");
+			EditorUtility.SetDirty(Database.FindCompanion("bramble"));
+
 			EditorUtility.SetDirty(Database);
 			AssetDatabase.SaveAssets();
 
@@ -106,6 +110,9 @@ namespace WitchCraftEditor
 			AddItem("clay", "Clay", ItemCategory.Material, new Color(0.78f, 0.46f, 0.35f), "Sticky red clay from the pond bank.");
 			AddItem("seashell", "Seashell", ItemCategory.Material, new Color(0.98f, 0.82f, 0.78f), "Pearly pink shells from Tidewater's beach.");
 			AddItem("pearl", "Pearl", ItemCategory.Material, new Color(0.95f, 0.95f, 1f), "A rare pearl from one of Tidewater's giant clams.");
+			AddItem("brambles_spectacles", "Bramble's Spectacles", ItemCategory.Keepsake, new Color(0.8f, 0.72f, 0.45f), "Small round spectacles, slightly bent. They smell of hedge.");
+			AddItem("winter_acorn", "Bramble's Winter Acorn", ItemCategory.Keepsake, new Color(0.72f, 0.5f, 0.26f), "The last of a very old winter store, from the nest atop the Old Oak.");
+
 			AddItem("crystal", "Crystal", ItemCategory.Material, new Color(0.6f, 0.9f, 1f), "Humming crystal from the cave. Makes glass and lamps.");
 
 			AddPotion("swiftness_brew", "Swiftness Brew", new Color(0.4f, 0.85f, 1f), PotionEffect.Swiftness, 60f, "Your feet feel feather light. Run faster for a minute.");
@@ -829,14 +836,47 @@ namespace WitchCraftEditor
 			AddReward(pip, 9, null, null, "\"You're my best friend, {name}. Don't tell the newts.\"");
 
 			var bramble = AddCompanion("bramble", "Bramble", "Hedgehog", new Color(0.62f, 0.45f, 0.3f), Hedgehog(),
-				"\"Hm? Oh, hullo. Mind the prickles. I'm Bramble. I mostly forage and complain about weather.\"",
-				"\"Your home has a garden, does it? Bring me four Wild Berries and I'll come tend it.\"",
+				"\"Hm? Oh, hullo. Mind the prickles. I'm Bramble. I mostly forage and complain about weather. And write. You've read my book? Hardly anybody has.\"",
+				"\"Your home has a garden, does it? I might be persuaded. But one thing at a time.\"",
 				("wild_berry", 4),
-				"\"Right then. I'll pack my things. Which is to say, I'll roll there.\"",
+				"\"Right then. Your home it is. I'll pack my things. Which is to say, I'll roll there.\"",
 				new[] { "\"The lavender in your planters wants more sun. Or less. One of those.\"", "\"Nettles are misunderstood. Like me.\"", "\"Morning, {name}. Or afternoon. I don't keep track.\"", "\"I heard the owl up in the sky islands keeps recipes in his nest.\"" },
 				new[] { "wild_berry", "lavender", "nettle" });
 
 			bramble.FavouriteFurniture = Database.FindBuildPiece("rug");
+
+			bramble.Whereabouts = "in the forest to the north east, by the blocked burrow";
+			bramble.Expectant = "\"Back already? Well, go on then. What have you got?\"";
+
+			AddQuest(bramble, "Find Bramble's spectacles, in the shade beyond the Old Oak",
+				"\"I'd sign your copy, but I can't see the page. I took my spectacles off to sniff the mushrooms, somewhere past the far side of the Old Oak, the big one, where it's shady all day. Then I couldn't see where I'd put them. You see the problem.\"",
+				"Give Bramble the spectacles",
+				"\"Ah. So that's what you look like. Hm. And that's what the forest looks like. It's got much bigger.\"",
+				item: "brambles_spectacles");
+
+			AddQuest(bramble, "Conjure a Woven Rug at home (reeds grow by the pond)",
+				"\"Now then, this home of yours. Hedgehogs don't do bare floorboards. Terrible on the feet. Conjure a rug, a proper woven one, and I'll think harder about it.\"",
+				"Tell Bramble about the rug",
+				"\"A rug! Rose-coloured, you say. Well. I've slept on worse. I've slept on nettles.\"",
+				piece: "rug");
+
+			AddQuest(bramble, "Clear the boulder from Bramble's burrow with Levitate (inscribe Aer + Forma)",
+				"\"Trouble is, all my things are down my burrow, and a boulder's rolled across the door. I'm a hedgehog. I can't shift a boulder. But you've a spellbook, haven't you? Put Aer and Forma on a page together and you'll have Levitate. Lift the thing out of my way.\"",
+				"Tell Bramble the door's clear",
+				"\"Oh, well done. Look at that. There's my door. I'd forgotten it was green.\"",
+				goal: BrambleBurrowGoal);
+
+			AddQuest(bramble, "Brew a Leaping Tonic at your bench and bring Bramble one",
+				"\"Moving house at my age, though. My knees. A Leaping Tonic's the only thing for them, and you've the recipe in your book: Spring Water, a ground Glowcap, two boils, a Wild Berry to finish. Brew it carefully. A good batch makes three, and I only want the one. You'll be wanting the others.\"",
+				"Give Bramble a Leaping Tonic",
+				"\"Mmf. Tastes of pond. Oh, but that's better. That's a good deal better.\"",
+				item: "leaping_tonic");
+
+			AddQuest(bramble, "Climb the Old Oak and fetch the acorn from its nest (drink a Leaping Tonic for the last big gap)",
+				"\"One last thing. My winter store's in the nest at the very top of the Old Oak. I was a much younger hedgehog when I put it there. Your broom's no good in those branches, you'll have to climb. There's a mushroom at the foot to get you started. Near the top there's a gap no witch could jump, so drink a tonic before it. Bring me the acorn and I'm yours.\"",
+				"Give Bramble the acorn",
+				"\"You went all the way up there! And it's still good. Probably.\"",
+				item: "winter_acorn");
 
 			AddReward(bramble, 5, recipes["featherfall"], null, "\"Found this page in a hedge. Featherfall Elixir. Moon Dew, two Feather Down, ground Lavender, one boil.\"");
 
@@ -891,6 +931,24 @@ namespace WitchCraftEditor
 			AddReward(ember, 6, null, null, "\"I will tell you a secret, friend: light and life together make a little friend of their own. Lux and Vita.\"");
 		}
 
+		public const string BrambleBurrowGoal = "bramble_burrow";
+
+		private static void AddQuest(CompanionDefinition companion, string objective, string ask, string offer, string thanks, string item = null, string piece = null, string goal = null)
+		{
+			companion.Quests.Add(new QuestStep
+			{
+				Objective = objective,
+				Ask = ask,
+				Offer = offer,
+				Thanks = thanks,
+				Needs = item != null ? new ItemStack(items[item], 1) : new ItemStack(),
+				Piece = piece != null ? Database.FindBuildPiece(piece) : null,
+				Goal = goal ?? "",
+			});
+
+			EditorUtility.SetDirty(companion);
+		}
+
 		private static CompanionDefinition AddCompanion(string id, string name, string species, Color colour, GameObject prefab,
 			string greeting, string plea, (string item, int amount) gift, string moveIn, string[] chat, string[] liked)
 		{
@@ -911,6 +969,8 @@ namespace WitchCraftEditor
 			companion.ChatLines = chat.ToList();
 			companion.LikedGifts = liked.Select(itemId => items[itemId]).ToList();
 			companion.Rewards = new List<FriendshipReward>();
+			companion.Quests = new List<QuestStep>();
+			companion.RevealBook = null;
 
 			EditorUtility.SetDirty(companion);
 

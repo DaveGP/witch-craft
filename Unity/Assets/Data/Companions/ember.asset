@@ -26,6 +26,10 @@ MonoBehaviour:
     Amount: 1
   MoveInLine: '"It''s so bright! Thank you, witch. I will keep your hearth warm,
     always."'
+  RevealBook: {fileID: 0}
+  Whereabouts: 
+  Quests: []
+  Expectant: 
   ChatLines:
   - '"Your hearth is the cosiest fire I''ve ever slept beside."'
   - '"When you''re out late, {name}, I keep the fire bright so you can find your

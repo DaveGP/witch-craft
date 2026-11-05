@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3668743613542039220}
   - component: {fileID: 2984471362852330254}
-  - component: {fileID: 8324604539477812604}
+  - component: {fileID: 390605203785942154}
   m_Layer: 6
   m_Name: GlowcapLamp
   m_TagString: Untagged
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Home.Paintable
   surfaces: []
---- !u!114 &8324604539477812604
+--- !u!114 &390605203785942154
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

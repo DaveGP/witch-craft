@@ -3,6 +3,7 @@ using System.Linq;
 using Character.Interfaces;
 using Character.Input.Interfaces;
 using Companions.Interfaces;
+using Companions.Interfaces;
 using Data.Enums;
 using Data.ScriptableObjects;
 using DependencyInjection;
@@ -84,6 +85,14 @@ namespace UserInterface.Views
 
 		private readonly List<(Text text, float born)> toasts = new();
 
+		private IQuestLog quests;
+
+		private GameObject questPanel;
+
+		private Text questHeading;
+
+		private Text questLine;
+
 		private Text locationLabel;
 
 		private Image locationRule;
@@ -99,6 +108,11 @@ namespace UserInterface.Views
 		private float announcedAt = -100f;
 
 		/// <summary>
+		/// The quest line showing, or empty when none is, for the playtest.
+		/// </summary>
+		public string ShownQuest => questPanel != null && questPanel.activeSelf ? questLine.text : "";
+
+		/// <summary>
 		/// The place name showing in the corner, or empty when none is, for the playtest.
 		/// </summary>
 		public string ShownLocation => locationLabel != null && locationLabel.color.a > 0.05f ? locationLabel.text : "";
@@ -111,6 +125,7 @@ namespace UserInterface.Views
 			potionEffects = ServiceLocator.Get<IPotionEffects>();
 			inventory = ServiceLocator.Get<IInventory>();
 			roster = ServiceLocator.Get<ICompanionRoster>();
+			quests = ServiceLocator.Get<IQuestLog>();
 			controlScheme = ServiceLocator.Get<IControlScheme>();
 
 			root = parent;
@@ -121,6 +136,7 @@ namespace UserInterface.Views
 			BuildBroom();
 			BuildCorners();
 			BuildLocation();
+			BuildQuest();
 
 			eventBus.ActiveTargetChanged += SetTarget;
 			eventBus.InteractionFocusChanged += SetFocus;
@@ -243,6 +259,45 @@ namespace UserInterface.Views
 			help = UIFactory.Label(root, "", 16, UIFactory.TextMuted, TextAnchor.LowerRight);
 			UIFactory.Place(help.rectTransform, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-640, 24), new Vector2(-30, 80));
 			help.gameObject.AddComponent<Shadow>();
+		}
+
+		// Under the objective, with a line on what the companion being earned wants next
+		private void BuildQuest()
+		{
+			var panel = UIFactory.Image(root, new Color(0.13f, 0.09f, 0.17f, 0.82f), "Quest");
+			UIFactory.Place(panel.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-520, -230), new Vector2(-30, -130));
+
+			var accent = UIFactory.Image(panel.transform, UIFactory.Accent, "Accent");
+			UIFactory.Place(accent.rectTransform, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(5, 0));
+
+			questHeading = UIFactory.Label(panel.transform, "", 14, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
+			UIFactory.Place(questHeading.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(20, -30), new Vector2(-16, -10));
+
+			questLine = UIFactory.Label(panel.transform, "", 20, UIFactory.Text);
+			UIFactory.Place(questLine.rectTransform, Vector2.zero, Vector2.one, new Vector2(20, 10), new Vector2(-16, -32));
+
+			questPanel = panel.gameObject;
+			questPanel.SetActive(false);
+		}
+
+		private void UpdateQuest()
+		{
+			var companion = quests.Followed;
+
+			if (questPanel.activeSelf != (companion != null))
+				questPanel.SetActive(companion != null);
+
+			if (companion == null)
+				return;
+
+			questHeading.text = $"{companion.DisplayName.ToUpperInvariant()}  ·  J FOR JOURNAL";
+			questLine.text = quests.NextStep(companion);
+
+			// Below the objective when there is one, in its place when not
+			var rect = questPanel.GetComponent<RectTransform>();
+			var drop = objectivePanel.activeSelf ? -110f : 0f;
+			rect.offsetMin = new Vector2(-520, -230 + drop);
+			rect.offsetMax = new Vector2(-30, -130 + drop);
 		}
 
 		// Bottom left, above the broom's charge
@@ -376,7 +431,7 @@ namespace UserInterface.Views
 		{
 			help.text = Gamepad
 				? "Left stick move · A jump · X interact · Y broom · D-pad ready spell 1/2 · RT cast\nView satchel · Right stick click spellbook · Start menu"
-				: "WASD move · Space jump · Shift sprint · E interact · F broom\n1-4 ready spell · Click cast · Tab satchel · B spellbook · Esc menu";
+				: "WASD move · Space jump · Shift sprint · E interact · F broom\n1-4 ready spell · Click cast · Tab satchel · B spellbook · J journal · Esc menu";
 
 			SetFocus(focus);
 		}
@@ -448,6 +503,9 @@ namespace UserInterface.Views
 			status.text = target.Spells.Status;
 
 			UpdateLocation();
+
+			if (Time.frameCount % 15 == 0)
+				UpdateQuest();
 
 			crosshair.enabled = target.Spells.ActiveSpell != null && target.Spells.IsAiming;
 

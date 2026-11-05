@@ -29,6 +29,12 @@ namespace Data.Save
 
 		public List<string> Books = new();
 
+		public List<QuestRecord> Quests = new();
+
+		public List<string> QuestGoals = new();
+
+		public string FollowedQuest = "";
+
 		public float Hour = 8f;
 
 		public int Day = 1;
@@ -40,6 +46,14 @@ namespace Data.Save
 		public string Id;
 
 		public int Amount;
+	}
+
+	[Serializable]
+	public class QuestRecord
+	{
+		public string Id;
+
+		public int Step;
 	}
 
 	[Serializable]

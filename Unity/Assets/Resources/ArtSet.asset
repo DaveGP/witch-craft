@@ -113,9 +113,9 @@ MonoBehaviour:
     Note: Driftwood (Timber)
     Prefab: {fileID: 3059600125008029049, guid: 6382ecb43018daf48bc6671d9ac92dc0, type: 3}
     Material: {fileID: 0}
-    Offset: {x: -0.12878236, y: 0.50375843, z: -0.05670633}
+    Offset: {x: -0.12878306, y: 0.503757, z: -0.056699675}
     Rotation: {x: 0, y: 90, z: 0}
-    Scale: 0.7190875
+    Scale: 0.71908545
     KeepPlaceholder: 0
   - Key: gather:EmberMoss
     Note: EmberMoss (Ember Moss)

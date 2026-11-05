@@ -47,6 +47,7 @@ namespace Character.Input
 			OnPress(player.Pick, CharacterAction.Pick);
 			OnPress(player.Satchel, CharacterAction.None, MenuAction.Satchel);
 			OnPress(player.Spellbook, CharacterAction.None, MenuAction.Spellbook);
+			OnPress(player.Journal, CharacterAction.None, MenuAction.Journal);
 			OnPress(player.Cancel, CharacterAction.None, MenuAction.Cancel);
 
 			player.Enable();

@@ -16,7 +16,7 @@ namespace Spells.Effects
 		public override bool CapturesScroll => held != null;
 
 		public override string Status => held == null
-			? "Levitate: aim at furniture or a crate and click to lift it"
+			? "Levitate: aim at furniture, a crate or a loose boulder and click to lift it"
 			: $"Levitating {held.name}: click to set down · Q/R turn · scroll push/pull · right-click to cancel";
 
 		[SerializeField] private float minDistance = 2.5f;
@@ -83,7 +83,7 @@ namespace Spells.Effects
 
 			if (movable == null)
 			{
-				EventBus.Notify("That won't budge. Levitate works on furniture and crates.");
+				EventBus.Notify("That won't budge. Levitate works on furniture, crates and loose boulders.");
 				return;
 			}
 

@@ -128,10 +128,30 @@ The plot starts 8 cells (16m) across with a starter hut. Walls snap to cell edge
 
 Others are met out in the world and ask for something before they move in. At home they wander the plot; visit them to chat (a little friendship) or give gifts they like (more), and at friendship milestones they share recipes and secrets.
 
+### Earning a companion
+
+Companions are being moved from a single gift to a chain of quests, so the loop becomes: explore, find a book, find its author, earn them through several quests, and they move in. Bramble works this way now; the rest are planned below and still ask for their old gift.
+
+* **A book leads to them.** They can't be found until their storybook has been read; a note in the back says where to look.
+* **Each step is asked in person.** Doing something early still counts, but it has to be handed in, so each step means a trip back to them. Steps show on the HUD and in the journal (J), which hides what's still to come.
+* **Bramble's chain:** read *Eye of Newt* (western shore) → find her spectacles in the shade beyond the Old Oak → conjure a Woven Rug at home → shift the boulder from her burrow with Levitate (Aer + Forma) → brew a Leaping Tonic and bring her one → climb the Old Oak for the acorn in its nest.
+* **The Old Oak** is the first platforming trial. A bounce mushroom starts it, branches spiral up the trunk, one branch glides, and one 3.9 m gap is beyond a double jump (about 3 m) without a Leaping Tonic. The branches are too tangled to fly through. Lanterns mark checkpoints: fall to the ground and a breath of wind lifts you back to the last one you landed on.
+
+| Companion | Book | Find | Build | Spell challenge | Potion | Trial | Status |
+| --------- | ---- | ---- | ----- | --------------- | ------ | ----- | ------ |
+| Pip (short, teaches the system) | The Silver Spellbook | 3 Glowcaps | Herb planter | - | - | - | Planned |
+| Bramble | Eye of Newt | Her spectacles | Woven Rug | Levitate a boulder from her door | Leaping Tonic | The Old Oak | **Done** |
+| Ember | The Lantern Under the Hill | Her lantern | Crystal lamp | Wisp, to reveal a hidden way | Glimmer Draught | A climb up a dark cave shaft | Planned |
+| Hoot | The Owl Who Counted Stars (moved somewhere earlier) | A star chart page | Rooftop perch (new) | Gust, against the wind | Swiftness Brew | The spire's upper route | Planned |
+| Tilly | Bubble Witch | Her shell keepsake and pearls | Washtub (new) | Bubble or Rain Call | Skyward Draught | Timed hops across the sea stacks | Planned |
+| Nova | The Claw of the Phoenix | Stardust, at night | Telescope | Blink | A brew to be chosen | Night-only constellation platforms | Planned |
+
+Still to do alongside these: slower gathering (fewer nodes, longer respawns, dearer home levels, rarer materials further out).
+
 | Companion | Found | Wants | Shares |
 | --------- | ----- | ----- | ------ |
 | Pip the Frog | Pond | 3 Glowcaps | Glimmer Draught |
-| Bramble the Hedgehog | Forest | 4 Wild Berries | Featherfall Elixir |
+| Bramble the Hedgehog | Forest, once *Eye of Newt* is read | Her quest chain, below | Featherfall Elixir |
 | Hoot the Owl | Sky island | A Swiftness Brew | Skyward Draught |
 | Ember the Fox Spirit | Crystal cave | A Glimmer Draught | A hint about Wisp |
 | Tilly the Turtle | Tidewater Isle | 3 Pearls | Seafoam Draught |

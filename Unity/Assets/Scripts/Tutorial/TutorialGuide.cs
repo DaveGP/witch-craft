@@ -203,7 +203,7 @@ namespace Tutorial
 
 		private void Finish()
 		{
-			eventBus.SetObjective("Explore! Glyph shrines glow at the pond, atop the sky spire, in the crystal cave and on the sky island. Far to the north, sea stacks lead to Tidewater Isle");
+			eventBus.SetObjective("Explore! Glyph shrines glow at the pond, atop the sky spire, in the crystal cave and on the sky island. Far to the north, sea stacks lead to Tidewater Isle. Storybooks say who else lives out there");
 			eventBus.Notify("Sable: \"That's the basics. The island's yours. I'll be right behind you.\"");
 
 			farewellUntil = Time.time + FarewellSeconds;

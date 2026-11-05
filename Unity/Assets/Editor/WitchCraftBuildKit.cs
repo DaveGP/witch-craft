@@ -265,6 +265,10 @@ namespace WitchCraftEditor
 
 		public static Mesh RockyUnderside(int seed) => ReplaceMesh($"RockyUnderside{seed}", BuildRockyUnderside(seed));
 
+		public static Mesh OakTrunk() => ReplaceMesh("OakTrunk", BuildOakTrunk(new System.Random(7)));
+
+		public static Mesh LeafClump(int seed) => ReplaceMesh($"LeafClump{seed}", BuildLeafClump(new System.Random(seed)));
+
 		public static Mesh CaveShell() => ReplaceMesh("CaveShell", BuildCaveShell(new System.Random(5)));
 
 		// Saves a generated mesh over the last build's, for shapes that are still being tuned
@@ -481,6 +485,119 @@ namespace WitchCraftEditor
 				var outside = new Vector3(-10f, 1f, 0f);
 				Face(inner[0, j], outer[0, j], outer[0, j + 1], outside, true);
 				Face(inner[0, j], outer[0, j + 1], inner[0, j + 1], outside, true);
+			}
+
+			return Finish(vertices, triangles);
+		}
+
+		// A huge old trunk, 1 m to a unit: flared at the foot, narrowing to a flat top at y 22 for a nest. Faceted
+		private static Mesh BuildOakTrunk(System.Random random)
+		{
+			float Roll(float min, float max) => min + (float)random.NextDouble() * (max - min);
+
+			const int rings = 9;
+			const int around = 12;
+			const float height = 22f;
+
+			var grid = new Vector3[rings + 1, around];
+
+			for (var ring = 0; ring <= rings; ring++)
+			{
+				var t = ring / (float)rings;
+				var radius = Mathf.Lerp(3.3f, 2.6f, t) + 2f * Mathf.Pow(1f - t, 5f);
+
+				for (var s = 0; s < around; s++)
+				{
+					var angle = s * Mathf.PI * 2f / around;
+					var bump = ring == rings ? 0f : Roll(-0.22f, 0.22f);
+
+					grid[ring, s] = new Vector3(Mathf.Cos(angle) * (radius + bump), t * height - (ring == 0 ? 0.2f : 0f), Mathf.Sin(angle) * (radius + bump));
+				}
+			}
+
+			var vertices = new List<Vector3>();
+			var triangles = new List<int>();
+
+			void Face(Vector3 a, Vector3 b, Vector3 c)
+			{
+				var centre = (a + b + c) / 3f;
+
+				if (Vector3.Dot(Vector3.Cross(b - a, c - a), new Vector3(centre.x, 0f, centre.z)) < 0f)
+					(b, c) = (c, b);
+
+				AddTriangle(vertices, triangles, a, b, c);
+			}
+
+			for (var ring = 0; ring < rings; ring++)
+			for (var s = 0; s < around; s++)
+			{
+				var next = (s + 1) % around;
+				Face(grid[ring, s], grid[ring, next], grid[ring + 1, next]);
+				Face(grid[ring, s], grid[ring + 1, next], grid[ring + 1, s]);
+			}
+
+			var top = new Vector3(0f, height, 0f);
+
+			for (var s = 0; s < around; s++)
+			{
+				var a = grid[rings, s];
+				var b = grid[rings, (s + 1) % around];
+
+				if (Vector3.Cross(b - top, a - top).y > 0f)
+					AddTriangle(vertices, triangles, top, b, a);
+				else
+					AddTriangle(vertices, triangles, top, a, b);
+			}
+
+			return Finish(vertices, triangles);
+		}
+
+		// A lumpy, faceted ball of leaves, about 1 across each way
+		private static Mesh BuildLeafClump(System.Random random)
+		{
+			float Roll(float min, float max) => min + (float)random.NextDouble() * (max - min);
+
+			const int rings = 5;
+			const int around = 8;
+
+			var grid = new Vector3[rings - 1, around];
+
+			for (var ring = 1; ring < rings; ring++)
+			for (var s = 0; s < around; s++)
+			{
+				var down = ring * Mathf.PI / rings;
+				var angle = (s + (ring % 2) * 0.5f) * Mathf.PI * 2f / around;
+				var radius = Roll(0.82f, 1.1f);
+
+				grid[ring - 1, s] = new Vector3(Mathf.Sin(down) * Mathf.Cos(angle), Mathf.Cos(down), Mathf.Sin(down) * Mathf.Sin(angle)) * radius;
+			}
+
+			var vertices = new List<Vector3>();
+			var triangles = new List<int>();
+
+			void Face(Vector3 a, Vector3 b, Vector3 c)
+			{
+				if (Vector3.Dot(Vector3.Cross(b - a, c - a), a + b + c) < 0f)
+					(b, c) = (c, b);
+
+				AddTriangle(vertices, triangles, a, b, c);
+			}
+
+			var crown = Vector3.up * Roll(0.9f, 1.1f);
+			var foot = Vector3.down * Roll(0.8f, 1f);
+
+			for (var s = 0; s < around; s++)
+			{
+				var next = (s + 1) % around;
+
+				Face(crown, grid[0, s], grid[0, next]);
+				Face(foot, grid[rings - 2, s], grid[rings - 2, next]);
+
+				for (var ring = 0; ring < rings - 2; ring++)
+				{
+					Face(grid[ring, s], grid[ring, next], grid[ring + 1, next]);
+					Face(grid[ring, s], grid[ring + 1, next], grid[ring + 1, s]);
+				}
 			}
 
 			return Finish(vertices, triangles);

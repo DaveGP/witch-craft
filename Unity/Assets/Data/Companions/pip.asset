@@ -27,6 +27,10 @@ MonoBehaviour:
     Amount: 3
   MoveInLine: '"Ribbit-ribbit! Wait for me, I''ll catch up. Probably. Frogs are not
     fast walkers."'
+  RevealBook: {fileID: 0}
+  Whereabouts: 
+  Quests: []
+  Expectant: 
   ChatLines:
   - '"Did you know lily pads are just pond plates?"'
   - '"I counted the stars last night. I got to eleven and fell asleep."'

@@ -41,7 +41,7 @@ namespace Character.Movement.Interfaces
 		/// <summary>
 		/// Replaces the character's velocity, for bounce pads and gusts.
 		/// </summary>
-		public void Launch(Vector3 velocity, bool restoreAirJumps);
+		public void Launch(Vector3 velocity, bool restoreAirJumps, bool fullArc = false);
 
 		public void Teleport(Vector3 position);
 

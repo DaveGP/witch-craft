@@ -6,5 +6,6 @@ namespace Data.Enums
 		Base = 1,
 		Material = 2,
 		Potion = 3,
+		Keepsake = 4,
 	}
 }

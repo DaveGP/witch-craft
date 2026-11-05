@@ -136,6 +136,9 @@ namespace DependencyInjection
 			var books = new BookCollection(database, eventBus);
 			ServiceLocator.Register<IBookCollection>(books);
 
+			var quests = new QuestLog(database, inventory, books, roster);
+			ServiceLocator.Register<IQuestLog>(quests);
+
 			var witch = new WitchProfile();
 			ServiceLocator.Register<IWitchProfile>(witch);
 
@@ -148,6 +151,7 @@ namespace DependencyInjection
 			saveService.Register(spellBook);
 			saveService.Register(roster);
 			saveService.Register(books);
+			saveService.Register(quests);
 			saveService.Register(witch);
 
 			Application.quitting += saveService.Save;

@@ -27,6 +27,10 @@ MonoBehaviour:
     Amount: 3
   MoveInLine: '"Off we go then. Don''t wait up, I''ll be there by supper. Possibly
     next supper."'
+  RevealBook: {fileID: 0}
+  Whereabouts: 
+  Quests: []
+  Expectant: 
   ChatLines:
   - '"Hurrying is for crabs."'
   - '"{name}, dear, you do far too much. Sit down for a century or so."'

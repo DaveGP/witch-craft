@@ -161,6 +161,8 @@ namespace Debugging
 			Check("Starter home was built", FindObjectsByType<PlacedPiece>(FindObjectsSortMode.None).Length >= 20);
 			Check("Started with two recipes", recipeBook.Known.Count == 2);
 			Check("Started with three glyphs", spellBook.KnownGlyphs.Count == 3);
+			Check("Bramble can't be found until her storybook is read", !ServiceLocator.Get<IQuestLog>().IsRevealed(database.FindCompanion("bramble"))
+				&& FindObjectsByType<CompanionRecruit>(FindObjectsSortMode.None).First(found => found.name.StartsWith("Bramble")).transform.position.y < -100f);
 
 			// The island's ground is one surface, its grounds blended by a control map: nothing layered on top to flicker
 			var islandMaterial = FindObjectsByType<Renderer>(FindObjectsSortMode.None).Select(renderer => renderer.sharedMaterial)
@@ -845,6 +847,8 @@ namespace Debugging
 
 			yield return Storybooks(inputMode, player, movement);
 
+			yield return BrambleQuest(player, movement);
+
 			yield return WitchName(inputMode, player);
 
 			yield return WitchArt(player);
@@ -1014,6 +1018,236 @@ namespace Debugging
 			Tap(Key.F);
 			yield return Until(() => !player.GetComponent<IBroomController>().IsMounted);
 			yield return new WaitForSeconds(1f);
+		}
+
+		// Earning Bramble from start to finish: her book, then each thing she asks for, with the climb jumped for real
+		private IEnumerator BrambleQuest(PlayerCharacter player, IMovementController movement)
+		{
+			var database = ServiceLocator.Get<GameDatabase>();
+			var quests = ServiceLocator.Get<IQuestLog>();
+			var inventory = ServiceLocator.Get<IInventory>();
+			var potions = ServiceLocator.Get<IPotionEffects>();
+			var home = ServiceLocator.Get<IHomeService>();
+			var roster = ServiceLocator.Get<ICompanionRoster>();
+			var bramble = database.FindCompanion("bramble");
+			var recruit = FindObjectsByType<CompanionRecruit>(FindObjectsSortMode.None).First(found => found.name.StartsWith("Bramble"));
+			var hud = FindFirstObjectByType<UserInterface.Views.HudView>();
+
+			IEnumerator Choose(string label)
+			{
+				var option = FindObjectsByType<UnityEngine.UI.Button>(FindObjectsSortMode.None)
+					.FirstOrDefault(button => button.isActiveAndEnabled && button.GetComponentInChildren<UnityEngine.UI.Text>().text.StartsWith(label));
+
+				Check($"Bramble's dialogue offers \"{label}\"", option != null);
+				option?.onClick.Invoke();
+				yield return new WaitForSeconds(0.4f);
+			}
+
+			IEnumerator Talk()
+			{
+				recruit.Interact(player.gameObject);
+				yield return new WaitForSeconds(0.4f);
+			}
+
+			ServiceLocator.Get<Books.Interfaces.IBookCollection>().Collect(database.FindBook("eye_of_newt"));
+			yield return new WaitForSeconds(0.5f);
+
+			Check($"Her book reveals Bramble ({recruit.transform.position.y:0.0} m up)", quests.IsRevealed(bramble) && recruit.transform.position.y > -5f);
+			Check($"The HUD says where to find her (\"{hud.ShownQuest}\")", hud.ShownQuest.Contains("Find Bramble") || quests.Followed != bramble);
+
+			movement.Teleport(recruit.transform.position + Vector3.back * 2f);
+			yield return new WaitForSeconds(0.5f);
+			yield return View("30_burrow", recruit.transform.position + new Vector3(-3f, 2.5f, -5f), recruit.transform.position + new Vector3(3f, 0.5f, 2f));
+
+			yield return Talk();
+			Shot("30b_bramble_meets");
+			Check("Meeting her starts the first step", quests.HasStarted(bramble) && quests.StepIndex(bramble) == 0);
+			Check("She can't take anything yet", !quests.IsMet(quests.Current(bramble)));
+			yield return Choose("Goodbye");
+
+			var spectacles = FindObjectsByType<QuestPickup>(FindObjectsSortMode.None).First(found => found.name == "Spectacles");
+			Check("The spectacles can be picked up", spectacles.CanInteract);
+			yield return View("31_spectacles", spectacles.transform.position + new Vector3(1.2f, 1f, -1.5f), spectacles.transform.position);
+			spectacles.Interact(player.gameObject);
+			Check("They go in the satchel", inventory.Count(database.FindItem("brambles_spectacles")) == 1 && !spectacles.CanInteract);
+
+			yield return Talk();
+			yield return Choose("Give Bramble the spectacles");
+			Check("Handing them in takes them", inventory.Count(database.FindItem("brambles_spectacles")) == 0 && quests.StepIndex(bramble) == 1);
+			yield return Choose("Goodbye");
+
+			var rug = database.FindBuildPiece("rug");
+
+			if (!home.Has(rug))
+			{
+				Check("The rug step waits for a rug", !quests.IsMet(quests.Current(bramble)));
+				home.Place(rug, new Vector3(4f, 0f, -6f), Quaternion.identity);
+			}
+
+			Check("Building the rug meets the rug step", quests.IsMet(quests.Current(bramble)));
+			yield return Talk();
+			yield return Choose("Tell Bramble about the rug");
+			yield return Choose("Goodbye");
+
+			var boulder = FindFirstObjectByType<World.QuestMoveGoal>();
+			var movable = boulder.GetComponent<Movable>();
+			var aimedAt = Physics.Raycast(boulder.transform.position + Vector3.up * 3f, Vector3.down, out var aimHit, 4f, Utilities.LayerUtility.AimMask, QueryTriggerInteraction.Ignore)
+				? aimHit.collider.GetComponentInParent<Movable>() : null;
+			Check("Levitate can aim at the boulder", aimedAt == movable);
+			Check("The boulder step waits for the boulder", !quests.IsMet(quests.Current(bramble)));
+
+			movable.BeginLevitate(Color.white);
+			boulder.transform.position += new Vector3(-1f, 1f, 3.2f);
+			yield return null;
+			movable.EndLevitate();
+			yield return Until(() => quests.HasGoal(boulder.Goal));
+			Check("Moving the boulder clears the burrow", quests.IsMet(quests.Current(bramble)));
+
+			yield return Talk();
+			yield return Choose("Tell Bramble the door's clear");
+			yield return Choose("Goodbye");
+
+			var tonic = database.FindItem("leaping_tonic");
+			if (inventory.Count(tonic) > 0)
+				inventory.Remove(tonic, inventory.Count(tonic));
+
+			Check("The tonic step waits for a tonic", !quests.IsMet(quests.Current(bramble)));
+			inventory.Add(tonic, 2);
+			yield return Talk();
+			yield return Choose("Give Bramble a Leaping Tonic");
+			Check("She takes just the one", inventory.Count(tonic) == 1 && quests.StepIndex(bramble) == 4);
+			yield return Choose("Goodbye");
+
+			Tap(Key.J);
+			yield return new WaitForSeconds(0.4f);
+			Shot("32_journal");
+			Tap(Key.J);
+			yield return new WaitForSeconds(0.4f);
+			Shot("32b_quest_tracker");
+
+			// The Old Oak
+			var oak = GameObject.Find("OldOak").transform;
+			var course = oak.GetComponent<World.TrialCourse>();
+			var cameraController = FindAnyObjectByType<global::Camera.CameraController>();
+			var yawField = typeof(global::Camera.CameraController).GetField("yaw", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+			yield return View("33_old_oak", oak.position + new Vector3(-10f, 20f, -11f), oak.position + Vector3.up * 14f);
+
+			movement.Teleport(oak.position + Vector3.back * 7f + Vector3.up * 0.3f);
+			yield return new WaitForSeconds(0.6f);
+
+			var broom = player.GetComponent<IBroomController>();
+			broom.Toggle();
+			Check($"No flying at the Old Oak (mounted: {broom.IsMounted})", !broom.IsMounted);
+
+			// Dropped onto the mushroom at the foot, as if walking off it: it must throw her up to the first branch
+			var mushroom = oak.GetComponentsInChildren<World.BouncePad>().First();
+			var firstBranch = GameObject.Find("Shelf0").transform.position;
+			movement.Teleport(mushroom.transform.position + Vector3.up * 3f);
+
+			var apex = 0f;
+
+			for (var t = 0f; t < 1.6f; t += Time.deltaTime)
+			{
+				apex = Mathf.Max(apex, player.transform.position.y);
+				yield return null;
+			}
+
+			Check($"The mushroom throws her level with the first branch (apex {apex:0.0}, branch {firstBranch.y:0.0})", apex >= firstBranch.y);
+
+			var landed = false;
+
+			// A run and a double jump from one branch's middle towards the next, as a player would
+			IEnumerator Hop(Vector3 from, Vector3 to)
+			{
+				movement.Teleport(from + Vector3.up * 0.15f);
+				yield return new WaitForSeconds(0.5f);
+
+				var heading = to - from;
+				yawField.SetValue(cameraController, Mathf.Atan2(heading.x, heading.z) * Mathf.Rad2Deg);
+				yield return null;
+
+				Hold(Key.W);
+				yield return new WaitForSeconds(0.2f);
+				Hold(Key.W, Key.Space);
+				yield return new WaitForSeconds(0.28f);
+				Hold(Key.W);
+				yield return new WaitForSeconds(0.04f);
+				Hold(Key.W, Key.Space);
+				yield return new WaitForSeconds(0.2f);
+				Hold(Key.W);
+
+				var flat = new Vector2(to.x, to.z);
+
+				for (var t = 0f; t < 1.2f; t += Time.deltaTime)
+				{
+					var here = new Vector2(player.transform.position.x, player.transform.position.z);
+
+					// Off with the key once over the target, to stop on it
+					if (Vector2.Distance(here, flat) < 0.8f)
+						Release();
+
+					yield return null;
+				}
+
+				Release();
+				yield return new WaitForSeconds(0.5f);
+
+				var position = player.transform.position;
+				landed = movement.IsGrounded && Mathf.Abs(position.y - to.y) < 0.5f && Vector2.Distance(new Vector2(position.x, position.z), flat) < 2.2f;
+			}
+
+			Vector3 Shelf(int index) => GameObject.Find($"Shelf{index}").transform.position;
+
+			potions.Clear();
+
+			foreach (var (from, to) in new[] { (0, 1), (1, 2), (2, 3) })
+			{
+				yield return Hop(Shelf(from), Shelf(to));
+				Check($"Branch {from} to {to} can be jumped", landed);
+			}
+
+			Check($"The first lantern is remembered (reached {course.Reached})", course.Reached == 0);
+
+			yield return Hop(Shelf(6), Shelf(7));
+			Check($"The big gap can't be jumped without a tonic (at {player.transform.position.y:0.0})", !landed);
+
+			movement.Teleport(Shelf(6) + Vector3.up * 0.15f);
+			yield return new WaitForSeconds(0.5f);
+			Check($"The second lantern is remembered (reached {course.Reached})", course.Reached == 1);
+
+			movement.Teleport(oak.position + new Vector3(0f, 0.4f, -7f));
+			yield return Until(() => player.transform.position.y > 10f, 2f);
+			Check($"A fall lifts her back to the last lantern (at {player.transform.position.y:0.0})", Mathf.Abs(player.transform.position.y - Shelf(6).y) < 1f);
+
+			Check("Drinking the tonic", potions.Drink(tonic));
+			yield return Hop(Shelf(6), Shelf(7));
+			Check($"With the tonic the big gap can be jumped (at {player.transform.position.y:0.0})", landed);
+
+			yield return Hop(Shelf(7), Shelf(8));
+			Check("The next branch can be jumped", landed);
+
+			var nest = GameObject.Find("OakNest").transform.position;
+			yield return Hop(Shelf(8), nest + Vector3.up * 0.2f);
+			Check($"The last jump reaches the nest (at {player.transform.position.y:0.0})", landed);
+			Shot("34_nest");
+
+			potions.Clear();
+
+			var acorn = FindObjectsByType<QuestPickup>(FindObjectsSortMode.None).First(found => found.name == "Acorn");
+			Check("The acorn is in the nest", acorn.CanInteract);
+			yield return View("34b_acorn", acorn.transform.position + new Vector3(2f, 1.5f, -2f), acorn.transform.position);
+			acorn.Interact(player.gameObject);
+
+			movement.Teleport(recruit.transform.position + Vector3.back * 2f);
+			yield return new WaitForSeconds(0.5f);
+
+			Check("Bramble isn't living with you until it's all done", !roster.IsResident(bramble));
+			yield return Talk();
+			yield return Choose("Give Bramble the acorn");
+			Check("The acorn earns her: she moves in", roster.IsResident(bramble) && quests.Current(bramble) == null);
+			yield return Choose("See you at home!");
+			Check("A resident Bramble appears at home", FindObjectsByType<CompanionResident>(FindObjectsSortMode.None).Any(found => found.name.StartsWith("Bramble")));
 		}
 
 		private IEnumerator FrameWitch(PlayerCharacter player, float distance)
