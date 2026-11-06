@@ -62,7 +62,7 @@ namespace Character.Input
 		}
 
 		public CameraInput GetCameraInput()
-			=> new(looking, zoom);
+			=> new(looking, zoom, rotate);
 
 		public MenuAction ConsumeMenuInput()
 		{

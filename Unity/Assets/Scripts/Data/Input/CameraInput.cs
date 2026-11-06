@@ -9,10 +9,16 @@ namespace Data.Input
 
 		public readonly float Zoom;
 
-		public CameraInput(Vector2 look, float zoom)
+		/// <summary>
+		/// Turning the view by key: -1 left to 1 right.
+		/// </summary>
+		public readonly float Turn;
+
+		public CameraInput(Vector2 look, float zoom, float turn)
 		{
 			Look = look;
 			Zoom = zoom;
+			Turn = turn;
 		}
 	}
 }

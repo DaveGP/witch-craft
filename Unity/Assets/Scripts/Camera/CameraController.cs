@@ -60,6 +60,9 @@ namespace Camera
 
 		[SerializeField] private float followSharpness = 14f;
 
+		[Tooltip("Degrees a second the view turns on Q and R, for playing without a mouse")]
+		[SerializeField] private float keyTurnSpeed = 110f;
+
 		[Tooltip("How quickly the camera follows height changes in the air. Low keeps jumps from bobbing the view")]
 		[SerializeField] private float airborneHeightSharpness = 2.5f;
 
@@ -191,6 +194,10 @@ namespace Camera
 			var sensitivity = settings.LookSensitivity;
 
 			yaw += cameraInput.Look.x * sensitivity;
+
+			// Q and R belong to the spell while it's turning something
+			if (!playerContext.ScrollCaptured)
+				yaw += cameraInput.Turn * keyTurnSpeed * Time.unscaledDeltaTime;
 
 			pitch -= cameraInput.Look.y * sensitivity * (settings.InvertY ? -1f : 1f);
 

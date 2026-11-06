@@ -536,7 +536,7 @@ GameObject:
   - component: {fileID: 755247253827347515}
   - component: {fileID: 7247932976580328251}
   - component: {fileID: 6487701888741943467}
-  - component: {fileID: 660392935109691768}
+  - component: {fileID: 1762465454790483296}
   m_Layer: 6
   m_Name: Bed
   m_TagString: Untagged
@@ -593,7 +593,7 @@ MonoBehaviour:
   - {fileID: 936593427335381983}
   - {fileID: 5727469962593456625}
   - {fileID: 2839942418055459376}
---- !u!114 &660392935109691768
+--- !u!114 &1762465454790483296
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

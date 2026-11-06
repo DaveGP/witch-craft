@@ -1136,6 +1136,19 @@ namespace Debugging
 			movement.Teleport(oak.position + Vector3.back * 7f + Vector3.up * 0.3f);
 			yield return new WaitForSeconds(0.6f);
 
+			// Q and R turn the view by key, but turn the piece instead while Conjure is readied
+			var lookYaw = (float)yawField.GetValue(cameraController);
+			Hold(Key.R);
+			yield return new WaitForSecondsRealtime(0.4f);
+			Release();
+			yield return null;
+			var turnedRight = Mathf.DeltaAngle(lookYaw, (float)yawField.GetValue(cameraController));
+			Hold(Key.Q);
+			yield return new WaitForSecondsRealtime(0.4f);
+			Release();
+			yield return null;
+			Check($"R turns the view right and Q back ({turnedRight:0} degrees)", turnedRight > 10f && Mathf.Abs(Mathf.DeltaAngle(lookYaw, (float)yawField.GetValue(cameraController))) < turnedRight);
+
 			var broom = player.GetComponent<IBroomController>();
 			broom.Toggle();
 			Check($"No flying at the Old Oak (mounted: {broom.IsMounted})", !broom.IsMounted);
@@ -1157,13 +1170,20 @@ namespace Debugging
 
 			var landed = false;
 
-			// A run and a double jump from one branch's middle towards the next, as a player would
-			IEnumerator Hop(Vector3 from, Vector3 to)
+			// A run and a double jump towards the next branch, as a player would, from one branch's middle (or from where
+			// she stands), once any moving target is in reach
+			IEnumerator Hop(Vector3? from, Func<Vector3> target, Func<bool> ready = null)
 			{
-				movement.Teleport(from + Vector3.up * 0.15f);
-				yield return new WaitForSeconds(0.5f);
+				if (from.HasValue)
+				{
+					movement.Teleport(from.Value + Vector3.up * 0.15f);
+					yield return new WaitForSeconds(0.5f);
+				}
 
-				var heading = to - from;
+				if (ready != null)
+					yield return Until(ready, 8f);
+
+				var heading = target() - player.transform.position;
 				yawField.SetValue(cameraController, Mathf.Atan2(heading.x, heading.z) * Mathf.Rad2Deg);
 				yield return null;
 
@@ -1177,14 +1197,12 @@ namespace Debugging
 				yield return new WaitForSeconds(0.2f);
 				Hold(Key.W);
 
-				var flat = new Vector2(to.x, to.z);
-
 				for (var t = 0f; t < 1.2f; t += Time.deltaTime)
 				{
-					var here = new Vector2(player.transform.position.x, player.transform.position.z);
+					var aim = target();
 
 					// Off with the key once over the target, to stop on it
-					if (Vector2.Distance(here, flat) < 0.8f)
+					if (Vector2.Distance(new Vector2(player.transform.position.x, player.transform.position.z), new Vector2(aim.x, aim.z)) < 0.8f)
 						Release();
 
 					yield return null;
@@ -1194,7 +1212,8 @@ namespace Debugging
 				yield return new WaitForSeconds(0.5f);
 
 				var position = player.transform.position;
-				landed = movement.IsGrounded && Mathf.Abs(position.y - to.y) < 0.5f && Vector2.Distance(new Vector2(position.x, position.z), flat) < 2.2f;
+				var end = target();
+				landed = movement.IsGrounded && Mathf.Abs(position.y - end.y) < 0.5f && Vector2.Distance(new Vector2(position.x, position.z), new Vector2(end.x, end.z)) < 2.2f;
 			}
 
 			Vector3 Shelf(int index) => GameObject.Find($"Shelf{index}").transform.position;
@@ -1203,32 +1222,58 @@ namespace Debugging
 
 			foreach (var (from, to) in new[] { (0, 1), (1, 2), (2, 3) })
 			{
-				yield return Hop(Shelf(from), Shelf(to));
+				yield return Hop(Shelf(from), () => Shelf(to));
 				Check($"Branch {from} to {to} can be jumped", landed);
 			}
 
 			Check($"The first lantern is remembered (reached {course.Reached})", course.Reached == 0);
 
-			yield return Hop(Shelf(6), Shelf(7));
+			// Onto the gliding branch at its near end, a ride across, and off at its far end
+			var glider = GameObject.Find("GlidingBranch").transform;
+			var gliderTop = glider.GetComponentInChildren<Renderer>().sharedMaterial;
+			var stillGrass = Art.ArtSwap.Set.Find("surface:grass")?.Material;
+			Check($"The gliding branch's grass isn't the world-space kind ({gliderTop.name})", gliderTop != stillGrass);
+
+			var shelfThree = Shelf(3);
+			var shelfSix = Shelf(6);
+
+			float FlatTo(Vector3 point) => Vector2.Distance(new Vector2(glider.position.x, glider.position.z), new Vector2(point.x, point.z));
+
+			// It lingers at each end of its glide, so that's when a player would jump
+			yield return Hop(shelfThree, () => glider.position, () => FlatTo(shelfThree) < 4.9f);
+			Check($"Branch 3 to the gliding branch can be jumped (at {player.transform.position - glider.position})", landed);
+			Shot("33b_gliding_branch");
+
+			yield return Hop(null, () => shelfSix, () => FlatTo(shelfSix) < 4.9f);
+			Check($"The gliding branch to branch 6 can be jumped (at {player.transform.position - shelfSix})", landed);
+
+			yield return Hop(Shelf(6), () => Shelf(7));
 			Check($"The big gap can't be jumped without a tonic (at {player.transform.position.y:0.0})", !landed);
 
 			movement.Teleport(Shelf(6) + Vector3.up * 0.15f);
 			yield return new WaitForSeconds(0.5f);
 			Check($"The second lantern is remembered (reached {course.Reached})", course.Reached == 1);
 
-			movement.Teleport(oak.position + new Vector3(0f, 0.4f, -7f));
-			yield return Until(() => player.transform.position.y > 10f, 2f);
-			Check($"A fall lifts her back to the last lantern (at {player.transform.position.y:0.0})", Mathf.Abs(player.transform.position.y - Shelf(6).y) < 1f);
+			// Falling doesn't trap her: she stays on the ground, can walk off, and the lantern at the foot lifts her if she wants
+			var lift = oak.GetComponentInChildren<World.TrialLift>();
+			movement.Teleport(lift.transform.position + Vector3.back * 1.5f + Vector3.up * 0.4f);
+			yield return new WaitForSeconds(1.5f);
+			Check($"A fall leaves her on the ground, free to leave (at {player.transform.position.y - oak.position.y:0.0})", player.transform.position.y - oak.position.y < 1f && movement.IsGrounded);
+			Check("The lantern at the foot offers a lift", lift.CanInteract);
+			yield return View("33c_wind_lift", lift.transform.position + new Vector3(2f, 2f, -3.5f), lift.transform.position + Vector3.up);
+			lift.Interact(player.gameObject);
+			yield return new WaitForSeconds(0.3f);
+			Check($"It lifts her to the last lantern (at {player.transform.position.y:0.0})", Mathf.Abs(player.transform.position.y - Shelf(6).y) < 1f);
 
 			Check("Drinking the tonic", potions.Drink(tonic));
-			yield return Hop(Shelf(6), Shelf(7));
+			yield return Hop(Shelf(6), () => Shelf(7));
 			Check($"With the tonic the big gap can be jumped (at {player.transform.position.y:0.0})", landed);
 
-			yield return Hop(Shelf(7), Shelf(8));
+			yield return Hop(Shelf(7), () => Shelf(8));
 			Check("The next branch can be jumped", landed);
 
 			var nest = GameObject.Find("OakNest").transform.position;
-			yield return Hop(Shelf(8), nest + Vector3.up * 0.2f);
+			yield return Hop(Shelf(8), () => nest + Vector3.up * 0.2f);
 			Check($"The last jump reaches the nest (at {player.transform.position.y:0.0})", landed);
 			Shot("34_nest");
 

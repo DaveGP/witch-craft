@@ -63,7 +63,7 @@ All sound is synthesised at startup (`Audio/SoundSynth`): footsteps, jumps and l
 
 ## Movement
 
-* Camera relative running with walk, run and sprint speeds.
+* Camera relative running with walk, run and sprint speeds. Q and R turn the view for playing without a mouse, unless a spell is using them (Conjure, or something held with Levitate).
 * Jumps are buffered and forgiving (coyote time). Holding jump goes higher, tapping hops. One air jump.
 * Bounce mushrooms launch you and refresh your air jump. Moving platforms carry you.
 * **Broom** (F): fly level where the camera faces (it holds its height), Space to climb, Ctrl to dive, Shift to boost; tilting the view well up or down also climbs or dives. Flight uses a charge that refills on the ground. The broom skims the land and the sea: climbing slows over the last few metres to a gentle stop at its 7 m hover ceiling (the broom shimmers, and the first time a hint says updrafts can carry you higher); above the ceiling it eases back down, and flying off something high becomes a long glide, so the high places still need platforming. Updrafts lift you past the ceiling and refill the broom.
@@ -135,7 +135,7 @@ Companions are being moved from a single gift to a chain of quests, so the loop 
 * **A book leads to them.** They can't be found until their storybook has been read; a note in the back says where to look.
 * **Each step is asked in person.** Doing something early still counts, but it has to be handed in, so each step means a trip back to them. Steps show on the HUD and in the journal (J), which hides what's still to come.
 * **Bramble's chain:** read *Eye of Newt* (western shore) → find her spectacles in the shade beyond the Old Oak → conjure a Woven Rug at home → shift the boulder from her burrow with Levitate (Aer + Forma) → brew a Leaping Tonic and bring her one → climb the Old Oak for the acorn in its nest.
-* **The Old Oak** is the first platforming trial. A bounce mushroom starts it, branches spiral up the trunk, one branch glides, and one 3.9 m gap is beyond a double jump (about 3 m) without a Leaping Tonic. The branches are too tangled to fly through. Lanterns mark checkpoints: fall to the ground and a breath of wind lifts you back to the last one you landed on.
+* **The Old Oak** is the first platforming trial. A bounce mushroom starts it, branches spiral up the trunk, one branch glides, and one 3.9 m gap is beyond a double jump (about 3 m) without a Leaping Tonic. The branches are too tangled to fly through. Lanterns mark checkpoints. A fall leaves you on the ground, free to walk away (to brew a tonic, say); the lantern at the foot of the oak will lift you back to the last one you landed on if you ask it.
 
 | Companion | Book | Find | Build | Spell challenge | Potion | Trial | Status |
 | --------- | ---- | ---- | ----- | --------------- | ------ | ----- | ------ |

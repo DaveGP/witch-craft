@@ -302,7 +302,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4377098665122638141}
   - component: {fileID: 983370339593321227}
-  - component: {fileID: 7471593268722799085}
+  - component: {fileID: 8917912464689888395}
   m_Layer: 6
   m_Name: TimberWall
   m_TagString: Untagged
@@ -344,7 +344,7 @@ MonoBehaviour:
   - {fileID: 2759398392441939288}
   - {fileID: 7268313701010121113}
   - {fileID: 5316775460707494173}
---- !u!114 &7471593268722799085
+--- !u!114 &8917912464689888395
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

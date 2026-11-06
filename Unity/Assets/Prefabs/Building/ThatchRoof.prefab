@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 225011367124767656}
   - component: {fileID: 3262518775718341861}
   - component: {fileID: 2771306372707744129}
-  - component: {fileID: 6542187387214913187}
+  - component: {fileID: 1201343147994568607}
   m_Layer: 6
   m_Name: ThatchRoof
   m_TagString: Untagged
@@ -176,7 +176,7 @@ MonoBehaviour:
   surfaces:
   - {fileID: 1076911205498973331}
   - {fileID: 511984392420189798}
---- !u!114 &6542187387214913187
+--- !u!114 &1201343147994568607
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

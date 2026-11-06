@@ -113,9 +113,9 @@ MonoBehaviour:
     Note: Driftwood (Timber)
     Prefab: {fileID: 3059600125008029049, guid: 6382ecb43018daf48bc6671d9ac92dc0, type: 3}
     Material: {fileID: 0}
-    Offset: {x: -0.12878306, y: 0.503757, z: -0.056699675}
+    Offset: {x: -0.12878221, y: 0.503757, z: -0.056702077}
     Rotation: {x: 0, y: 90, z: 0}
-    Scale: 0.71908545
+    Scale: 0.7190857
     KeepPlaceholder: 0
   - Key: gather:EmberMoss
     Note: EmberMoss (Ember Moss)
@@ -671,6 +671,15 @@ MonoBehaviour:
     Note: Darker grass on some hills
     Prefab: {fileID: 0}
     Material: {fileID: 2100000, guid: bc3a1e5391b2fa24fb3fdb8dd46b20b6, type: 2}
+    Offset: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0}
+    Scale: 1
+    KeepPlaceholder: 0
+  - Key: surface:grass-moving
+    Note: Grass on platforms that move. Not a world-space material, or the texture
+      swims as they move
+    Prefab: {fileID: 0}
+    Material: {fileID: 2100000, guid: 0c08cc25323724b6cac1babc52921403, type: 2}
     Offset: {x: 0, y: 0, z: 0}
     Rotation: {x: 0, y: 0, z: 0}
     Scale: 1

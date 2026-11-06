@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 1833750379861314542}
   - component: {fileID: 721182234975489618}
   - component: {fileID: 7262051702649822165}
-  - component: {fileID: 3224826322246651891}
+  - component: {fileID: 5163913537050926094}
   m_Layer: 6
   m_Name: SlateRoof
   m_TagString: Untagged
@@ -266,7 +266,7 @@ MonoBehaviour:
   surfaces:
   - {fileID: 5288544044921062931}
   - {fileID: 6681037581972168334}
---- !u!114 &3224826322246651891
+--- !u!114 &5163913537050926094
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

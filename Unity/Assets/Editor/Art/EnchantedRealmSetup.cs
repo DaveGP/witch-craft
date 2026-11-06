@@ -194,6 +194,7 @@ namespace WitchCraftEditor
 
 			// The island's ground is one splat-blended surface: the packs' ground textures on its shader
 			filled += FillIslandGround(set);
+			filled += FillMovingGrass(set);
 
 			foreach (var (key, path) in surfaces)
 			{
@@ -527,8 +528,30 @@ namespace WitchCraftEditor
 				($"{Elven}/Props/SM_Prop_Shelf_01.prefab", new Vector3(0.8f, 0f, -1f), 0f, Uniform(0.85f)),
 				($"{Elven}/Props/SM_Prop_Distiller_01.prefab", new Vector3(1.9f, 0.8f, -0.15f), 200f, Uniform(0.8f)),
 				($"{Elven}/Props/SM_Prop_Potion_Stand_01.prefab", new Vector3(2.0f, 0.8f, 0.2f), 0f, Uniform(0.7f)),
-				($"{Elven}/Buildings/SM_Bld_Awning_01.prefab", new Vector3(0.8f, 1.15f, -0.6f), 180f, new Vector3(1.25f, 0.8f, 1f)),
+				BenchAwning(),
 				($"{Elven}/Props/SM_Prop_Lantern_03.prefab", new Vector3(-0.85f, 0f, -1f), 0f, Uniform(1.6f)));
+		}
+
+		// The pack's awning sits well away from its own pivot, so it's placed by its measured bounds: over the bench and
+		// cauldron, its roof resting on the top of the shelf's arch
+		private static (string, Vector3, float, Vector3) BenchAwning()
+		{
+			const float yaw = 180f;
+			const float width = 2.8f;
+			const float underside = 1.45f;
+
+			var path = $"{Elven}/Buildings/SM_Bld_Awning_01.prefab";
+			var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+
+			if (prefab == null)
+				return (path, Vector3.zero, yaw, Vector3.one);
+
+			var art = ArtBounds(prefab, yaw);
+			var scale = width / art.size.x;
+
+			Debug.Log($"{nameof(EnchantedRealmSetup)}: awning {art.min:F2} to {art.max:F2}, scale {scale:0.00}");
+
+			return (path, new Vector3(0.7f - art.center.x * scale, underside - art.min.y * scale, -0.25f - art.center.z * scale), yaw, Uniform(scale));
 		}
 
 		// Round the fire: mossy stones and two benches where the stumps are
@@ -773,6 +796,46 @@ namespace WitchCraftEditor
 				material.SetColor(colour, tint);
 				material.SetFloat(scale, tiling);
 			}
+
+			EditorUtility.SetDirty(material);
+			entry.Material = material;
+
+			return 1;
+		}
+
+		// The moss on still ground is projected in world space, which swims on anything that moves. Platforms that move
+		// get the same moss texture stuck to their own UVs instead
+		private static int FillMovingGrass(ArtSet set)
+		{
+			var entry = Entry(set, "surface:grass-moving");
+			var source = AssetDatabase.LoadAssetAtPath<Material>($"{Forest}/Materials/Moss_Enchanted_Triplanar_01.mat");
+			var placeholder = AssetDatabase.LoadAssetAtPath<Material>($"{MaterialFolder}/GliderGrass.mat");
+
+			if (source == null || placeholder == null || entry.Material != null && !entry.Material.name.StartsWith("GliderGrass_Art"))
+				return 0;
+
+			Texture top = null;
+
+			foreach (var name in new[] { "_Top", "_TopAlbedo", "_TriplanarAlbedo", "_BaseMap" })
+				if (top == null && source.HasProperty(name))
+					top = source.GetTexture(name);
+
+			if (top == null)
+				return 0;
+
+			var path = $"{KitFolder}/GliderGrass_Art.mat";
+			var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+
+			if (material == null)
+			{
+				material = new Material(placeholder);
+				AssetDatabase.CreateAsset(material, path);
+			}
+
+			material.shader = placeholder.shader;
+			material.SetTexture("_BaseMap", top);
+			material.SetTextureScale("_BaseMap", Vector2.one * 2f);
+			material.SetColor("_BaseColor", Color.white);
 
 			EditorUtility.SetDirty(material);
 			entry.Material = material;

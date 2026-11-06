@@ -185,6 +185,9 @@ namespace WitchCraftEditor
 		private static Material Rock => Lit("Rock", new Color(0.6f, 0.58f, 0.64f));
 		private static Material RockDark => Lit("RockDark", new Color(0.4f, 0.38f, 0.46f));
 		private static Material Trunk => Lit("Trunk", new Color(0.47f, 0.33f, 0.24f));
+		// Grass for things that move: its texture sits on the mesh. The world-space materials on still ground would
+		// stay put while the platform slid underneath them
+		private static Material GliderGrass => Lit("GliderGrass", new Color(0.5f, 0.72f, 0.42f));
 		private static Material Water => Transparent("Water", new Color(0.35f, 0.62f, 0.85f, 0.65f), 0.92f);
 		private static Material Leaf(int index) => index switch
 		{
@@ -650,12 +653,12 @@ namespace WitchCraftEditor
 		}
 
 		// A step that's a sky island in miniature: a disc of grass to stand on, over a clump of torn-up rock
-		private static GameObject MiniIsle(Transform parent, string name, Vector3 topCentre, float radius, Material rock, int seed)
+		private static GameObject MiniIsle(Transform parent, string name, Vector3 topCentre, float radius, Material rock, int seed, Material grass = null)
 		{
 			var isle = Node(name, parent, topCentre, seed * 47f % 360f);
 			isle.layer = Ground;
 
-			var top = Prim(PrimitiveType.Cylinder, "Top", isle.transform, Vector3.down * 0.2f, new Vector3(radius * 2f, 0.2f, radius * 2f), Grass);
+			var top = Prim(PrimitiveType.Cylinder, "Top", isle.transform, Vector3.down * 0.2f, new Vector3(radius * 2f, 0.2f, radius * 2f), grass != null ? grass : Grass);
 			top.layer = Ground;
 
 			MeshObject("Roots", isle.transform, WitchCraftBuildKit.RockyUnderside(seed % 8), Vector3.down * 0.35f,
@@ -1047,11 +1050,11 @@ namespace WitchCraftEditor
 				}
 			}
 
-			var glider = OakShelfDisc(oak, "GlidingBranch", OakShelf(4, heights[4]), 4);
+			var glider = OakShelfDisc(oak, "GlidingBranch", OakShelf(4, heights[4]), 4, GliderGrass);
 			glider.AddComponent<Rigidbody>();
 			var moving = glider.AddComponent<MovingPlatform>();
 			SetVector(moving, "offset", OakShelf(5, heights[5]) - OakShelf(4, heights[4]));
-			SetValue(moving, "period", 5f);
+			SetValue(moving, "period", 8f);
 
 			// The nest on top
 			var nest = Node("OakNest", oak, new Vector3(0f, 22f, 0f));
@@ -1113,7 +1116,17 @@ namespace WitchCraftEditor
 			SetString(noFly, "message", "The Old Oak's branches are too tangled to fly through. You'll have to climb.");
 
 			var course = root.AddComponent<TrialCourse>();
-			SetString(course, "liftMessage", "A breath of wind lifts you back up to the last lantern.");
+			SetString(course, "fallMessage", "Ouch. The lantern at the foot of the oak can lift you back up to the last one you reached.");
+			SetString(course, "lastCheckpointHint", "That next gap is too wide for any jump. A Leaping Tonic would do it (Tab to drink one). No tonic? Hop down and go and brew some.");
+
+			// The way back up, by the mushroom
+			var lift = Node("WindLift", oak, OakShelf(-3, 0f));
+			lift.layer = Interactable;
+			Trigger(lift, 1.6f, new Vector3(0f, 0.8f, 0f));
+			Prim(PrimitiveType.Cylinder, "Post", lift.transform, new Vector3(0f, 0.9f, 0f), new Vector3(0.1f, 0.9f, 0.1f), DarkWood, false);
+			Prim(PrimitiveType.Sphere, "Glow", lift.transform, new Vector3(0f, 1.95f, 0f), Vector3.one * 0.32f, Lit("CheckpointGlow", new Color(1f, 0.85f, 0.5f), 0.3f, new Color(1f, 0.75f, 0.35f) * 2f), false);
+			PointLight(lift.transform, new Vector3(0f, 1.95f, 0f), new Color(1f, 0.85f, 0.5f), 6f, 1.8f);
+			Set(lift.AddComponent<TrialLift>(), "course", course);
 
 			var serialized = new SerializedObject(course);
 			var list = serialized.FindProperty("checkpoints");
@@ -1125,12 +1138,12 @@ namespace WitchCraftEditor
 			serialized.ApplyModifiedPropertiesWithoutUndo();
 		}
 
-		private static GameObject OakShelfDisc(Transform parent, string name, Vector3 topCentre, int seed)
+		private static GameObject OakShelfDisc(Transform parent, string name, Vector3 topCentre, int seed, Material grass = null)
 		{
 			var shelf = Node(name, parent, topCentre, seed * 47f % 360f);
 			shelf.layer = Ground;
 
-			var top = Prim(PrimitiveType.Cylinder, "Top", shelf.transform, Vector3.down * 0.12f, new Vector3(3f, 0.12f, 3f), Grass);
+			var top = Prim(PrimitiveType.Cylinder, "Top", shelf.transform, Vector3.down * 0.12f, new Vector3(3f, 0.12f, 3f), grass != null ? grass : Grass);
 			top.layer = Ground;
 
 			MeshObject("Underside", shelf.transform, WitchCraftBuildKit.LeafClump(seed % 3), Vector3.down * 0.45f, new Vector3(1.6f, 0.4f, 1.6f), Leaf(seed % 2));
@@ -1477,7 +1490,7 @@ namespace WitchCraftEditor
 			}
 
 			// The gliding step's rock glows faintly, so it reads as the one that moves
-			var mover = MiniIsle(spire, "MovingStep", positions[6], 1.4f, Lit("MovingStone", new Color(0.8f, 0.7f, 0.9f), 0.3f, new Color(0.5f, 0.3f, 0.8f) * 0.4f), 6);
+			var mover = MiniIsle(spire, "MovingStep", positions[6], 1.4f, Lit("MovingStone", new Color(0.8f, 0.7f, 0.9f), 0.3f, new Color(0.5f, 0.3f, 0.8f) * 0.4f), 6, GliderGrass);
 			mover.AddComponent<Rigidbody>();
 			var moving = mover.AddComponent<MovingPlatform>();
 			SetVector(moving, "offset", positions[7] - positions[6]);
@@ -1729,6 +1742,7 @@ namespace WitchCraftEditor
 
 			SurfaceSlot(parent, "surface:grass", "Meadow grass on the island and hills (a world-space triplanar material suits the shapes)", Grass);
 			SurfaceSlot(parent, "surface:grass-dark", "Darker grass on some hills", GrassDark);
+			SurfaceSlot(parent, "surface:grass-moving", "Grass on platforms that move. Not a world-space material, or the texture swims as they move", GliderGrass);
 			SurfaceSlot(parent, "surface:sand", "Beaches", Sand);
 			SurfaceSlot(parent, "surface:path", "Path stones", PathMat);
 			SurfaceSlot(parent, "surface:rock", "Rocks, cliffs and stones", Rock, RockDark);

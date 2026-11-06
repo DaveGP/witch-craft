@@ -431,7 +431,7 @@ namespace UserInterface.Views
 		{
 			help.text = Gamepad
 				? "Left stick move · A jump · X interact · Y broom · D-pad ready spell 1/2 · RT cast\nView satchel · Right stick click spellbook · Start menu"
-				: "WASD move · Space jump · Shift sprint · E interact · F broom\n1-4 ready spell · Click cast · Tab satchel · B spellbook · J journal · Esc menu";
+				: "WASD move · Q/R turn · Space jump · Shift sprint · E interact · F broom\n1-4 ready spell · Click cast · Tab satchel · B spellbook · J journal · Esc menu";
 
 			SetFocus(focus);
 		}
