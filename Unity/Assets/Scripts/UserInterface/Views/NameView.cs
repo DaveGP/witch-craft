@@ -18,14 +18,14 @@ namespace UserInterface.Views
 		{
 			witch = ServiceLocator.Get<IWitchProfile>();
 
-			var shade = UIFactory.Image(Root, new Color(0.05f, 0.03f, 0.08f, 0.55f), "Shade");
+			var shade = UIFactory.Image(Root, UITheme.Scrim, "Shade");
 			UIFactory.Fill(shade.rectTransform);
 
-			var panel = UIFactory.Image(Root, UIFactory.Panel, "Name");
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Paper, Color.white, "Name");
 			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-400, -150), new Vector2(400, 150));
-			UIFactory.Vertical(panel.gameObject, 14f, 28);
+			UIFactory.Vertical(panel.gameObject, UITheme.RowGap, UITheme.Padding);
 
-			UIFactory.Layout(UIFactory.Label(panel.transform, "Your name", 30, UIFactory.Accent, TextAnchor.MiddleLeft, FontStyle.Bold).gameObject, preferredHeight: 40);
+			UIFactory.Layout(UIFactory.Label(panel.transform, "Your name", UITheme.Section, UITheme.Ink, TextAnchor.MiddleLeft, FontStyle.Bold).gameObject, preferredHeight: 40);
 
 			body = UIFactory.Rect("Form", panel.transform);
 			UIFactory.Vertical(body.gameObject, 12f);
@@ -36,7 +36,7 @@ namespace UserInterface.Views
 		{
 			UIFactory.Clear(body);
 
-			Form = new NameForm(body, "What should everyone call you?", witch.HasName ? witch.Name : "", "Rename", Rename, Close);
+			Form = new NameForm(body, "What should everyone call you?", witch.HasName ? witch.Name : "", "Rename", Rename, Close, UITheme.Ink);
 			Form.Field.ActivateInputField();
 		}
 
