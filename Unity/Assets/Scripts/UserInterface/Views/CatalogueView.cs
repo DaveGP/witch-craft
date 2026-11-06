@@ -39,13 +39,13 @@ namespace UserInterface.Views
 		{
 			inventory = ServiceLocator.Get<IInventory>();
 
-			var shade = UIFactory.Image(Root, new Color(0.05f, 0.03f, 0.08f, 0.55f), "Shade");
+			var shade = UIFactory.Image(Root, UITheme.Scrim, "Shade");
 			UIFactory.Fill(shade.rectTransform);
 
-			var panel = UIFactory.Image(Root, UIFactory.Panel, "Catalogue");
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Leather, UITheme.Leather, "Catalogue");
 			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-780, -440), new Vector2(780, 440));
 
-			var title = UIFactory.Label(panel.transform, "Build catalogue", 38, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
+			var title = UIFactory.Label(panel.transform, "Build catalogue", UITheme.Heading, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(title.rectTransform, new Vector2(0, 1), new Vector2(0.5f, 1), new Vector2(36, -76), new Vector2(0, -24));
 
 			var hint = UIFactory.Label(panel.transform, "Right-click or Esc to close", 18, UIFactory.TextMuted, TextAnchor.UpperRight);
@@ -105,7 +105,7 @@ namespace UserInterface.Views
 				var chosen = each;
 
 				var button = UIFactory.Button(tabs, each.ToString(), () => { tab = chosen; Refresh(); }, 20,
-					each == tab ? new Color(0.55f, 0.34f, 0.62f) : new Color(0.28f, 0.22f, 0.36f), 46);
+					each == tab ? UITheme.Moss : new Color(0.28f, 0.22f, 0.36f), 46);
 
 				UIFactory.Layout(button.gameObject, minWidth: 200, preferredWidth: 200, minHeight: 46, preferredHeight: 46);
 			}
@@ -147,7 +147,7 @@ namespace UserInterface.Views
 			var affordable = inventory.Has(piece.Cost);
 
 			var cost = string.Join(", ", piece.Cost.Select(stack =>
-				$"<color=#{UIFactory.Hex(inventory.Count(stack.Item) >= stack.Amount ? new Color(0.7f, 0.95f, 0.7f) : new Color(1f, 0.6f, 0.55f))}>{stack.Amount} {stack.Item.DisplayName}</color>"));
+				$"<color=#{UIFactory.Hex(inventory.Count(stack.Item) >= stack.Amount ? UITheme.Positive : UITheme.Warning)}>{stack.Amount} {stack.Item.DisplayName}</color>"));
 
 			var details = unlocked
 				? cost + (piece.Comfort > 0 ? $"\n<color=#{UIFactory.Hex(UIFactory.Accent)}>+{piece.Comfort} comfort</color>" : "")
@@ -166,7 +166,7 @@ namespace UserInterface.Views
 
 		private void Tile(string text, bool selected, bool interactable, System.Action onClick)
 		{
-			var colour = selected ? new Color(0.55f, 0.34f, 0.62f) : UIFactory.PanelLight;
+			var colour = selected ? UITheme.Moss : UIFactory.PanelLight;
 
 			var button = UIFactory.Button(grid, "", onClick, 20, colour);
 			button.interactable = interactable;
