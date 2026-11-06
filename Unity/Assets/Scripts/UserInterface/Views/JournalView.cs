@@ -18,16 +18,16 @@ namespace UserInterface.Views
 		{
 			quests = ServiceLocator.Get<IQuestLog>();
 
-			var shade = UIFactory.Image(Root, new Color(0.05f, 0.03f, 0.08f, 0.6f), "Shade");
+			var shade = UIFactory.Image(Root, UITheme.Scrim, "Shade");
 			UIFactory.Fill(shade.rectTransform);
 
-			var panel = UIFactory.Image(Root, new Color(0.25f, 0.2f, 0.28f, 0.97f), "Journal");
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Paper, Color.white, "Journal");
 			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-560, -420), new Vector2(560, 420));
 
-			var heading = UIFactory.Label(panel.transform, "Journal", 38, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
+			var heading = UIFactory.Label(panel.transform, "Journal", UITheme.Heading, UITheme.Ink, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(heading.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(36, -86), new Vector2(-36, -24));
 
-			var hint = UIFactory.Label(panel.transform, "J or Esc to close", 18, UIFactory.TextMuted, TextAnchor.UpperRight);
+			var hint = UIFactory.Label(panel.transform, "J or Esc to close", UITheme.Small, UITheme.Ink, TextAnchor.UpperRight);
 			UIFactory.Place(hint.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(36, -60), new Vector2(-36, -30));
 
 			var area = UIFactory.Rect("List", panel.transform);
@@ -45,7 +45,7 @@ namespace UserInterface.Views
 
 			if (active.Count == 0)
 			{
-				var empty = UIFactory.Label(list, "Nobody to win over just now. The authors of the island's storybooks are worth looking for.", 23, UIFactory.TextMuted);
+				var empty = UIFactory.Label(list, "Nobody to win over just now. The authors of the island's storybooks are worth looking for.", UITheme.Body, UITheme.Ink);
 				UIFactory.Layout(empty.gameObject, preferredHeight: 70);
 				return;
 			}
@@ -56,7 +56,7 @@ namespace UserInterface.Views
 
 		private void Entry(CompanionDefinition companion)
 		{
-			var row = UIFactory.Image(list, new Color(0.34f, 0.28f, 0.38f), "Companion");
+			var row = UIFactory.Surface(list, UITheme.Surface.Leather, UITheme.Leather, "Companion");
 			UIFactory.Vertical(row.gameObject, 6f, 16);
 
 			var done = quests.HasStarted(companion) ? quests.StepIndex(companion) : 0;
