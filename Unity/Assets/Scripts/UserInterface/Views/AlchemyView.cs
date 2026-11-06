@@ -84,8 +84,8 @@ namespace UserInterface.Views
 
 		private void BuildRecipeBook()
 		{
-			var book = UIFactory.Image(Root, UIFactory.Parchment, "RecipeBook");
-			UIFactory.Place(book.rectTransform, new Vector2(0, 0), new Vector2(0, 1), new Vector2(24, 300), new Vector2(520, -24));
+			var book = UIFactory.Surface(Root, UITheme.Surface.Paper, Color.white, "RecipeBook");
+			UIFactory.Place(book.rectTransform, new Vector2(0, 0), new Vector2(0, 1), new Vector2(24, 320), new Vector2(520, -24));
 
 			var title = UIFactory.Label(book.transform, "Recipe Book", 34, UIFactory.Ink, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(title.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(24, -64), new Vector2(-24, -16));
@@ -100,8 +100,8 @@ namespace UserInterface.Views
 
 		private void BuildShelf()
 		{
-			var panel = UIFactory.Image(Root, UIFactory.Panel, "Shelf");
-			UIFactory.Place(panel.rectTransform, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-520, 300), new Vector2(-24, -24));
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Wood, UITheme.WoodTint, "Shelf");
+			UIFactory.Place(panel.rectTransform, new Vector2(1, 0), new Vector2(1, 1), new Vector2(-520, 320), new Vector2(-24, -24));
 
 			var title = UIFactory.Label(panel.transform, "Ingredient Shelf", 30, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(title.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(20, -60), new Vector2(-20, -14));
@@ -115,8 +115,8 @@ namespace UserInterface.Views
 
 		private void BuildBench()
 		{
-			var panel = UIFactory.Image(Root, UIFactory.Panel, "Bench");
-			UIFactory.Place(panel.rectTransform, Vector2.zero, new Vector2(1, 0), new Vector2(24, 24), new Vector2(-24, 280));
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Wood, UITheme.WoodTint, "Bench");
+			UIFactory.Place(panel.rectTransform, Vector2.zero, new Vector2(1, 0), new Vector2(24, 24), new Vector2(-24, 300));
 
 			cauldronStatus = UIFactory.Label(panel.transform, "", 21, UIFactory.Text);
 			UIFactory.Place(cauldronStatus.rectTransform, new Vector2(0, 1), new Vector2(0.5f, 1), new Vector2(24, -64), new Vector2(-12, -14));
@@ -128,9 +128,9 @@ namespace UserInterface.Views
 			var heat = UIFactory.Rect("Heat", panel.transform);
 			UIFactory.Place(heat, new Vector2(0, 1), new Vector2(0.5f, 1), new Vector2(24, -122), new Vector2(-12, -94));
 			UIFactory.Vertical(heat.gameObject);
-			heatFill = UIFactory.Bar(heat, new Color(0, 0, 0, 0.5f), new Color(1f, 0.55f, 0.2f), 26);
+			heatFill = UIFactory.Bar(heat, UITheme.Track, UITheme.Fire, 26);
 
-			var band = UIFactory.Image(heatFill.transform.parent, new Color(0.5f, 1f, 0.5f, 0.25f), "BoilBand");
+			var band = UIFactory.Image(heatFill.transform.parent, UITheme.BoilBand, "BoilBand");
 			UIFactory.Place(band.rectTransform, new Vector2(AlchemySession.MinBoilHeat, 0), new Vector2(AlchemySession.MaxBoilHeat, 1), Vector2.zero, Vector2.zero);
 
 			var glassLabel = UIFactory.Label(panel.transform, "Hourglass", 18, UIFactory.TextMuted);
@@ -139,21 +139,21 @@ namespace UserInterface.Views
 			var glass = UIFactory.Rect("Hourglass", panel.transform);
 			UIFactory.Place(glass, new Vector2(0, 1), new Vector2(0.5f, 1), new Vector2(24, -172), new Vector2(-12, -152));
 			UIFactory.Vertical(glass.gameObject);
-			hourglassFill = UIFactory.Bar(glass, new Color(0, 0, 0, 0.5f), new Color(0.95f, 0.85f, 0.55f), 18);
+			hourglassFill = UIFactory.Bar(glass, UITheme.Track, UITheme.Sand, 18);
 
 			var buttons = UIFactory.Rect("Actions", panel.transform);
-			UIFactory.Place(buttons, new Vector2(0, 0), new Vector2(0.5f, 0), new Vector2(24, 16), new Vector2(-12, 80));
+			UIFactory.Place(buttons, new Vector2(0, 0), new Vector2(0.5f, 0), new Vector2(24, 16), new Vector2(-12, 108));
 			var grid = buttons.gameObject.AddComponent<GridLayoutGroup>();
-			grid.cellSize = new Vector2(205, 52);
+			grid.cellSize = new Vector2(205, 44);
 			grid.spacing = new Vector2(8, 8);
 
-			UIFactory.Button(buttons, "Bellows (Space)", Pump, 18, new Color(0.6f, 0.3f, 0.2f));
+			UIFactory.Button(buttons, "Bellows (Space)", Pump, 18, UITheme.Brick);
 			UIFactory.Button(buttons, "Turn hourglass", () => station.Session.StartTurn(), 18);
 			UIFactory.Button(buttons, "Grind (G)", () => station.Grind(), 18);
 			UIFactory.Button(buttons, "Add from mortar", () => station.Session.AddFromMortar(), 18);
-			UIFactory.Button(buttons, "Bottle", Bottle, 18, new Color(0.3f, 0.45f, 0.35f));
-			UIFactory.Button(buttons, "Empty", () => station.Session.Empty(), 18, new Color(0.35f, 0.3f, 0.3f));
-			UIFactory.Button(buttons, "Leave (Esc)", Cancel, 18, new Color(0.3f, 0.25f, 0.35f));
+			UIFactory.Button(buttons, "Bottle", Bottle, 18, UITheme.Moss);
+			UIFactory.Button(buttons, "Empty", () => station.Session.Empty(), 18, UITheme.Walnut);
+			UIFactory.Button(buttons, "Leave (Esc)", Cancel, 18, UITheme.Leather);
 
 			log = UIFactory.Label(panel.transform, "", 19, UIFactory.Text);
 			UIFactory.Place(log.rectTransform, new Vector2(0.5f, 0), new Vector2(1, 1), new Vector2(12, 16), new Vector2(-24, -14));
@@ -264,7 +264,7 @@ namespace UserInterface.Views
 		{
 			var item = stack.Item;
 
-			var row = UIFactory.Image(shelf, UIFactory.PanelLight, "Ingredient");
+			var row = UIFactory.Surface(shelf, UITheme.Surface.Plaque, UITheme.Leather, "Ingredient");
 			UIFactory.Horizontal(row.gameObject, 6f, 6, false).childAlignment = TextAnchor.MiddleLeft;
 			UIFactory.Layout(row.gameObject, preferredHeight: 50);
 
@@ -298,8 +298,8 @@ namespace UserInterface.Views
 			var session = station.Session;
 
 			heatFill.fillAmount = session.Heat;
-			heatFill.color = session.Heat > AlchemySession.MaxBoilHeat ? new Color(1f, 0.25f, 0.15f)
-				: session.Heat >= AlchemySession.MinBoilHeat ? new Color(1f, 0.7f, 0.25f)
+			heatFill.color = session.Heat > AlchemySession.MaxBoilHeat ? UITheme.Ember
+				: session.Heat >= AlchemySession.MinBoilHeat ? UITheme.Fire
 				: new Color(0.7f, 0.45f, 0.3f);
 
 			hourglassFill.fillAmount = session.IsBoiling ? 1f - session.TurnProgress : 0f;
