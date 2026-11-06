@@ -15,11 +15,11 @@ namespace UserInterface
 
 		private readonly Action<string> confirmed;
 
-		public NameForm(Transform parent, string prompt, string current, string confirmLabel, Action<string> onConfirm, Action onCancel)
+		public NameForm(Transform parent, string prompt, string current, string confirmLabel, Action<string> onConfirm, Action onCancel, Color? promptColour = null)
 		{
 			confirmed = onConfirm;
 
-			UIFactory.Layout(UIFactory.Label(parent, prompt, 22, UIFactory.Text, TextAnchor.MiddleLeft).gameObject, preferredHeight: 34);
+			UIFactory.Layout(UIFactory.Label(parent, prompt, UITheme.Body, promptColour ?? UIFactory.Text, TextAnchor.MiddleLeft).gameObject, preferredHeight: 34);
 
 			var start = string.IsNullOrEmpty(current) ? WitchProfile.Suggest() : current;
 
@@ -29,12 +29,12 @@ namespace UserInterface
 
 			var buttons = UIFactory.Row(parent, 12f, 56f);
 
-			UIFactory.Button(buttons, "Suggest another", () => Field.text = WitchProfile.Suggest(Field.text), 20, new Color(0.3f, 0.25f, 0.4f), 56);
+			UIFactory.Button(buttons, "Suggest another", () => Field.text = WitchProfile.Suggest(Field.text), 20, UITheme.Leather, 56);
 
-			Confirm = UIFactory.Button(buttons, confirmLabel, Submit, 22, new Color(0.45f, 0.28f, 0.52f), 56);
+			Confirm = UIFactory.Button(buttons, confirmLabel, Submit, 22, UITheme.Moss, 56);
 
 			if (onCancel != null)
-				UIFactory.Button(buttons, "Back", () => onCancel(), 20, new Color(0.3f, 0.25f, 0.4f), 56);
+				UIFactory.Button(buttons, "Back", () => onCancel(), 20, UITheme.Leather, 56);
 
 			Refresh();
 		}
