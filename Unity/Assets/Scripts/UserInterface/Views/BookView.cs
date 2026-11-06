@@ -36,10 +36,10 @@ namespace UserInterface.Views
 
 		protected override void OnBuild()
 		{
-			var shade = UIFactory.Image(Root, new Color(0.05f, 0.03f, 0.08f, 0.7f), "Shade");
+			var shade = UIFactory.Image(Root, UITheme.Scrim, "Shade");
 			UIFactory.Fill(shade.rectTransform);
 
-			var cover = UIFactory.Image(Root, new Color(0.35f, 0.2f, 0.25f, 1f), "Cover");
+			var cover = UIFactory.Surface(Root, UITheme.Surface.Leather, UITheme.Leather, "Cover");
 			UIFactory.Place(cover.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-760, -420), new Vector2(760, 420));
 
 			ribbon = UIFactory.Image(cover.transform, UIFactory.Accent, "Ribbon");
@@ -55,13 +55,13 @@ namespace UserInterface.Views
 			var back = Footer(cover.transform, new Vector2(0f, 0f), new Vector2(0.5f, 0f));
 			var forward = Footer(cover.transform, new Vector2(0.5f, 0f), new Vector2(1f, 0f));
 
-			previous = UIFactory.Button(back, "< Previous", () => Turn(-1), 20, new Color(0.5f, 0.32f, 0.38f), 50);
+			previous = UIFactory.Button(back, "< Previous", () => Turn(-1), 20, UITheme.Mulberry, 50);
 			UIFactory.Layout(previous.gameObject, minWidth: 200, preferredWidth: 200, minHeight: 50, preferredHeight: 50);
 
-			next = UIFactory.Button(forward, "Next >", () => Turn(1), 20, new Color(0.5f, 0.32f, 0.38f), 50);
+			next = UIFactory.Button(forward, "Next >", () => Turn(1), 20, UITheme.Mulberry, 50);
 			UIFactory.Layout(next.gameObject, minWidth: 200, preferredWidth: 200, minHeight: 50, preferredHeight: 50);
 
-			var close = UIFactory.Button(forward, "Close book", Close, 20, new Color(0.3f, 0.25f, 0.35f), 50);
+			var close = UIFactory.Button(forward, "Close book", Close, 20, UITheme.Leather, 50);
 			UIFactory.Layout(close.gameObject, minWidth: 200, preferredWidth: 200, minHeight: 50, preferredHeight: 50);
 		}
 
@@ -75,15 +75,15 @@ namespace UserInterface.Views
 
 		private static Text Page(Transform parent, Vector2 min, Vector2 max, Vector2 offsetMin, Vector2 offsetMax, out Text number)
 		{
-			var page = UIFactory.Image(parent, UIFactory.Parchment, "Page");
+			var page = UIFactory.Surface(parent, UITheme.Surface.Paper, Color.white, "Page");
 			UIFactory.Place(page.rectTransform, min, max, offsetMin, offsetMax);
 
-			var text = UIFactory.Label(page.transform, "", 28, UIFactory.Ink);
+			var text = UIFactory.Label(page.transform, "", UITheme.Reading, UIFactory.Ink);
 			UIFactory.Place(text.rectTransform, Vector2.zero, Vector2.one, new Vector2(48, 56), new Vector2(-48, -40));
 			text.lineSpacing = 1.15f;
 
 			// At the foot of the page, as in a printed book
-			number = UIFactory.Label(page.transform, "", 24, new Color(UIFactory.Ink.r, UIFactory.Ink.g, UIFactory.Ink.b, 0.85f), TextAnchor.LowerCenter, FontStyle.Italic);
+			number = UIFactory.Label(page.transform, "", 24, UITheme.SoftInk, TextAnchor.LowerCenter, FontStyle.Italic);
 			UIFactory.Place(number.rectTransform, new Vector2(0, 0), new Vector2(1, 0), new Vector2(48, 14), new Vector2(-48, 46));
 
 			return text;
