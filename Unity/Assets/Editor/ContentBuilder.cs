@@ -232,6 +232,8 @@ namespace WitchCraftEditor
 			spell.DisplayName = name;
 			spell.Effect = effect;
 			spell.Color = colour;
+			if (spell.Icon == null)
+				spell.Icon = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Resources/UI/Spells/{id}.png");
 			spell.Glyphs = glyphIds.Select(glyphId => glyphs[glyphId]).ToList();
 			spell.Description = description;
 			spell.Hint = hint;

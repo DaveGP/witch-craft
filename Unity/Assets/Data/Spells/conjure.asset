@@ -16,6 +16,7 @@ MonoBehaviour:
   DisplayName: Conjure
   Effect: 1
   Color: {r: 1, g: 0.75, b: 0.4, a: 1}
+  Icon: {fileID: 21300000, guid: d1bcc815656cc449aad12d90392ac58c, type: 3}
   Glyphs:
   - {fileID: 11400000, guid: 8b5c3a5dfd85b4dbc9a7c46f2f178be4, type: 2}
   - {fileID: 11400000, guid: 55119a711421047e1b840cfdcf36ede3, type: 2}

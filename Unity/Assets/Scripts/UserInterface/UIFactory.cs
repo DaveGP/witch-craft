@@ -10,25 +10,23 @@ namespace UserInterface
 	// Builds uGUI from code so every screen lives in source and needs no prefab authoring.
 	public static class UIFactory
 	{
-		public static readonly Color Panel = new(0.13f, 0.09f, 0.17f, 0.92f);
+		public static readonly Color Panel = UITheme.Night;
+		public static readonly Color PanelLight = UITheme.Leather;
+		public static readonly Color Parchment = UITheme.Parchment;
+		public static readonly Color Ink = UITheme.Ink;
+		public static readonly Color Accent = UITheme.Gold;
+		public static readonly Color Text = UITheme.Linen;
+		public static readonly Color TextMuted = UITheme.Muted;
+		public static readonly Color ButtonColour = UITheme.Leather;
 
-		public static readonly Color PanelLight = new(0.24f, 0.17f, 0.3f, 0.95f);
+		public static Font Font => UITheme.BodyFont;
 
-		public static readonly Color Parchment = new(0.95f, 0.89f, 0.76f, 0.97f);
-
-		public static readonly Color Ink = new(0.22f, 0.14f, 0.18f);
-
-		public static readonly Color Accent = new(1f, 0.8f, 0.45f);
-
-		public static readonly Color Text = new(0.97f, 0.93f, 0.87f);
-
-		public static readonly Color TextMuted = new(0.75f, 0.68f, 0.78f);
-
-		public static readonly Color ButtonColour = new(0.4f, 0.27f, 0.5f);
-
-		private static Font font;
-
-		public static Font Font => font ??= Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+		public static Image Surface(Transform parent, UITheme.Surface style, Color colour, string name)
+		{
+			var image = Image(parent, colour, name);
+			UITheme.Style(image, style);
+			return image;
+		}
 
 		public static RectTransform Rect(string name, Transform parent)
 		{
@@ -61,17 +59,25 @@ namespace UserInterface
 			return image;
 		}
 
-		public static Text Label(Transform parent, string text, int size = 22, Color? colour = null, TextAnchor anchor = TextAnchor.UpperLeft, FontStyle style = FontStyle.Normal)
+		public static Text Label(Transform parent, string text, int size = UITheme.Body, Color? colour = null, TextAnchor anchor = TextAnchor.UpperLeft, FontStyle style = FontStyle.Normal)
 		{
 			var rect = Rect("Label", parent);
 
 			var label = rect.gameObject.AddComponent<Text>();
-			label.font = Font;
+			label.font = size >= UITheme.Section ? UITheme.DisplayFont : Font;
 			label.text = text;
 			label.fontSize = size;
 			label.color = colour ?? Text;
 			label.alignment = anchor;
 			label.fontStyle = style;
+			foreach (var character in text ?? string.Empty)
+			{
+				if (character > 127 && !label.font.HasCharacter(character))
+				{
+					label.font = UITheme.FallbackFont;
+					break;
+				}
+			}
 			label.supportRichText = true;
 			label.horizontalOverflow = HorizontalWrapMode.Wrap;
 			label.verticalOverflow = VerticalWrapMode.Overflow;
@@ -80,17 +86,15 @@ namespace UserInterface
 			return label;
 		}
 
-		public static Button Button(Transform parent, string text, Action onClick, int size = 20, Color? colour = null, float height = 40f)
+		public static Button Button(Transform parent, string text, Action onClick, int size = UITheme.Control, Color? colour = null, float height = 40f)
 		{
 			var image = Image(parent, colour ?? ButtonColour, "Button");
 
 			var button = image.gameObject.AddComponent<Button>();
 
-			var colours = button.colors;
-			colours.highlightedColor = new Color(1.25f, 1.2f, 1.25f);
-			colours.pressedColor = new Color(0.8f, 0.8f, 0.8f);
-			colours.disabledColor = new Color(0.55f, 0.55f, 0.55f, 0.6f);
-			button.colors = colours;
+			UITheme.Style(image, UITheme.Surface.Leather);
+			button.targetGraphic = image;
+			button.colors = UITheme.ControlColours();
 
 			button.onClick.AddListener(() => ServiceLocator.Get<IAudioService>()?.Play(Sound.Click, 0.4f));
 
@@ -98,7 +102,12 @@ namespace UserInterface
 				button.onClick.AddListener(() => onClick());
 
 			var label = Label(image.transform, text, size, Text, TextAnchor.MiddleCenter);
-			Fill(label.rectTransform, 4f);
+			Fill(label.rectTransform, UITheme.Gap);
+			label.resizeTextForBestFit = true;
+			label.resizeTextMinSize = Mathf.Min(size, UITheme.Meta);
+			label.resizeTextMaxSize = size;
+			label.verticalOverflow = VerticalWrapMode.Truncate;
+			UIFocus.Attach(button);
 
 			Layout(image.gameObject, preferredHeight: height, minHeight: height);
 
@@ -110,9 +119,12 @@ namespace UserInterface
 		/// </summary>
 		public static InputField InputField(Transform parent, string value, string placeholder, int characterLimit, int size = 26, float height = 56f)
 		{
-			var image = Image(parent, Parchment, "InputField");
+			var image = Surface(parent, UITheme.Surface.Paper, Parchment, "InputField");
 
 			var field = image.gameObject.AddComponent<InputField>();
+			field.targetGraphic = image;
+			field.colors = UITheme.ControlColours();
+			UIFocus.Attach(field);
 
 			var hint = Label(image.transform, placeholder, size, new Color(Ink.r, Ink.g, Ink.b, 0.45f), TextAnchor.MiddleLeft, FontStyle.Italic);
 			Fill(hint.rectTransform, 14f);
@@ -140,7 +152,7 @@ namespace UserInterface
 			var root = Rect("Slider", parent);
 			Layout(root.gameObject, minHeight: height, preferredHeight: height, flexibleWidth: 1);
 
-			var track = Image(root, new Color(0f, 0f, 0f, 0.45f), "Track");
+			var track = Surface(root, UITheme.Surface.Plaque, UITheme.Track, "Track");
 			Place(track.rectTransform, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(0f, -5f), new Vector2(0f, 5f));
 
 			var fillArea = Rect("FillArea", root);
@@ -152,7 +164,7 @@ namespace UserInterface
 			var handleArea = Rect("HandleArea", root);
 			Place(handleArea, Vector2.zero, Vector2.one, new Vector2(10f, 0f), new Vector2(-10f, 0f));
 
-			var handle = Image(handleArea, Text, "Handle");
+			var handle = Surface(handleArea, UITheme.Surface.Plaque, Accent, "Handle");
 			handle.rectTransform.sizeDelta = new Vector2(22f, 0f);
 			handle.rectTransform.anchorMin = new Vector2(0f, 0f);
 			handle.rectTransform.anchorMax = new Vector2(0f, 1f);
@@ -166,10 +178,8 @@ namespace UserInterface
 			slider.maxValue = max;
 			slider.SetValueWithoutNotify(value);
 
-			var colours = slider.colors;
-			colours.highlightedColor = Accent;
-			colours.selectedColor = Accent;
-			slider.colors = colours;
+			slider.colors = UITheme.ControlColours();
+			UIFocus.Attach(slider);
 
 			slider.onValueChanged.AddListener(changed => onChanged(changed));
 
@@ -230,7 +240,7 @@ namespace UserInterface
 		/// </summary>
 		public static Image Bar(Transform parent, Color back, Color fill, float height = 18f)
 		{
-			var background = Image(parent, back, "Bar");
+			var background = Surface(parent, UITheme.Surface.Plaque, back, "Bar");
 			Layout(background.gameObject, minHeight: height, preferredHeight: height);
 
 			var fillImage = Image(background.transform, fill, "Fill");

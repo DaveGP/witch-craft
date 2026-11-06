@@ -16,6 +16,7 @@ MonoBehaviour:
   DisplayName: Wisp
   Effect: 5
   Color: {r: 1, g: 0.95, b: 0.6, a: 1}
+  Icon: {fileID: 21300000, guid: 62e2f18101a1349078523af0b4fce614, type: 3}
   Glyphs:
   - {fileID: 11400000, guid: 211fe8475911841a6aa8143eb06d8beb, type: 2}
   - {fileID: 11400000, guid: ff1b84353de1241c49e06e576b7ca2e2, type: 2}

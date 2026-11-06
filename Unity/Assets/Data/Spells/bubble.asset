@@ -16,6 +16,7 @@ MonoBehaviour:
   DisplayName: Bubble
   Effect: 6
   Color: {r: 0.65, g: 0.9, b: 1, a: 1}
+  Icon: {fileID: 21300000, guid: 0967dbea7ca2c4d57838bee7b6c2ff17, type: 3}
   Glyphs:
   - {fileID: 11400000, guid: 5f5537ed17c4a4cf8a281e5223e14ece, type: 2}
   - {fileID: 11400000, guid: 99899dce860a64f12917ded531888c7d, type: 2}

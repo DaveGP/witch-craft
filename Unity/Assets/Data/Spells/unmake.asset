@@ -16,6 +16,7 @@ MonoBehaviour:
   DisplayName: Unmake
   Effect: 2
   Color: {r: 0.62, g: 0.5, b: 0.85, a: 1}
+  Icon: {fileID: 21300000, guid: 3a2594c3a67ac4b52874a05d5928042a, type: 3}
   Glyphs:
   - {fileID: 11400000, guid: 6bdb482396ee94da7938f4b9e7292aed, type: 2}
   - {fileID: 11400000, guid: 55119a711421047e1b840cfdcf36ede3, type: 2}

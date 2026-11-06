@@ -16,6 +16,7 @@ MonoBehaviour:
   DisplayName: Levitate
   Effect: 0
   Color: {r: 0.78, g: 0.62, b: 1, a: 1}
+  Icon: {fileID: 21300000, guid: 6b6e3f1a1009c46b096dd28cc8411e40, type: 3}
   Glyphs:
   - {fileID: 11400000, guid: 99899dce860a64f12917ded531888c7d, type: 2}
   - {fileID: 11400000, guid: 55119a711421047e1b840cfdcf36ede3, type: 2}
