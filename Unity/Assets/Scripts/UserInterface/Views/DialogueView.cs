@@ -18,16 +18,16 @@ namespace UserInterface.Views
 
 		protected override void OnBuild()
 		{
-			var panel = UIFactory.Image(Root, UIFactory.Panel, "Dialogue");
-			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-520, 60), new Vector2(520, 460));
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Paper, Color.white, "Dialogue");
+			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-560, 60), new Vector2(560, 500));
 
 			accent = UIFactory.Image(panel.transform, UIFactory.Accent, "Accent");
 			UIFactory.Place(accent.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(0, -6), Vector2.zero);
 
-			title = UIFactory.Label(panel.transform, "", 30, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
+			title = UIFactory.Label(panel.transform, "", 30, UITheme.Ink, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(title.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(30, -60), new Vector2(-30, -18));
 
-			body = UIFactory.Label(panel.transform, "", 22, UIFactory.Text);
+			body = UIFactory.Label(panel.transform, "", UITheme.Body, UITheme.Ink);
 			UIFactory.Place(body.rectTransform, new Vector2(0, 0), new Vector2(1, 1), new Vector2(30, 150), new Vector2(-30, -70));
 
 			options = UIFactory.Rect("Options", panel.transform);
