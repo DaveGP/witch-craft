@@ -35,21 +35,21 @@ namespace UserInterface.Views
 			settings = ServiceLocator.Get<IGameSettings>();
 			controlScheme = ServiceLocator.Get<IControlScheme>();
 
-			var shade = UIFactory.Image(Root, new Color(0.05f, 0.03f, 0.08f, 0.7f), "Shade");
+			var shade = UIFactory.Image(Root, UITheme.Scrim, "Shade");
 			UIFactory.Fill(shade.rectTransform);
 
-			var panel = UIFactory.Image(Root, UIFactory.Panel, "Settings");
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Leather, UITheme.Leather, "Settings");
 			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-640, -400), new Vector2(640, 400));
 
 			var left = UIFactory.Rect("Options", panel.transform);
 			UIFactory.Place(left, new Vector2(0f, 0f), new Vector2(0.48f, 1f), new Vector2(40, 40), new Vector2(-10, -40));
 			UIFactory.Vertical(left.gameObject, 12f);
 
-			UIFactory.Layout(UIFactory.Label(left, "Settings", 40, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold).gameObject, preferredHeight: 60);
+			UIFactory.Layout(UIFactory.Label(left, "Settings", UITheme.Heading, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold).gameObject, preferredHeight: 60);
 
 			look = Setting(left, "Look sensitivity", 0.02f, 0.5f, value => settings.LookSensitivity = value);
 
-			invertLabel = UIFactory.Button(left, "", ToggleInvert, 20, new Color(0.3f, 0.25f, 0.4f), 46).GetComponentInChildren<Text>();
+			invertLabel = UIFactory.Button(left, "", ToggleInvert, 20, UITheme.Leather, 46).GetComponentInChildren<Text>();
 
 			music = Setting(left, "Music volume", 0f, 1f, value => settings.MusicVolume = value);
 			sound = Setting(left, "Sound volume", 0f, 1f, value => settings.SoundVolume = value);
@@ -59,14 +59,14 @@ namespace UserInterface.Views
 			{
 				settings.LookSensitivity = GameSettings.DefaultLookSensitivity;
 				Refresh();
-			}, 18, new Color(0.3f, 0.25f, 0.4f), 40);
+			}, 18, UITheme.Leather, 40);
 
 			UIFactory.Button(left, "Back", Close, 22, null, 52);
 
-			var right = UIFactory.Image(panel.transform, UIFactory.PanelLight, "Controls");
+			var right = UIFactory.Surface(panel.transform, UITheme.Surface.Paper, Color.white, "Controls");
 			UIFactory.Place(right.rectTransform, new Vector2(0.52f, 0f), new Vector2(1f, 1f), new Vector2(10, 40), new Vector2(-40, -40));
 
-			controls = UIFactory.Label(right.transform, "", 19, UIFactory.Text);
+			controls = UIFactory.Label(right.transform, "", UITheme.Small, UITheme.Ink);
 			UIFactory.Fill(controls.rectTransform, 24f);
 		}
 

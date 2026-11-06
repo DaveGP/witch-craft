@@ -63,6 +63,8 @@ namespace UserInterface.Views
 
 		private Text prompt;
 
+		private Image promptBacking;
+
 		private Text status;
 
 		private Text crosshair;
@@ -81,9 +83,9 @@ namespace UserInterface.Views
 
 		private Image broomFill;
 
-		private readonly List<(Image back, Text label)> slots = new();
+		private readonly List<(Image icon, Text fallback, Image ready)> slots = new();
 
-		private readonly List<(Text text, float born)> toasts = new();
+		private readonly List<(Text text, CanvasGroup group, float born)> toasts = new();
 
 		private IQuestLog quests;
 
@@ -178,9 +180,13 @@ namespace UserInterface.Views
 
 		private void BuildPrompt()
 		{
-			prompt = UIFactory.Label(root, "", 26, UIFactory.Text, TextAnchor.MiddleCenter, FontStyle.Bold);
-			UIFactory.Place(prompt.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-400, 190), new Vector2(400, 230));
-			prompt.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(2, -2);
+			promptBacking = UIFactory.Surface(root, UITheme.Surface.Plaque, UITheme.HudBacking, "Prompt");
+			promptBacking.raycastTarget = false;
+			UIFactory.Place(promptBacking.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-140, 186), new Vector2(140, 242));
+			prompt = UIFactory.Label(promptBacking.transform, "", UITheme.Body, UIFactory.Text, TextAnchor.MiddleCenter, FontStyle.Bold);
+			UIFactory.Fill(prompt.rectTransform, UITheme.TinyGap);
+			prompt.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(1, -1);
+			promptBacking.gameObject.SetActive(false);
 
 			status = UIFactory.Label(root, "", 20, UIFactory.Accent, TextAnchor.MiddleCenter);
 			UIFactory.Place(status.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-600, 120), new Vector2(600, 150));
@@ -193,20 +199,26 @@ namespace UserInterface.Views
 		private void BuildHotbar()
 		{
 			var bar = UIFactory.Rect("Hotbar", root);
-			UIFactory.Place(bar, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-330, 30), new Vector2(330, 110));
-			UIFactory.Horizontal(bar.gameObject, 10f);
+			UIFactory.Place(bar, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-276, 89), new Vector2(-30, 141));
+			UIFactory.Horizontal(bar.gameObject, UITheme.RowGap);
 
 			for (var i = 0; i < ISpellBook.SlotCount; i++)
 			{
-				var back = UIFactory.Image(bar, UIFactory.Panel, $"Slot{i + 1}");
+				var slot = UIFactory.Rect($"Slot{i + 1}", bar);
+				UIFactory.Layout(slot.gameObject, preferredWidth: 52, preferredHeight: 52);
+				var icon = UIFactory.Image(slot, Color.white, "SpellIcon");
+				icon.raycastTarget = false;
+				icon.preserveAspect = true;
+				UIFactory.Fill(icon.rectTransform);
 
-				var key = UIFactory.Label(back.transform, $"{i + 1}", 16, UIFactory.TextMuted);
-				UIFactory.Place(key.rectTransform, Vector2.zero, Vector2.one, new Vector2(8, 4), new Vector2(-4, -4));
+				var fallback = UIFactory.Label(slot, "", UITheme.Meta, UITheme.Linen, TextAnchor.MiddleCenter, FontStyle.Bold);
+				UIFactory.Fill(fallback.rectTransform);
 
-				var label = UIFactory.Label(back.transform, "", 18, UIFactory.Text, TextAnchor.MiddleCenter, FontStyle.Bold);
-				UIFactory.Fill(label.rectTransform, 6f);
-
-				slots.Add((back, label));
+				var ready = UIFactory.Image(slot, UITheme.Gold, "Readied");
+				ready.raycastTarget = false;
+				UIFactory.Place(ready.rectTransform, new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(-3, -6), new Vector2(3, 0));
+				ready.rectTransform.localRotation = Quaternion.Euler(0, 0, 45);
+				slots.Add((icon, fallback, ready));
 			}
 		}
 
@@ -221,12 +233,12 @@ namespace UserInterface.Views
 
 		private void BuildBroom()
 		{
-			var panel = UIFactory.Image(root, UIFactory.Panel, "Broom");
+			var panel = UIFactory.Surface(root, UITheme.Surface.Plaque, UITheme.HudBacking, "Broom");
 			UIFactory.Place(panel.rectTransform, Vector2.zero, Vector2.zero, new Vector2(30, 30), new Vector2(300, 90));
 			UIFactory.Vertical(panel.gameObject, 4f, 10);
 
 			UIFactory.Label(panel.transform, "Broom magic", 16, UIFactory.TextMuted);
-			broomFill = UIFactory.Bar(panel.transform, new Color(0, 0, 0, 0.5f), new Color(0.6f, 0.75f, 1f));
+			broomFill = UIFactory.Bar(panel.transform, UITheme.Track, UITheme.SkyMagic);
 
 			broomPanel = panel.gameObject;
 		}
@@ -237,11 +249,14 @@ namespace UserInterface.Views
 			UIFactory.Place(potions.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(30, -300), new Vector2(420, -30));
 			potions.gameObject.AddComponent<Shadow>();
 
-			homeInfo = UIFactory.Label(root, "", 20, UIFactory.Text, TextAnchor.UpperRight);
-			UIFactory.Place(homeInfo.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-520, -120), new Vector2(-30, -30));
+			var homePlaque = UIFactory.Surface(root, UITheme.Surface.Plaque, UITheme.HudBacking, "HomeInfo");
+			homePlaque.raycastTarget = false;
+			UIFactory.Place(homePlaque.rectTransform, Vector2.one, Vector2.one, new Vector2(-395, -102), new Vector2(-30, -30));
+			homeInfo = UIFactory.Label(homePlaque.transform, "", UITheme.Control, UITheme.Linen, TextAnchor.MiddleRight);
+			UIFactory.Fill(homeInfo.rectTransform, UITheme.RowGap);
 			homeInfo.gameObject.AddComponent<Shadow>();
 
-			var panel = UIFactory.Image(root, new Color(0.13f, 0.09f, 0.17f, 0.82f), "Objective");
+			var panel = UIFactory.Surface(root, UITheme.Surface.Plaque, UITheme.HudBacking, "Objective");
 			UIFactory.Place(panel.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-520, -230), new Vector2(-30, -130));
 
 			var accent = UIFactory.Image(panel.transform, UIFactory.Accent, "Accent");
@@ -264,7 +279,7 @@ namespace UserInterface.Views
 		// Under the objective, with a line on what the companion being earned wants next
 		private void BuildQuest()
 		{
-			var panel = UIFactory.Image(root, new Color(0.13f, 0.09f, 0.17f, 0.82f), "Quest");
+			var panel = UIFactory.Surface(root, UITheme.Surface.Plaque, UITheme.HudBacking, "Quest");
 			UIFactory.Place(panel.rectTransform, new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-520, -230), new Vector2(-30, -130));
 
 			var accent = UIFactory.Image(panel.transform, UIFactory.Accent, "Accent");
@@ -419,10 +434,14 @@ namespace UserInterface.Views
 				focus = null;
 
 			var button = Gamepad ? "(X)" : "[E]";
-			var text = focus != null ? $"<color=#{UIFactory.Hex(UIFactory.Accent)}>{button}</color> {focus.Prompt}" : "";
+			var text = focus != null ? $"<color=#{UIFactory.Hex(UIFactory.Accent)}>{button}</color> · {focus.Prompt}" : "";
 
-			if (prompt.text != text)
-				prompt.text = text;
+			if (prompt.text == text)
+				return;
+
+			prompt.text = text;
+			promptBacking.gameObject.SetActive(text.Length > 0);
+			promptBacking.rectTransform.sizeDelta = new Vector2(Mathf.Clamp(prompt.preferredWidth + 32, 140, 760), 56);
 		}
 
 		private bool Gamepad => controlScheme != null && controlScheme.UsingGamepad;
@@ -448,14 +467,17 @@ namespace UserInterface.Views
 			if (toasts.Count >= MaxToasts)
 				RemoveToast(0);
 
-			var back = UIFactory.Image(toastList, new Color(0.1f, 0.07f, 0.13f, 0.8f), "Toast");
+			var back = UIFactory.Surface(toastList, UITheme.Surface.Plaque, UITheme.HudBacking, "Toast");
 			UIFactory.Horizontal(back.gameObject, 0f, 10);
 			back.gameObject.AddComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
 			var text = UIFactory.Label(back.transform, message, 21, UIFactory.Text, TextAnchor.MiddleCenter);
 			UIFactory.Layout(text.gameObject, preferredWidth: Mathf.Min(760, message.Length * 11 + 20));
 
-			toasts.Add((text, Time.unscaledTime));
+			var group = back.gameObject.AddComponent<CanvasGroup>();
+			group.alpha = 0;
+			group.blocksRaycasts = false;
+			toasts.Add((text, group, Time.unscaledTime));
 		}
 
 		private void RemoveToast(int index)
@@ -472,9 +494,11 @@ namespace UserInterface.Views
 
 				var readied = target?.Spells?.ActiveSpell == spell && spell != null;
 
-				slots[i].label.text = spell != null ? spell.DisplayName : "";
-				slots[i].label.color = spell != null ? Color.Lerp(spell.Color, Color.white, 0.4f) : UIFactory.TextMuted;
-				slots[i].back.color = readied ? Color.Lerp(UIFactory.Panel, spell.Color, 0.55f) : UIFactory.Panel;
+				var slot = slots[i];
+				slot.icon.sprite = spell != null ? spell.Icon : null;
+				slot.icon.enabled = slot.icon.sprite != null;
+				slot.fallback.text = spell == null ? "·" : slot.icon.enabled ? "" : spell.DisplayName;
+				slot.ready.enabled = readied;
 			}
 		}
 
@@ -494,7 +518,7 @@ namespace UserInterface.Views
 					continue;
 				}
 
-				toasts[i].text.color = new Color(1f, 1f, 1f, Mathf.Clamp01((ToastLifetime - age) * 2f));
+				toasts[i].group.alpha = Mathf.Min(Mathf.Clamp01(age / 0.15f), Mathf.Clamp01((ToastLifetime - age) * 2f));
 			}
 
 			if (target == null)
@@ -511,7 +535,7 @@ namespace UserInterface.Views
 
 			broomPanel.SetActive(target.Broom.IsMounted || target.Broom.Charge01 < 0.999f);
 			broomFill.fillAmount = target.Broom.Charge01;
-			broomFill.color = potionEffects.IsActive(PotionEffect.Skyward) ? UIFactory.Accent : new Color(0.6f, 0.75f, 1f);
+			broomFill.color = potionEffects.IsActive(PotionEffect.Skyward) ? UIFactory.Accent : UITheme.SkyMagic;
 
 			potions.text = string.Join("\n", potionEffects.Active.Select(pair => $"{pair.Key}  {Mathf.CeilToInt(pair.Value)}s"));
 

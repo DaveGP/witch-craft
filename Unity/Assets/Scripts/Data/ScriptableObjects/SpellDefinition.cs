@@ -16,6 +16,9 @@ namespace Data.ScriptableObjects
 
 		public Color Color = Color.white;
 
+		[Tooltip("Shared by the spellbook and the exploration HUD")]
+		public Sprite Icon;
+
 		[Tooltip("Glyphs inscribed together to discover this spell, in any order")]
 		public List<GlyphDefinition> Glyphs = new();
 

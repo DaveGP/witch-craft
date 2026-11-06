@@ -16,6 +16,7 @@ MonoBehaviour:
   DisplayName: Blink
   Effect: 8
   Color: {r: 1, g: 0.93, b: 0.62, a: 1}
+  Icon: {fileID: 21300000, guid: 3a9b668debec64663b04028bcd03f13b, type: 3}
   Glyphs:
   - {fileID: 11400000, guid: a6dbdf4a508564792aad29be15b479a1, type: 2}
   - {fileID: 11400000, guid: 1a10f62a2312549eab1b4edabf6e662f, type: 2}

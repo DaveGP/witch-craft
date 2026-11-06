@@ -66,7 +66,7 @@ UnityInputReader ──> InputProvider ──(FixedUpdate)──> PlayerCharacte
 * **Audio**: `AudioDirector` (`IAudioService`) generates clips with `SoundSynth`, plays music, ambience and broom wind, and turns events into sounds.
 * **Tutorial**: `TutorialGuide` (`ITutorialGuide`) runs Sable's guided steps, sets the HUD objective and places a beacon. Progress is saved.
 * **Debugging**: `FeelTuner` is a backquote-toggled panel of live sliders for movement, broom and camera values. `PlaytestScenario` is the automated playtest.
-* **UI**: `UIRoot` builds a uGUI canvas in code via `UIFactory` and routes menu keys. Views: `HudView`, `SatchelView`, `SpellbookView`, `AlchemyView`, `DialogueView`, `PauseView`, `BookView`, `BookcaseView`.
+* **UI**: `UIRoot` builds a code-driven uGUI overlay via `UIFactory` and routes menu keys. The CanvasScaler expands the reference canvas at 1920 × 1080 so fixed panels fit at different aspect ratios. `UITheme` owns palette, type and spacing, plus the shared nine-sliced sprites and font slots in `Resources/UI`. Alegreya and Alegreya Sans ship with their OFL licences and fall back to the built-in font when unavailable. The HUD and spellbook use the same `SpellDefinition.Icon` sprite. Spell tiles keep their four positions even when a slot is empty. Buttons, sliders and name fields have a separate focus ring. View fades use unscaled time, with outgoing controls disabled as soon as the view closes. Visual direction and the screen list are in [UIDesign.md](UIDesign.md).
 
 ## Layers
 

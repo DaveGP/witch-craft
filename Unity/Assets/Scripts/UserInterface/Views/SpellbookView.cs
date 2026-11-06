@@ -33,11 +33,15 @@ namespace UserInterface.Views
 			spellBook = ServiceLocator.Get<ISpellBook>();
 			eventBus = ServiceLocator.Get<IEventBus>();
 
-			var book = UIFactory.Image(Root, new Color(0.35f, 0.2f, 0.25f, 1f), "Book");
+			var book = UIFactory.Surface(Root, UITheme.Surface.Leather, UITheme.Leather, "Book");
 			UIFactory.Place(book.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-860, -440), new Vector2(860, 440));
 
 			var left = Page(book.transform, new Vector2(0f, 0f), new Vector2(0.5f, 1f), new Vector2(24, 24), new Vector2(-8, -24));
 			var right = Page(book.transform, new Vector2(0.5f, 0f), new Vector2(1f, 1f), new Vector2(8, 24), new Vector2(-24, -24));
+
+			var binding = UIFactory.Image(book.transform, UITheme.Brass, "Binding");
+			binding.raycastTarget = false;
+			UIFactory.Place(binding.rectTransform, new Vector2(0.5f, 0), new Vector2(0.5f, 1), new Vector2(-2, 24), new Vector2(2, -24));
 
 			BuildGlyphPage(left);
 			BuildSpellPage(right);
@@ -66,7 +70,7 @@ namespace UserInterface.Views
 
 		private static RectTransform Page(Transform parent, Vector2 min, Vector2 max, Vector2 offsetMin, Vector2 offsetMax)
 		{
-			var page = UIFactory.Image(parent, UIFactory.Parchment, "Page");
+			var page = UIFactory.Surface(parent, UITheme.Surface.Paper, Color.white, "Page");
 			UIFactory.Place(page.rectTransform, min, max, offsetMin, offsetMax);
 
 			return page.rectTransform;
@@ -74,7 +78,7 @@ namespace UserInterface.Views
 
 		private void BuildGlyphPage(RectTransform page)
 		{
-			var title = UIFactory.Label(page, "Glyphs", 38, UIFactory.Ink, TextAnchor.UpperLeft, FontStyle.Bold);
+			var title = UIFactory.Label(page, "Glyphs", UITheme.Heading, UIFactory.Ink, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(title.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(30, -70), new Vector2(-30, -20));
 
 			var intro = UIFactory.Label(page, "Choose up to three glyphs and inscribe them together. Matching glyphs awaken a spell.", 18, UIFactory.Ink, TextAnchor.UpperLeft, FontStyle.Italic);
@@ -98,8 +102,8 @@ namespace UserInterface.Views
 			UIFactory.Place(actions, new Vector2(0, 0.42f), new Vector2(1, 0.42f), new Vector2(30, -220), new Vector2(-30, -165));
 			UIFactory.Horizontal(actions.gameObject, 14f);
 
-			UIFactory.Button(actions, "Inscribe", Inscribe, 24, new Color(0.45f, 0.25f, 0.45f), 54);
-			UIFactory.Button(actions, "Clear", () => { inscription.Clear(); Refresh(); }, 22, new Color(0.4f, 0.32f, 0.3f), 54);
+			UIFactory.Button(actions, "Inscribe", Inscribe, 24, UITheme.Mulberry, 54);
+			UIFactory.Button(actions, "Clear", () => { inscription.Clear(); Refresh(); }, 22, UITheme.Walnut, 54);
 
 			result = UIFactory.Label(page, "", 20, UIFactory.Ink, TextAnchor.UpperLeft, FontStyle.Italic);
 			UIFactory.Place(result.rectTransform, Vector2.zero, new Vector2(1, 0.42f), new Vector2(30, 20), new Vector2(-30, -230));
@@ -107,7 +111,7 @@ namespace UserInterface.Views
 
 		private void BuildSpellPage(RectTransform page)
 		{
-			var title = UIFactory.Label(page, "Spells", 38, UIFactory.Ink, TextAnchor.UpperLeft, FontStyle.Bold);
+			var title = UIFactory.Label(page, "Spells", UITheme.Heading, UIFactory.Ink, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(title.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(30, -70), new Vector2(-30, -20));
 
 			var hint = UIFactory.Label(page, "B to close", 18, UIFactory.Ink, TextAnchor.UpperRight);
@@ -165,7 +169,7 @@ namespace UserInterface.Views
 				}
 				else
 				{
-					var empty = UIFactory.Image(inscriptionRow, new Color(0.3f, 0.2f, 0.2f, 0.15f), "Empty");
+					var empty = UIFactory.Image(inscriptionRow, UITheme.InsetPaper, "Empty");
 					UIFactory.Layout(empty.gameObject, preferredHeight: 100);
 				}
 			}
@@ -189,7 +193,19 @@ namespace UserInterface.Views
 			var entry = UIFactory.Image(spellList, new Color(1f, 1f, 1f, 0.35f), "Spell");
 			UIFactory.Vertical(entry.gameObject, 4f, 12);
 
-			UIFactory.Label(entry.transform, $"<color=#{UIFactory.Hex(Color.Lerp(spell.Color, Color.black, 0.4f))}><b>{spell.DisplayName}</b></color>   <size=16>{spell.GlyphSummary}</size>", 26, UIFactory.Ink);
+			var heading = UIFactory.Row(entry.transform, UITheme.Gap, 40);
+			heading.GetComponent<HorizontalLayoutGroup>().childForceExpandWidth = false;
+			if (spell.Icon != null)
+			{
+				var icon = UIFactory.Image(heading, Color.white, "SpellIcon");
+				icon.sprite = spell.Icon;
+				icon.preserveAspect = true;
+				icon.raycastTarget = false;
+				UIFactory.Layout(icon.gameObject, minWidth: 40, preferredWidth: 40);
+			}
+
+			var spellName = UIFactory.Label(heading, $"<color=#{UIFactory.Hex(Color.Lerp(spell.Color, Color.black, 0.4f))}><b>{spell.DisplayName}</b></color>   <size=16>{spell.GlyphSummary}</size>", UITheme.Reading, UIFactory.Ink, TextAnchor.MiddleLeft);
+			UIFactory.Layout(spellName.gameObject, flexibleWidth: 1);
 			UIFactory.Label(entry.transform, spell.Description, 18, UIFactory.Ink);
 
 			var row = UIFactory.Row(entry.transform, 8f, 40f);
@@ -203,17 +219,17 @@ namespace UserInterface.Views
 
 				var equipped = spellBook.GetSlot(slot) == spell;
 
-				UIFactory.Button(row, $"{slot + 1}", () => spellBook.Equip(spell, target), 20, equipped ? spell.Color : new Color(0.45f, 0.35f, 0.4f));
+				UIFactory.Button(row, $"{slot + 1}", () => spellBook.Equip(spell, target), 20, equipped ? UITheme.Moss : UITheme.Leather);
 			}
 		}
 
 		private void UnknownSpell(SpellDefinition spell)
 		{
-			var entry = UIFactory.Image(spellList, new Color(0f, 0f, 0f, 0.08f), "Unknown");
+			var entry = UIFactory.Image(spellList, UITheme.InsetPaper, "Unknown");
 			UIFactory.Vertical(entry.gameObject, 4f, 12);
 
-			UIFactory.Label(entry.transform, "<b>? ? ?</b>", 26, new Color(0.4f, 0.32f, 0.35f));
-			UIFactory.Label(entry.transform, spell.Hint, 18, new Color(0.35f, 0.27f, 0.3f), TextAnchor.UpperLeft, FontStyle.Italic);
+			UIFactory.Label(entry.transform, "<b>? ? ?</b>", 26, UITheme.SoftInk);
+			UIFactory.Label(entry.transform, spell.Hint, 18, UITheme.SoftInk, TextAnchor.UpperLeft, FontStyle.Italic);
 		}
 
 		private void AddGlyph(GlyphDefinition glyph)

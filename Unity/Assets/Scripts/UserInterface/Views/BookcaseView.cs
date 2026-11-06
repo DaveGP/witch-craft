@@ -22,13 +22,13 @@ namespace UserInterface.Views
 		{
 			books = ServiceLocator.Get<IBookCollection>();
 
-			var shade = UIFactory.Image(Root, new Color(0.05f, 0.03f, 0.08f, 0.6f), "Shade");
+			var shade = UIFactory.Image(Root, UITheme.Scrim, "Shade");
 			UIFactory.Fill(shade.rectTransform);
 
-			var panel = UIFactory.Image(Root, new Color(0.3f, 0.2f, 0.16f, 0.97f), "Bookcase");
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Wood, UITheme.WoodTint, "Bookcase");
 			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-560, -420), new Vector2(560, 420));
 
-			heading = UIFactory.Label(panel.transform, "", 38, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
+			heading = UIFactory.Label(panel.transform, "", UITheme.Heading, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(heading.rectTransform, new Vector2(0, 1), new Vector2(1, 1), new Vector2(36, -86), new Vector2(-36, -24));
 
 			var hint = UIFactory.Label(panel.transform, "Esc to close", 18, UIFactory.TextMuted, TextAnchor.UpperRight);
@@ -57,11 +57,11 @@ namespace UserInterface.Views
 		{
 			var found = books.Has(book);
 
-			var row = UIFactory.Image(shelf, found ? new Color(0.45f, 0.32f, 0.26f) : new Color(0.22f, 0.15f, 0.12f), "Book");
+			var row = UIFactory.Surface(shelf, UITheme.Surface.Plaque, UITheme.Leather, "Book");
 			UIFactory.Horizontal(row.gameObject, 16f, 14, false).childAlignment = TextAnchor.MiddleLeft;
 			UIFactory.Layout(row.gameObject, preferredHeight: 84);
 
-			var spine = UIFactory.Image(row.transform, found ? book.Color : new Color(0.35f, 0.3f, 0.28f), "Spine");
+			var spine = UIFactory.Image(row.transform, found ? book.Color : UITheme.SoftInk, "Spine");
 			UIFactory.Layout(spine.gameObject, minWidth: 22, preferredWidth: 22, preferredHeight: 60);
 
 			var text = found
@@ -74,7 +74,7 @@ namespace UserInterface.Views
 			if (!found)
 				return;
 
-			var read = UIFactory.Button(row.transform, "Read", () => Read?.Invoke(book), 20, new Color(0.5f, 0.32f, 0.38f), 48);
+			var read = UIFactory.Button(row.transform, "Read", () => Read?.Invoke(book), 20, UITheme.Mulberry, 48);
 			UIFactory.Layout(read.gameObject, minWidth: 130, preferredWidth: 130, minHeight: 48, preferredHeight: 48);
 		}
 	}

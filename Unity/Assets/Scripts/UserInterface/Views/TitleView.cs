@@ -39,10 +39,10 @@ namespace UserInterface.Views
 			saveService = ServiceLocator.Get<ISaveService>();
 			eventBus = ServiceLocator.Get<IEventBusSender>();
 
-			var shade = UIFactory.Image(Root, new Color(0.08f, 0.04f, 0.12f, 0.35f), "Shade");
+			var shade = UIFactory.Image(Root, UITheme.Scrim, "Shade");
 			UIFactory.Fill(shade.rectTransform);
 
-			var title = UIFactory.Label(Root, "Witch Craft", 110, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
+			var title = UIFactory.Label(Root, "Witch Craft", UITheme.Display, UIFactory.Accent, TextAnchor.UpperLeft, FontStyle.Bold);
 			UIFactory.Place(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(110, -240), new Vector2(-110, -90));
 			title.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(4, -4);
 
@@ -50,7 +50,7 @@ namespace UserInterface.Views
 			UIFactory.Place(subtitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(116, -300), new Vector2(-110, -240));
 			subtitle.gameObject.AddComponent<Shadow>().effectDistance = new Vector2(2, -2);
 
-			var panel = UIFactory.Image(Root, UIFactory.Panel, "Slots");
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Leather, UITheme.Leather, "Slots");
 			UIFactory.Place(panel.rectTransform, new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(110, 90), new Vector2(900, 620));
 			UIFactory.Vertical(panel.gameObject, 12f, 28);
 
@@ -61,10 +61,10 @@ namespace UserInterface.Views
 			UIFactory.Layout(slotList.gameObject, flexibleHeight: 1);
 
 			var footer = UIFactory.Row(panel.transform, 12f, 50f);
-			UIFactory.Button(footer, "Settings", () => OpenSettings?.Invoke(), 22, new Color(0.3f, 0.25f, 0.4f), 50);
+			UIFactory.Button(footer, "Settings", () => OpenSettings?.Invoke(), 22, UITheme.Leather, 50);
 
 			if (Application.platform != RuntimePlatform.WebGLPlayer)
-				UIFactory.Button(footer, "Quit", Quit, 22, new Color(0.3f, 0.25f, 0.4f), 50);
+				UIFactory.Button(footer, "Quit", Quit, 22, UITheme.Leather, 50);
 
 			viewpoint = new GameObject("TitleViewpoint").transform;
 			viewpoint.position = new Vector3(15f, 7.5f, -17f);
@@ -119,7 +119,7 @@ namespace UserInterface.Views
 		{
 			var summary = saveService.Describe(slot);
 
-			var row = UIFactory.Image(slotList, UIFactory.PanelLight, $"Slot{slot + 1}");
+			var row = UIFactory.Image(slotList, UITheme.Leather, $"Slot{slot + 1}");
 			UIFactory.Horizontal(row.gameObject, 12f, 12, false).childAlignment = TextAnchor.MiddleLeft;
 			UIFactory.Layout(row.gameObject, preferredHeight: 92);
 
@@ -136,13 +136,13 @@ namespace UserInterface.Views
 
 			var chosen = slot;
 
-			var play = UIFactory.Button(row.transform, summary.Exists ? "Continue" : "Start", () => Play(chosen), 22, new Color(0.45f, 0.28f, 0.52f), 56);
+			var play = UIFactory.Button(row.transform, summary.Exists ? "Continue" : "Start", () => Play(chosen), 22, UITheme.Mulberry, 56);
 			UIFactory.Layout(play.gameObject, minWidth: 150, preferredWidth: 150, minHeight: 56, preferredHeight: 56);
 
 			if (!summary.Exists)
 				return;
 
-			var erase = UIFactory.Button(row.transform, confirmingErase == slot ? "Really erase?" : "Erase", () => Erase(chosen), 18, new Color(0.45f, 0.25f, 0.28f), 56);
+			var erase = UIFactory.Button(row.transform, confirmingErase == slot ? "Really erase?" : "Erase", () => Erase(chosen), 18, UITheme.Brick, 56);
 			UIFactory.Layout(erase.gameObject, minWidth: 150, preferredWidth: 150, minHeight: 56, preferredHeight: 56);
 		}
 

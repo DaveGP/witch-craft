@@ -16,6 +16,7 @@ MonoBehaviour:
   DisplayName: Bloom
   Effect: 4
   Color: {r: 0.5, g: 1, b: 0.5, a: 1}
+  Icon: {fileID: 21300000, guid: 56c338417eee74cb0ade447aa956514d, type: 3}
   Glyphs:
   - {fileID: 11400000, guid: ff1b84353de1241c49e06e576b7ca2e2, type: 2}
   - {fileID: 11400000, guid: 8b5c3a5dfd85b4dbc9a7c46f2f178be4, type: 2}

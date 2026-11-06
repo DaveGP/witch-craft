@@ -16,6 +16,7 @@ MonoBehaviour:
   DisplayName: Gust
   Effect: 3
   Color: {r: 0.7, g: 0.95, b: 1, a: 1}
+  Icon: {fileID: 21300000, guid: 616e6542f50054322ae5ec3fc5f3f512, type: 3}
   Glyphs:
   - {fileID: 11400000, guid: 99899dce860a64f12917ded531888c7d, type: 2}
   - {fileID: 11400000, guid: 1a10f62a2312549eab1b4edabf6e662f, type: 2}
