@@ -15,22 +15,22 @@ namespace UserInterface.Views
 
 		protected override void OnBuild()
 		{
-			var shade = UIFactory.Image(Root, new Color(0.05f, 0.03f, 0.08f, 0.6f), "Shade");
+			var shade = UIFactory.Image(Root, UITheme.Scrim, "Shade");
 			UIFactory.Fill(shade.rectTransform);
 
-			var panel = UIFactory.Image(Root, UIFactory.Panel, "Pause");
+			var panel = UIFactory.Surface(Root, UITheme.Surface.Leather, UITheme.Leather, "Pause");
 			UIFactory.Place(panel.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-230, -290), new Vector2(230, 290));
 			UIFactory.Vertical(panel.gameObject, 14f, 30);
 
-			UIFactory.Label(panel.transform, "Witch Craft", 44, UIFactory.Accent, TextAnchor.MiddleCenter, FontStyle.Bold);
+			UIFactory.Label(panel.transform, "Witch Craft", UITheme.Heading, UIFactory.Accent, TextAnchor.MiddleCenter, FontStyle.Bold);
 
 			UIFactory.Button(panel.transform, "Resume", Close, 24, null, 54);
 			UIFactory.Button(panel.transform, "Settings", () => OpenSettings?.Invoke(), 24, null, 54);
 			UIFactory.Button(panel.transform, "Save game", Save, 24, null, 54);
 
-			skipTutorial = UIFactory.Button(panel.transform, "Skip tutorial", SkipTutorial, 20, new Color(0.3f, 0.25f, 0.4f), 46).gameObject;
+			skipTutorial = UIFactory.Button(panel.transform, "Skip tutorial", SkipTutorial, 20, UITheme.Leather, 46).gameObject;
 
-			UIFactory.Button(panel.transform, "Save and return to title", ReturnToTitle, 22, new Color(0.3f, 0.25f, 0.4f), 50);
+			UIFactory.Button(panel.transform, "Save and return to title", ReturnToTitle, 22, UITheme.Leather, 50);
 
 			// A browser tab can't quit itself
 			if (Application.platform != RuntimePlatform.WebGLPlayer)
